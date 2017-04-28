@@ -1,0 +1,35 @@
+{
+    "name": "pozoltd/pozo",
+    "minimum-stability": "stable",
+    "require": {
+        "silex/silex": ">=1.3,<2.0",
+        "twig/twig": ">=1.21,<2.0-dev",
+        "symfony/twig-bridge": "2.7.*",
+        "symfony/config": "2.7.*",
+        "symfony/translation": "2.7.*",
+        "symfony/intl": "2.7.*",
+        "symfony/form": "2.7.*",
+        "symfony/validator": "2.7.*",
+        "symfony/security": "2.7.*",
+        "swiftmailer/swiftmailer": "5.*",
+        "doctrine/dbal": ">=2.2.0,<2.4.0-dev",
+        "dflydev/doctrine-orm-service-provider": "1.0.*@dev",
+        "blueimp/jquery-file-upload": "9.6.0",
+        "omnipay/paypal": "~2.0",
+        "phpoffice/phpexcel": "1.8.*",
+        "facebook/graph-sdk": "~5.0",
+        "google/apiclient": "v1.1.8",
+        "ezyang/htmlpurifier": "v4.8.0"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:/pozoltd/pozo"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Pz\\": "/src/Pz"
+        }
+    }
+}
