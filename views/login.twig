@@ -1,0 +1,46 @@
+{% extends 'layout.twig' %} 
+
+{% set bodyClass = 'gray-bg' %}
+
+{% block wrapper %}
+    <div class="middle-box text-center loginscreen  animated fadeInDown">
+        <div>
+            <h1 class="logo-name">PZ+</h1>
+        </div>
+        <p>Perfectly designed with the latest technology. Manage everything in a simple & elegant backend.</p>
+        <p>Login in. To see it in action.</p>
+        <form class="m-t" action="/pz/login_check/" method="post" novalidate>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Username" required="" name="_username" value="{{ last_username }}">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" placeholder="Password" required="" name="_password">
+            </div>
+            {{ error }}
+            <button type="submit" class="btn btn-primary block full-width m-b">Login</button>
+        </form>
+        <p class="m-t"> <small>Powered by hsh.co.nz &copy; {{ 'now'|date('Y') }}</small> </p>
+    </div>
+    {#<div class="middle-box text-center loginscreen  animated fadeInDown">#}
+        {#<div>#}
+            {#<div>#}
+                {#<h1 class="logo-name">&nbsp;</h1>#}
+            {#</div>#}
+            {#<h3>{{ constant('PROJECT') }}</h3>#}
+
+            {#<p>Content Management System</p>#}
+
+            {#<form class="m-t" action="/pz/login_check/" method="post" novalidate>#}
+                {#<div class="form-group">#}
+                    {#<input type="text" class="form-control" placeholder="Username" required="" name="_username" value="{{ last_username }}">#}
+                {#</div>#}
+                {#<div class="form-group">#}
+                    {#<input type="password" class="form-control" placeholder="Password" required="" name="_password">#}
+                {#</div>#}
+                {#{{ error }}#}
+                {#<button type="submit" class="btn btn-primary block full-width m-b">Login</button>#}
+            {#</form>#}
+        {#</div>#}
+    {#</div>#}
+{% endblock %}
+

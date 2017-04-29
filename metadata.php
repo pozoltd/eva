@@ -1,14 +1,14 @@
 <?php
  
 $CMS_METAS = array(
-    'id',
-    'slug',
-    'modelId',
-    'rank',
-    'parentId',
-    'added',
-    'modified',
-    'active',
+    '_id' => 'INT ',
+    '_slug',
+    '_modelId',
+    '_rank',
+    '_parentId',
+    '_added',
+    '_modified',
+    '_active',
 );
 
 $CMS_WIDGETS = array(

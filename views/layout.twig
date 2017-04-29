@@ -1,0 +1,239 @@
+{% set currentPath = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
+{#{% set myModels = app.db.data('Model') %}#}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ constant('PROJECT') }}</title>
+
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <link href="/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="{{ constant('CDN') }}/inspinia/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ constant('CDN') }}/inspinia/css/animate.css" rel="stylesheet">
+    <link href="{{ constant('CDN') }}/inspinia/css/style.css" rel="stylesheet">
+
+    <!-- Mainly scripts -->
+    <script src="{{ constant('CDN') }}/inspinia/js/jquery-2.1.1.js"></script>
+    <script src="{{ constant('CDN') }}/inspinia/js/bootstrap.min.js"></script>
+    <script src="{{ constant('CDN') }}/inspinia/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="{{ constant('CDN') }}/inspinia/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="{{ constant('CDN') }}/inspinia/js/inspinia.js"></script>
+    <script src="{{ constant('CDN') }}/inspinia/js/plugins/pace/pace.min.js"></script>
+
+    <!-- iCheck -->
+    <link href="{{ constant('CDN') }}/inspinia/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <script src="{{ constant('CDN') }}/inspinia/js/plugins/iCheck/icheck.min.js"></script>
+
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+
+    <link href="{{ constant('CDN') }}/chosen.css" rel="stylesheet">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.4.5/jquery.datetimepicker.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.4.5/jquery.datetimepicker.min.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.4/handlebars.min.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+    {# custom css #}
+    <link href="{{ constant('CDN') }}/style.css?v=2" rel="stylesheet">
+    <script src="{{ constant('CDN') }}/js/function.js"></script>
+
+    {% block extraHead %}{% endblock %}
+</head>
+
+<body class="{{ bodyClass is defined ? bodyClass : 'pace-done' }} {% if app.request.cookies.get('miniNavbar') == 1 %}mini-navbar{% endif %}">
+
+{% block wrapper %}
+    <div id="wrapper">
+
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element">
+                            <span>
+                                <img style="height: 48px; width: 48px;" alt="image" class="img-circle" src="{% if app.user.image %}/pz/asset/image/{{ app.user.image }}/asset-picker-preview/{% else %}{{ constant('CDN') }}/inspinia/profile_small.jpg{% endif %}"/>
+                            </span>
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <span class="clear">
+                                    <span class="block m-t-xs"> <strong class="font-bold">{{ constant('CLIENT') }}</strong></span>
+                                </span>
+                            </a>
+                        </div>
+                        <div class="logo-element"><img style="width: 30px;" alt="image" class="img-circle" src="{% if app.user.image %}/pz/asset/image/{{ app.user.image }}/asset-picker-preview/{% else %}{{ constant('CDN') }}/inspinia/profile_small.jpg{% endif %}"/></div>
+                    </li>
+
+                    <li {% if ('/pz/page/' in currentPath) or (model is defined and model.className == 'Page') %}class="active"{% endif %}>
+                        <a href="/pz/page/">
+                            <i class="fa fa-sitemap"></i>
+                            <span class="nav-label">Pages</span>
+                        </a>
+                    </li>
+
+                    {#<li {% if ('/pz/content/' in currentPath) and model.dataType == 0 %}class="active"{% endif %}>#}
+                        {#<a href="#">#}
+                            {#<i class="fa fa-database"></i>#}
+                            {#<span class="nav-label">Database</span>#}
+                            {#<span class="fa arrow"></span>#}
+                        {#</a>#}
+                        {#<ul class="nav nav-second-level">#}
+                            {# custom model here... #}
+                            {#{% for itm in myModels if itm.dataType == 0 %}#}
+                                {#<li {% if '/pz/content/' in currentPath and model.id == itm.id %}class="active"{% endif %}>#}
+                                    {#<a href="/pz/content/{{ itm.id }}">{{ itm.label }}</a>#}
+                                {#</li>#}
+                            {#{% endfor %}#}
+                        {#</ul>#}
+                    {#</li>#}
+
+                    {#<li {% if ('/pz/asset/' in currentPath) or (model is defined and model.className == 'Asset') %}class="active"{% endif %}>#}
+                        {#<a href="/pz/asset/">#}
+                            {#<i class="fa fa-file-image-o"></i>#}
+                            {#<span class="nav-label">Files</span>#}
+                        {#</a>#}
+                    {#</li>#}
+
+                    {#<li {% if ('/pz/model/' in currentPath) or (('/pz/content/' in currentPath) and model.dataType == 1)  %}class="active"{% endif %}>#}
+                        {#<a href="#">#}
+                            {#<i class="fa fa-cogs"></i>#}
+                            {#<span class="nav-label">Admin</span>#}
+                            {#<span class="fa arrow"></span>#}
+                        {#</a>#}
+                        {#<ul class="nav nav-second-level">#}
+                            {#{% for itm in myModels if itm.dataType == 1 %}#}
+                                {#<li {% if '/pz/content/' in currentPath and model.id == itm.id %}class="active"{% endif %}>#}
+                                    {#<a href="/pz/content/{{ itm.id }}">{{ itm.label }}</a>#}
+                                {#</li>#}
+                            {#{% endfor %}#}
+                            {#<li {% if '/pz/model/0/' in currentPath or '/pz/model/detail/0/' in currentPath %}class="active"{% endif %}><a href="/pz/model/0/">Customised Models</a></li>#}
+                            {#<li {% if '/pz/model/1/' in currentPath or '/pz/model/detail/1/' in currentPath %}class="active"{% endif %}><a href="/pz/model/1/">Built-in Models</a></li>#}
+                        {#</ul>#}
+                    {#</li>#}
+                </ul>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="gray-bg">
+            <div class="row border-bottom">
+                <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                    <div class="navbar-header">
+                        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary" href="#"><i class="fa fa-bars"></i> </a>
+                    </div>
+                    <ul class="nav navbar-top-links navbar-right">
+                        <li><span class="m-r-sm text-muted welcome-message">{{ app.user.name }}</span></li>
+                        <li><a href="/pz/logout/"> <i class="fa fa-sign-out"></i> Log out</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-10">
+                    {% block extraHeader %}{% endblock %}
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+            <div class="wrapper wrapper-content animated fadeInRight">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+
+        {#  #}
+        <div id="confirm-dialog" style="display: none;" class="fancybox">
+            <div class="form-group">
+                Are you sure?
+            </div>
+            <div>
+                <button id="confirm-ok" type="submit" class="btn btn-sm btn-primary m-t-n-xs"><strong>OK</strong></button>
+                <button type="submit" class="btn btn-sm m-t-n-xs" onclick="$.fancybox.close();"><strong>Cancel</strong></button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{#<script>
+    $(function() {
+        $('.navbar-minimalize').off();
+        $(document).on('click', '.navbar-minimalize', function(ev) {
+            $('body').toggleClass('mini-navbar');
+            if ($('body').hasClass('mini-navbar')) {
+                Cookies.set('miniNavbar', 1);
+            } else {
+                Cookies.remove('miniNavbar');
+            }
+            return false;
+        });
+
+        $(document).on('click', '.js-status', function() {
+            $(this).attr('data-status', $(this).attr('data-status') == 1 ? 0 : 1);
+            $(this).removeClass('btn-danger btn-info');
+            $(this).find('i').removeClass('fa-check fa-ban')
+            if ($(this).attr('data-status') == 1) {
+                $(this).addClass('btn-info');
+                $(this).find('i').addClass('fa-check');
+            } else if ($(this).attr('data-status') == 0) {
+                $(this).addClass('btn-danger');
+                $(this).find('i').addClass('fa-ban');
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('change-status') }}',
+                data: 'content=' + encodeURIComponent($(this).attr('data-content'))  + '&model=' + encodeURIComponent($(this).attr('data-model')) + '&status=' + encodeURIComponent($(this).attr('data-status')),
+                success: function (msg) {
+                }
+            });
+
+            return false;
+        });
+
+        $(document).on('click', '.js-delete', function(ev) {
+            var _this = this;
+            swal({
+                title: "Are you sure?",
+                text: "You will not be able to recover this data!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes, delete it!",
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true,
+            }, function () {
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ path('remove-content') }}',
+                    data: 'content=' + encodeURIComponent($(_this).attr('data-content')) + '&model=' + encodeURIComponent($(_this).attr('data-model')),
+                    success: function (msg) {
+                        swal({
+                            title: "Deleted",
+                            text: "Your data has been deleted.",
+                            type: 'success',
+                            timer: 1000,
+                            showConfirmButton: false
+                        });
+                        setTimeout(function () {
+                            $(_this).closest('.content-container').remove();
+                        }, 800)
+                    }
+                });
+
+            });
+            return false;
+        });
+    });
+</script>#}
+{% block extraFooter %}{% endblock %}
+</body>
+
+</html>

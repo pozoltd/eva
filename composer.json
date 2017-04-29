@@ -19,7 +19,8 @@
         "phpoffice/phpexcel": "1.8.*",
         "facebook/graph-sdk": "~5.0",
         "google/apiclient": "v1.1.8",
-        "ezyang/htmlpurifier": "v4.8.0"
+        "ezyang/htmlpurifier": "v4.8.0",
+        "zendframework/zendframework1": "^1.12"
     },
     "repositories": [
         {
