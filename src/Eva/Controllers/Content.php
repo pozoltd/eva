@@ -1,21 +1,17 @@
 <?php
 
-namespace Pz\Controllers;
+namespace Eva\Controllers;
 
+use Eva\ORMs\Model;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
-use Silex\ControllerCollection;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
-use Pz\Common\Utils;
 
 class Content implements ControllerProviderInterface
 {
-    private $app;
-
     public function connect(Application $app)
     {
         $controllers = $app['controllers_factory'];
@@ -33,12 +29,10 @@ class Content implements ControllerProviderInterface
 
     public function contents(Application $app, Request $request, $modelId, $pageNum = null, $sort = null, $order = null)
     {
-        $modelClass = $app['modelClass'];
-        $model = $modelClass::findById($app['em'], $modelId);
+        $model = Model::getById($app['zdb'], $modelId);
         if (!$model) {
             $app->abort(404);
         }
-
 
         $sort = null;
         $order = null;
@@ -49,14 +43,14 @@ class Content implements ControllerProviderInterface
             $pageNum = $pageNum ?: 1;
             $limit = $model->numberPerPage;
         } else if ($model->listType == 1 || $model->listType == 2) {
-            $sort = 'rank';
+            $sort = '__rank';
             $order = 'ASC';
         }
 
 
-        $daoClass = $model->getFullClass();
-        $daos = $daoClass::data($app['em'], array(
-            'sort' => 'entity.' . $sort,
+        $daoClass = $model->namespace . '\\' . $model->className;
+        $daos = $daoClass::data($app['zdb'], array(
+            'sort' => $sort,
             'order' => $order,
             'page' => $pageNum,
             'limit' => $limit,
@@ -89,16 +83,15 @@ class Content implements ControllerProviderInterface
 
     public function content(Application $app, Request $request, $modelId, $returnURL, $id = null)
     {
-        $modelClass = $app['modelClass'];
-        $model = $modelClass::findById($app['em'], $modelId);
+        $model = Model::getById($app['zdb'], $modelId);
         if (!$model) {
             $app->abort(404);
         }
 
-        $daoClass = $model->getFullClass();
-        $content = new $daoClass($app['em']);
+        $daoClass = $model->namespace . '\\' . $model->className;
+        $content = new $daoClass($app['zdb']);
         if ($id) {
-            $content = $daoClass::findById($app['em'], $id);
+            $content = $daoClass::getById($app['zdb'], $id);
             if (!$content) {
                 $app->abort(404);
             }

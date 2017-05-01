@@ -1,0 +1,308 @@
+{% extends 'layout.twig' %} 
+
+{% block extraHead %}
+    <style>
+        #columns td { vertical-align: middle; cursor: move; }
+        input + label, .i-checks label { margin-left: .3em; }
+        label { padding: 0 .5em 0 .1em; }
+        .paddingB5 { padding-bottom: .5em; }
+    </style>
+{% endblock %}
+
+{% block extraHeader %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12 max-1000">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h1>{% if id %}{{ form.title.vars.value }}{% else %}New Model{% endif %}</h1>
+                </div>
+                <div class="ibox-content">
+                    <form method="post" autocomplete="off" novalidate>
+                        <div class="row show-grid form-group">
+                            <div class="col-md-3">
+                                {{ form_label(form.title) }}
+                                {{ form_widget(form.title, {attr: {class: 'form-control'}}) }}
+                                {{ form_errors(form.title) }}
+                            </div>
+                            <div class="col-md-3">
+                                {{ form_label(form.className) }}
+                                {{ form_widget(form.className, {attr: {class: 'form-control'}}) }}
+                                {{ form_errors(form.className) }}
+                            </div>
+                            <div class="col-md-3">
+                                {{ form_label(form.namespace) }}
+                                {{ form_widget(form.namespace, {attr: {class: 'form-control'}}) }}
+                                {{ form_errors(form.namespace) }}
+                            </div>
+                            <div class="col-md-3">
+                                {{ form_label(form.dataTable) }}
+                                {{ form_widget(form.dataTable, {attr: {class: 'form-control'}}) }}
+                                {{ form_errors(form.dataTable) }}
+                            </div>
+                            <div class="col-md-3">
+                                <div class="i-checks">
+                                    {{ form_widget(form.modelType) }}
+                                </div>
+                                {{ form_errors(form.modelType) }}
+                            </div>
+                            <div class="col-md-4">
+                                <div class="i-checks">
+                                    {{ form_widget(form.dataType) }}
+                                </div>
+                                {{ form_errors(form.dataType) }}
+                            </div>
+                            <div class="col-md-5">
+                                <div class="i-checks">
+                                    {{ form_widget(form.listType) }}
+                                </div>
+                                {{ form_errors(form.listType) }}
+                            </div>
+                            <div class="col-md-offset-7 col-md-2 model-pagination-detail" style="display: none;">
+                                {{ form_label(form.defaultSortBy) }}
+                                {{ form_widget(form.defaultSortBy, {attr: {class: 'form-control'}}) }}
+                                {{ form_errors(form.defaultSortBy) }}
+                            </div>
+                            <div class="col-md-3 model-pagination-detail" style="display: none;">
+                                {{ form_label(form.defaultOrder) }}
+                                {{ form_widget(form.defaultOrder, {attr: {class: 'form-control'}}) }}
+                                {{ form_errors(form.defaultOrder) }}
+                            </div>
+                            <div class="col-md-offset-7 col-md-2 model-pagination-detail" style="display: none;">
+                                {{ form_label(form.numberPerPage) }}
+                                {{ form_widget(form.numberPerPage, {attr: {class: 'form-control'}}) }}
+                                {{ form_errors(form.numberPerPage) }}
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-4 paddingB5">
+                                <select id="fields" class="chosen-select form-control" data-placeholder="Add a field"></select>
+                            </div>
+
+                            <div class="col-md-12">
+                                <table id="columns" class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th width="20%">Widget</th>
+                                            <th width="30%">Label</th>
+                                            <th width="25%">Field</th>
+                                            <th width="10%">Column</th>
+                                            <th width="10%">Required</th>
+                                            <th width="5%"></th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="display: none;">
+                            {{ form_label(form.columnsJson) }}
+                            {{ form_widget(form.columnsJson, {attr: {class: 'form-control'}}) }}
+                            {{ form_errors(form.columnsJson) }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_widget(form._token) }}
+                            <button class="btn btn-primary" name='submit' value='save'>
+                                <i class="icon"></i>
+                                <span class="txt">Save</span>
+                            </button>
+                            <button class="btn btn-success" name='submit' value='apply'>
+                                <i class="icon"></i>
+                                <span class="txt">Apply</span>
+                            </button>
+                            <a href="{{ returnURL }}" class="btn">
+                                <span class="txt">Cancel</span>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 
+
+{% block extraFooter %}
+    <script id="field-source" type="text/x-handlebars-template">{% include 'handlebars/field.twig' %}</script>
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+    <script>
+        var _fieldSource = $("#field-source").html();
+        var _columns = JSON.parse('{{ form.columnsJson.vars.value|e('js') ?: '[]' }}');
+        var _fields = {{ fields|json_encode|raw }};
+        var _metas = {{ metas|json_encode|raw }};
+        var _widgets = {{ widgets|json_encode|raw }};
+
+        $(function () {
+
+            $('#form_listType :radio').on('ifChanged', function (ev) {
+                if ($(this).val() == 0) {
+                    $('.model-pagination-detail').fadeIn();
+                } else {
+                    $('.model-pagination-detail').hide();
+                }
+            });
+            if ($('#form_listType :radio:checked').val() == 0) {
+                $('.model-pagination-detail').fadeIn();
+            }
+
+            $(document).on('change', '#fields', function (ev) {
+                var template = Handlebars.compile(_fieldSource);
+                $('#columns').append(template({
+                    itm: {
+                        id: 'z' + new Date().getTime(),
+                        column: $(this).val(),
+                        widget: $(this).find('option:selected').val().toLowerCase().indexOf('date') === -1 ? 'text' : 'date',
+                        label: $(this).find('option:selected').text().toLowerCase().replace(/\b[a-z]/g, function (letter) {
+                            return letter.toUpperCase();
+                        }) + ':',
+                        field: $(this).find('option:selected').text().toLowerCase(),
+                        sql: '',
+                    },
+                    widgets: _widgets,
+                }));
+
+                updateColumns();
+                renderFields();
+                renderDefaultSortBy();
+            });
+
+
+            renderColumns();
+            renderFields();
+            renderDefaultSortBy();
+            $('#columns select').each(function(key, value) {
+                if ($(value).val() == 'choice' || $(value).val() == '\\Pz\\Forms\\Types\\ChoiceMultiJson') {
+                    $('#sql' + $(value).closest('tbody').find('.id').val()).show();
+                } else {
+                    $('#sql' + $(value).closest('tbody').find('.id').val()).hide();
+                }
+            });
+            if (_columns.length == 0) {
+                $('#fields').val('title').change();
+            }
+
+            //
+            $(document).on('change', '#columns input, #columns textarea', function(ev) {
+                updateColumns();
+                renderDefaultSortBy();
+            });
+
+            //
+            $(document).on('change', '#columns select', function(ev) {
+                if ($(this).val() == 'choice' || $(this).val() == '\\Pz\\Twig\\Types\\ChoiceMultiJson') {
+                    $('#sql' + $(this).closest('tbody').find('.id').val()).show();
+                } else {
+                    $('#sql' + $(this).closest('tbody').find('.id').val()).hide();
+                }
+                updateColumns();
+            });
+
+            //
+            $(document).on('click', '#columns .js-rm-field', function(ev) {
+                $(this).closest('tbody').remove();
+                updateColumns();
+                renderFields();
+                renderDefaultSortBy();
+            });
+
+
+        });
+
+        function renderDefaultSortBy() {
+            $('#form_defaultSortBy').empty();
+            for (var idx in _metas) {
+                var itm = _metas[idx];
+                $('#form_defaultSortBy').append('<option value="' + itm + '">' + itm + '</option>');
+            }
+
+            for (var idx in _columns) {
+                var itm = _columns[idx];
+                $('#form_defaultSortBy').append('<option value="' + itm.column + '">' + itm.field + '</option>');
+            }
+
+            $('#form_defaultSortBy').val('{{ form.defaultSortBy.vars.value }}');
+
+        };
+
+        function renderFields() {
+            $('#fields').empty();
+            $('#fields').append('<option></option>');
+            for (var idx in _fields) {
+                var itm = _fields[idx];
+                var exist = false;
+                for (var idx2 in _columns) {
+                    var itm2 = _columns[idx2];
+                    if (itm2.column == itm) {
+                        exist = true;
+                    }
+                }
+                if (!exist) {
+                    $('#fields').append('<option value="' + itm + '">' + itm.toLowerCase().replace(/\b[a-z]/g, function (letter) {
+                                return letter.toUpperCase();
+                            }) + '</option>');
+                }
+            }
+
+            $(".chosen-select").trigger("chosen:updated");
+            $(".chosen-select").chosen({
+                allow_single_deselect: true
+            });
+        };
+
+        function renderColumns() {
+            for (var idx in _columns) {
+                var itm = _columns[idx];
+                var template = Handlebars.compile(_fieldSource);
+                $('#columns').append(template({
+                    itm: itm,
+                    widgets: _widgets,
+                }));
+            }
+            updateColumns();
+        };
+
+        function updateColumns() {
+            _columns = [];
+
+            $.each($('#columns tbody'), function(key, elem) {
+                if ( $(elem).find('.id').length > 0) {
+                    _columns.push({
+                        id: $(elem).find('.id').val(),
+                        column: $(elem).find('.col').val(),
+                        widget: $(elem).find('.wgt').val(),
+                        label: $(elem).find('.lbl').val(),
+                        field: $(elem).find('.fld').val(),
+                        required: $(elem).find('.req').is(':checked') ? 1 : 0,
+                        sql: $('#sql' + $(elem).find('.id').val() + ' textarea').val(),
+                    });
+                }
+            });
+
+
+            $('#columns').sortable({
+                items: 'tbody',
+                stop: function(event, ui) {
+                    updateColumns();
+                },
+                placeholder: {
+                    element: function(currentItem) {
+                        return $('<tr><td colspan="5" style="height: ' + $(currentItem).height() + 'px">&nbsp;</td></tr>')[0];
+                    },
+                    update: function(container, p) {
+                        return;
+                    }
+                }
+            });
+
+            $.each($('#columns td'), function (key, value) {
+                $(value).css('width', $(value).outerWidth() + 'px');
+            });
+
+            $('#form_columnsJson').val(JSON.stringify(_columns));
+        };
+    </script>
+{% endblock %}

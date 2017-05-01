@@ -1,7 +1,8 @@
 <?php
 
-namespace Pz\Controllers;
+namespace Eva\Controllers;
 
+use Eva\Db\Table;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -17,8 +18,8 @@ class Model implements ControllerProviderInterface
     {
         $controllers = $app['controllers_factory'];
         $controllers->match('/', array($this, 'models'));
-        $controllers->match('/{modelType}/{returnURL}/', array($this, 'model'))->bind('add-model');
-        $controllers->match('/{modelType}/{returnURL}/{id}/', array($this, 'model'))->bind('edit-model');
+        $controllers->match('/detail/{modelType}/', array($this, 'model'))->bind('add-model');
+        $controllers->match('/detail/{modelType}/{id}/', array($this, 'model'))->bind('edit-model');
         $controllers->match('/sort/', array($this, 'sort'))->bind('sort-models');
         $controllers->match('/{modelType}/', array($this, 'models'));
         return $controllers;
@@ -26,46 +27,33 @@ class Model implements ControllerProviderInterface
 
     public function models(Application $app, Request $request, $modelType = 0)
     {
-        $className = $app['modelClass'];
-        $models = $className::data($app['em'], array(
-            'whereSql' => 'entity.modelType = :v1',
-            'params' => array(
-                'v1' => $modelType,
-            )
+        $returnURL = $request->get('$returnURL') ?: '/pz/models/';
+        $models = \Eva\ORMs\Model::data($app['zdb'], array(
+            'whereSql' => 'm.modelType = ?',
+            'params' => array($modelType),
+//            'debug' => 1,
         ));
         return $app['twig']->render("models.twig", array(
             'models' => $models,
             'modelType' => $modelType,
-            'returnURL' => Utils::getURL(),
+            'returnURL' => $returnURL,
         ));
     }
 
-    public function model(Application $app, Request $request, $modelType, $returnURL, $id = null)
+    public function model(Application $app, Request $request, $modelType, $id = null)
     {
-        $returnURL = urldecode($returnURL);
-
-        global $CMS_FIELDS, $CMS_METAS, $CMS_WIDGETS;
-
-        $fields = $app['em']->getClassMetadata('Pz\Entities\Content')->getFieldNames();
+        $returnURL = $request->get('$returnURL') ?: '/pz/models/';
         if ($id) {
-            $className = $app['modelClass'];
-            $model = $className::findById($app['em'], $id);
+            $model = \Eva\ORMs\Model::getById($app['zdb'], $id);
             if (!$model) {
-                throw new NotFoundHttpException();
+                $app->abort(404);
             }
-
-            $myClass = $model->getFullClass();
-            if (class_exists($myClass)) {
-                $m = new $myClass($app['em']);
-                $fields = $app['em']->getClassMetadata($m->getORMClass())->getFieldNames();
-            }
-
         } else {
-            $className = $app['modelClass'];
-            $model = new $className($app['em']);
+            $model = new \Eva\ORMs\Model($app['zdb']);
             $model->label = 'New models';
             $model->className = 'NewModel';
-            $model->namespace = 'Site\\DAOs';
+            $model->namespace = DEFAULT_NAMESPACE . '\\ORMs';
+            $model->dataTable = '__contents';
             $model->modelType = $modelType;
             $model->dataType = 0;
             $model->listType = 0;
@@ -74,30 +62,36 @@ class Model implements ControllerProviderInterface
             $model->defaultOrder = 1;
         }
 
-        $fields = array_diff($fields, $CMS_METAS);
+        $zdb = $app['zdb'];
+        $pdo = $zdb->getConnection();
+        $table = new Table($pdo, $model->dataTable);
+//        var_dump($table->getFields());exit;
+
+        global $TBL_META, $CMS_WIDGETS;
+        $meta = array_merge(array('id', 'code'), array_keys($TBL_META));
+        $fields = array_diff($table->getFields(), $meta);
         sort($fields, SORT_NATURAL);
-        sort($CMS_METAS, SORT_NATURAL);
+        sort($meta, SORT_NATURAL);
         asort($CMS_WIDGETS, SORT_NATURAL);
 
-        $allColumns = array_merge($fields, $CMS_METAS);
-        $formBuilder = $app['form.factory']->createBuilder(new \Pz\Forms\Model(), $model, array(
-            'defaultSortByOptions' => array_combine($allColumns, $allColumns),
+        $columns = array_merge($meta, $fields);
+        $formBuilder = $app['form.factory']->createBuilder(new \Eva\Forms\Model(), $model, array(
+            'defaultSortByOptions' => array_combine($columns, $columns),
         ));
         $form = $formBuilder->getForm();
         $form->handleRequest($request);
         if ($form->isValid()) {
             $model->save();
-
             if ($model->modelType == 0) {
                 $generated = HOME_DIR . '/src/' . $model->namespace . '/Generated/' . $model->className . '.php';
                 $customised = HOME_DIR . '/src/' . $model->namespace . '/' . $model->className . '.php';
 
                 $columnsJson = json_decode($model->columnsJson);
-                $mappings = array_map(function($value) {
+                $mappings = array_map(function ($value) {
                     return "'{$value->field}' => '{$value->column}', ";
                 }, $columnsJson);
 
-                $extras = array_map(function($value) {
+                $extras = array_map(function ($value) {
                     if ($value->widget == 'checkbox') {
                         $txt = "\n\tpublic function get" . ucfirst($value->field) . "() {\n";
                         $txt .= "\t\treturn \$this->{$value->field} == 1 ? true : false;";
@@ -107,11 +101,11 @@ class Model implements ControllerProviderInterface
                 }, $columnsJson);
                 $extras = array_filter($extras);
 
-                $str = file_get_contents(CMS . 'vendor/pozoltd/pozo/src/Pz/Database/reproduce/generated.txt');
+                $str = file_get_contents(__DIR__ . '/../Db/files/generated.txt');
                 $str = str_replace('{TIMESTAMP}', date('Y-m-d H:i:s'), $str);
                 $str = str_replace('{NAMESPACE}', $model->namespace, $str);
                 $str = str_replace('{CLASSNAME}', $model->className, $str);
-                $str = str_replace('{MODELID}', $model->id, $str);
+                $str = str_replace('{DATATABLE}', $model->dataTable, $str);
                 $str = str_replace('{MAPPING}', join("\n\t\t\t", $mappings), $str);
                 $str = str_replace('{EXTRAS}', count($extras) == 0 ? '' : join("\n\t\t\t", $extras), $str);
                 $dir = dirname($generated);
@@ -121,7 +115,7 @@ class Model implements ControllerProviderInterface
                 file_put_contents($generated, $str);
 
                 if (!file_exists($customised)) {
-                    $str = file_get_contents(CMS . 'vendor/pozoltd/pozo/src/Pz/Database/reproduce/customised.txt');
+                    $str = file_get_contents(__DIR__ . '/../Db/files/customised.txt');
                     $str = str_replace('{TIMESTAMP}', date('Y-m-d H:i:s'), $str);
                     $str = str_replace('{NAMESPACE}', $model->namespace, $str);
                     $str = str_replace('{CLASSNAME}', $model->className, $str);
@@ -144,7 +138,7 @@ class Model implements ControllerProviderInterface
         return $app['twig']->render("model.twig", array(
             'form' => $form->createView(),
             'fields' => $fields,
-            'metas' => $CMS_METAS,
+            'metas' => $meta,
             'widgets' => $CMS_WIDGETS,
             'id' => $id,
             'returnURL' => $returnURL,
@@ -156,7 +150,7 @@ class Model implements ControllerProviderInterface
         $data = json_decode($request->get('data'));
         foreach ($data as $key => $value) {
             $className = $app['modelClass'];
-            $model = $className::findById($app['em'], $value);
+            $model = $className::findById($app['zdb'], $value);
             if ($model) {
                 $model->rank = $key;
                 $model->save();

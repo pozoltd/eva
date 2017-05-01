@@ -2,12 +2,11 @@
 
 namespace Eva\Users;
 
-//use Eva\DAOs\User;
+use Eva\ORMs\User;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Doctrine\ORM\EntityManager;
 
 class UserProvider implements UserProviderInterface
 {
@@ -15,7 +14,7 @@ class UserProvider implements UserProviderInterface
     private $conn;
     private $userClass;
 
-    public function __construct(EntityManager $conn, $userClass = 'Eva\\DAOs\\User')
+    public function __construct(\Zend_Db_Adapter_Abstract $conn, $userClass = 'Eva\\ORMs\\User')
     {
         $this->conn = $conn;
         $this->userClass = $userClass;
@@ -24,7 +23,7 @@ class UserProvider implements UserProviderInterface
     public function loadUserByUsername($username)
     {
         $className = $this->userClass;
-        $dao = $className::findByTitle($this->conn, $username);
+        $dao = $className::getByTitle($this->conn, $username);
         if (!$dao) {
             throw new UsernameNotFoundException(sprintf('Login "%s" does not exist.', $username));
         }

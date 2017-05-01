@@ -1,0 +1,20 @@
+[
+  {
+    "id": "z1460538866603",
+    "column": "title",
+    "widget": "text",
+    "label": "Title:",
+    "field": "title",
+    "required": 1,
+    "sql": ""
+  },
+  {
+    "id": "z1460538893676",
+    "column": "name",
+    "widget": "text",
+    "label": "File Name:",
+    "field": "filename",
+    "required": 1,
+    "sql": ""
+  }
+]

@@ -1,0 +1,27 @@
+{% raw %}
+    <tbody>
+        <tr class="column">
+            <td>
+                <select class="wgt form-control" data-idx="{{ idx }}">
+                    {{# each widgets }}
+                    <option {{#compare @key ../itm.widget operator="=="}}selected{{/compare}} value="{{@key}}">{{ this }}</option>
+                    {{/each}}
+                </select>
+            </td>
+            <td><input class="lbl form-control" type="text" value="{{ itm.label }}"/></td>
+            <td><input class="id form-control" type="text" value="{{ itm.id }}"/></td>
+            <td>
+                <input type="checkbox" class="req form-control" {{#compare itm.required 1 operator="=="}}checked{{/compare}}/>
+            </td>
+            <td>
+                <button type="button" class="js-delete btn btn-danger btn-circle" data-idx="{{ idx }}"><i class="fa fa-times"></i></button>
+            </td>
+        </tr>
+        <tr style="display: none;"></tr>
+        <tr id="sql{{ idx }}" {{#compare 'choice' itm.widget operator="!="}}style="display: none;"{{/compare}}>
+            <td></td>
+            <td colspan="3"><textarea class="sql form-control" placeholder="SQL statement">{{ itm.sql }}</textarea></td>
+            <td></td>
+        </tr>
+    </tbody>
+{% endraw %}

@@ -1,0 +1,53 @@
+<?php
+
+/**
+ * {TIMESTAMP}
+ */
+namespace {NAMESPACE};
+
+use Symfony\Component\Security\Core\User\UserInterface;
+
+
+class {CLASSNAME} extends \Eva\Db\ORM implements UserInterface {
+
+    function getFieldMap() {
+        global $TBL_META;
+        return array_merge(array(
+            {MAPPING}
+        ), array_combine(array_keys($TBL_META), array_keys($TBL_META)), array(
+            'id' => 'id',
+            'code' => 'code',
+        ));
+    }
+
+    function getTable() {
+        return '{DATATABLE}';
+    }
+
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    public function eraseCredentials()
+    {
+        return $this;
+    }
+
+    public function getUsername()
+    {
+        return $this->title;
+    }
+
+    public function getRoles()
+    {
+        return array('ROLE_ADMIN');
+    }
+
+    public function getSalt()
+    {
+        return '';
+    }
+
+    {EXTRAS}
+}

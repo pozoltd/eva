@@ -1,0 +1,65 @@
+[
+  {
+    "id": "z1454814922177",
+    "column": "title",
+    "widget": "text",
+    "label": "Title:",
+    "field": "title",
+    "required": 0,
+    "sql": ""
+  },
+  {
+    "id": "z1454815203155",
+    "column": "description",
+    "widget": "textarea",
+    "label": "Description:",
+    "field": "description",
+    "required": 0,
+    "sql": ""
+  },
+  {
+    "id": "z1454815210912",
+    "column": "extra1",
+    "widget": "hidden",
+    "label": "Is folder?",
+    "field": "isFolder",
+    "required": 0,
+    "sql": ""
+  },
+  {
+    "id": "z1454815261869",
+    "column": "extra2",
+    "widget": "text",
+    "label": "File name:",
+    "field": "fileName",
+    "required": 0,
+    "sql": ""
+  },
+  {
+    "id": "z1454815271344",
+    "column": "extra4",
+    "widget": "text",
+    "label": "File type:",
+    "field": "fileType",
+    "required": 0,
+    "sql": ""
+  },
+  {
+    "id": "z1454815274880",
+    "column": "extra5",
+    "widget": "text",
+    "label": "File size:",
+    "field": "fileSize",
+    "required": 0,
+    "sql": ""
+  },
+  {
+    "id": "z1454815312932",
+    "column": "extra6",
+    "widget": "text",
+    "label": "File location:",
+    "field": "fileLocation",
+    "required": 0,
+    "sql": ""
+  }
+]

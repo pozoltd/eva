@@ -1,0 +1,65 @@
+[
+  {
+    "id": "z1458512399354",
+    "column": "title",
+    "widget": "text",
+    "label": "Title:",
+    "field": "title",
+    "required": 1,
+    "sql": ""
+  },
+  {
+    "id": "z1458526553541",
+    "column": "extra4",
+    "widget": "text",
+    "label": "Code:",
+    "field": "code",
+    "required": 1,
+    "sql": ""
+  },
+  {
+    "id": "z1458513300598",
+    "column": "extra3",
+    "widget": "text",
+    "label": "From address:",
+    "field": "from",
+    "required": 1,
+    "sql": ""
+  },
+  {
+    "id": "z1458512432853",
+    "column": "extra1",
+    "widget": "textarea",
+    "label": "Recipients:",
+    "field": "recipients",
+    "required": 1,
+    "sql": ""
+  },
+  {
+    "id": "z1458512459460",
+    "column": "content",
+    "widget": "\\Pz\\Forms\\Types\\FormBuilder",
+    "label": "Fields:",
+    "field": "fields",
+    "required": 1,
+    "sql": ""
+  },
+  {
+    "id": "z1458531420787",
+    "column": "shortdescription",
+    "widget": "\\Pz\\Forms\\Types\\Wysiwyg",
+    "label": "Thankyou Message:",
+    "field": "thankyouMessage",
+    "required": 0,
+    "sql": ""
+  },
+  {
+    "id": "z1458512491526",
+    "column": "extra2",
+    "widget": "checkbox",
+    "label": "Use antispam field:",
+    "field": "antiSpam",
+    "required": 0,
+    "sql": ""
+  }
+]

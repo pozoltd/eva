@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * {TIMESTAMP}
+ */
+namespace {NAMESPACE};
+
+class {CLASSNAME} extends \Eva\Db\ORM {
+
+    function getFieldMap() {
+        global $TBL_META;
+        return array_merge(array(
+            {MAPPING}
+        ), array_combine(array_keys($TBL_META), array_keys($TBL_META)), array(
+            'id' => 'id',
+            'code' => 'code',
+        ));
+    }
+
+    function getTable() {
+        return '{DATATABLE}';
+    }
+
+    {EXTRAS}
+}

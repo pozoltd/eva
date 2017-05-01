@@ -1,0 +1,32 @@
+{% raw %}
+    <tbody>
+        <tr class="column">
+            <td>
+                <select class="wgt form-control">
+                    {{# each widgets }}
+                    <option {{#compare @key ../itm.widget operator="=="}}selected{{/compare}} value="{{@key}}">{{ this }}</option>
+                    {{/each}}
+                </select>
+            </td>
+            <td><input class="lbl form-control" type="text" value="{{ itm.label }}"/></td>
+            <td><input class="fld form-control" type="text" value="{{ itm.field }}"/></td>
+            <td class="column">
+                {{ itm.column }}
+                <input class="id" type="hidden" value="{{ itm.id }}" />
+                <input class="col" type="hidden" value="{{ itm.column }}" />
+            </td>
+            <td>
+                <input type="checkbox" class="req" {{#compare itm.required 1 operator="=="}}checked{{/compare}}/>
+            </td>
+            <td>
+                <button type="button" class="js-rm-field btn btn-danger btn-circle"><i class="fa fa-times"></i></button>
+            </td>
+        </tr>
+        <tr style="display: none;"></tr>
+        <tr id="sql{{ itm.id }}" {{#compare 'choice' itm.widget operator="!="}}style="display: none;"{{/compare}}>
+            <td></td>
+            <td colspan="4"><textarea class="form-control" placeholder="SQL statement">{{ itm.sql }}</textarea></td>
+            <td></td>
+        </tr>
+    </tbody>
+{% endraw %}

@@ -1,0 +1,373 @@
+{% extends 'layout.twig' %}
+
+{% block extraHead %}
+	<link rel="stylesheet" type="text/css" href="{{ constant('CDN') }}/redactor/redactor/redactor.css" />
+{% endblock %}
+
+{% block content %}
+	<script id="folder-source" type="text/x-handlebars-template">{% include 'handlebars/folder.twig' %}</script>
+	<script id="file-source" type="text/x-handlebars-template">{% include 'handlebars/file.twig' %}</script>
+	<script id="folderpicker-tablerow-source" type="text/x-handlebars-template">{% include 'handlebars/folderpicker-tablerow.twig' %}</script>
+	<script id="folderpicker-table-source" type="text/x-handlebars-template">{% include 'handlebars/folderpicker-table.twig' %}</script>
+	<script id="formbuilder-source" type="text/x-handlebars-template">{% include 'handlebars/formbuilder.twig' %}</script>
+	<script id="block-source" type="text/x-handlebars-template">{% include 'handlebars/block.twig' %}</script>
+
+	<div class="row">
+		<div class="col-lg-12 max-1000">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h1>{{ model.title }}</h1>
+				</div>
+				<div class="ibox-content">
+					<form method="POST" novalidate {{ form_enctype(form) }} autocomplete="off">
+						{{ form_widget(form) }}
+						<div style="clear: both;"></div>
+						<div>&nbsp;</div>
+						<div class="submit-container">
+							<a class="btn btn-white" href="{{ returnURL }}"><i class="fa fa-arrow-left"></i> &nbsp;Back</a>
+							<input class="btn btn-sm btn-primary pull-right m-t-n-xs" type="submit" value="Save" name="submit" />
+							<input class="btn btn-sm btn-success pull-right m-t-n-xs" type="submit" value="Apply" name="submit" />
+							{#<input class="btn btn-sm btn-danger pull-right m-t-n-xs" type="submit" value="Delete" name="submit" />#}
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{#{% include 'includes/popup-container.twig' %}#}
+{% endblock %}
+
+
+{% block extraFooter %}
+
+
+	{#<script type="text/javascript" src="/redactor.js"></script>#}
+
+	<script type="text/javascript" src="{{ constant('CDN') }}/redactor/redactor/redactor.min.js"></script>
+	<script type="text/javascript" src="{{ constant('CDN') }}/redactor/plugins/table.js"></script>
+	<script type="text/javascript" src="{{ constant('CDN') }}/redactor/plugins/video.js"></script>
+
+	<script src="//cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.7/jquery.iframe-transport.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.7/jquery.fileupload.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/3.0.4/jquery.imagesloaded.min.js"></script>
+	<script>
+		var _folderSource = $("#folder-source").html();
+		var _fileSource = $("#file-source").html();
+		var _folderPickerTableRowSource = $("#folderpicker-tablerow-source").html();
+		var _folderPickerTableSource = $("#folderpicker-table-source").html();
+
+		var _folders = [];
+		var _files = [];
+		var _ancestors = [];
+		var _parentId = 0;
+
+		$(function() {
+			{% if app.request.get('cat') and not content.id %}
+				if ($('#form_category_select').length > 0 && $('#form_category').length > 0) {
+					$('#form_category_select').val('{{ app.request.get('cat') }}');
+					$('#form_category').val(JSON.stringify(['{{ app.request.get('cat') }}']));
+				}
+			{% endif %}
+
+			$(document).on('click', '.assetpicker .change', function(ev) {
+				var _this = this;
+				window._callback = function () {
+					$($(_this).attr('data-id')).val($(this).attr('data-id'));
+					$($(_this).attr('data-id') + '-preview').css('visibility', 'visible');
+					$($(_this).attr('data-id') + '-preview').attr('src', '/pz/asset/image/' + $(this).attr('data-id') + '/asset-picker-preview/');
+				};
+				filepicker();
+			});
+
+			$(document).on('click', '.assetpicker .delete', function(ev) {
+				$($(this).attr('data-id')).val('');
+				$($(this).attr('data-id') + '-preview').css('visibility', 'hidden');
+			});
+
+			$(document).on('click', '.assetfolderpicker .change', function(ev) {
+				var _this = this;
+				window._callback = function () {
+					$($(_this).attr('data-id')).val($(this).closest('tr.folder-row').attr('data-id'));
+					$($(_this).attr('data-id') + '-title').html($(this).closest('tr.folder-row').find('.folder').html());
+				};
+				folderpicker();
+			});
+
+			$(document).on('click', '.assetfolderpicker .delete', function(ev) {
+				$($(this).attr('data-id')).val('');
+				$($(this).attr('data-id') + '-title').html('Choose...');
+			});
+
+
+			$('.wysiwyg textarea').redactor({
+				plugins: ['filePicker', 'imagePicker', 'video', 'table'],
+				minHeight: 300,
+			});
+
+			$('select').chosen();
+
+			{#var pb = $('.progress-bar').progressbar();
+			var url = '{{ path('upload-assets') }}';
+			$('#fileupload').fileupload({
+				url: url,
+				dataType: 'json',
+				sequentialUploads: true,
+				add: function(e, data) {
+					var uploadErrors = [];
+					if(data.files[0]['size'] == '' || data.files[0]['size'] > 5000000) {
+						uploadErrors.push('File size is too big');
+					}
+					if(uploadErrors.length > 0) {
+						alert(uploadErrors.join("\n"));
+					} else {
+						$('.progress').show();
+						data.submit();
+					}
+				},
+				done: function (e, data) {
+					_files.push(data.result);
+					repaintAssetPicker();
+				},
+				progressall: function (e, data) {
+					var progress = parseInt(data.loaded / data.total * 100, 10);
+					$('.progress-bar').css('width', progress + '%');
+				},
+				stop: function (e) {
+					$('.progress').fadeOut(3000);
+				}
+			}).prop('disabled', !$.support.fileInput).parent().addClass($.support.fileInput ? undefined : 'disabled');
+			$('#fileupload').bind('fileuploadsubmit', function (e, data) {
+				data.formData = {
+					parentId: _parentId
+				};
+			});#}
+		});
+
+		$.Redactor.prototype.filePicker = function()
+		{
+			return {
+				init: function()
+				{
+					var button = this.button.add('file', 'File Picker');
+					this.button.addCallback(button, this.filePicker.show);
+				},
+				show: function()
+				{
+					window._redactor = this;
+					window._callback = function() {
+						window._redactor.file.insert.call(window._redactor, '<a href="/asset/download/' + $(this).attr('data-id') + '/">' + $(this).attr('data-title') + '</a>');
+					};
+					filepicker();
+				}
+			};
+		};
+
+		$.Redactor.prototype.imagePicker = function()
+		{
+			return {
+				init: function()
+				{
+					var button = this.button.add('image', 'Image Picker');
+					this.button.addCallback(button, this.imagePicker.show);
+				},
+				show: function()
+				{
+					window._redactor = this;
+					window._callback = function() {
+						window._redactor.image.insert.call(window._redactor, '<img src="/asset/image/' + $(this).attr('data-id') + '/general/" alt="' + $(this).attr('data-title') + '">');
+					};
+					filepicker();
+				}
+			};
+		};
+
+
+		function folderpicker() {
+			$('.asset-picker-upload').css('visibility', 'hidden');
+			$('#popup-container .title').html('Choose a folder');
+			$('#popup-container .content').hide();
+			$('#popup-container .load').show();
+			$.fancybox.open([
+				{
+					href : '#popup-container',
+					type : 'inline',
+					minWidth: 400,
+					minHeight: 600,
+					maxWidth: 400,
+					maxHeight: 600,
+					helpers: {
+						overlay: {
+							locked: false
+						}
+					}
+				},
+			], {
+				padding : 0
+			});
+
+			folders(-1);
+		}
+
+		function folders(parentId) {
+
+			$.ajax({
+				url: '/pz/asset/json/' + parentId + '/',
+				dataType: 'json',
+				beforeSend: function() {
+					$('#popup-container .content').fadeOut(400, function() {
+						$('#popup-container .load').fadeIn();
+					});
+				},
+			}).done(function(json) {
+				_folders = json[0];
+				_files = [];
+				_ancestors = json[2];
+				_parentId = json[3];
+				repaintAssetFolderPicker();
+
+			});
+		};
+
+		function repaintAssetFolderPicker() {
+			$('#popup-container .content .modal-body').empty();
+
+			var folderPickerTableTemplate = Handlebars.compile(_folderPickerTableSource);
+			$('#popup-container .content .modal-body').append(folderPickerTableTemplate());
+
+			var folderPickerTableRowTemplate = Handlebars.compile(_folderPickerTableRowSource);
+			for (var idx in _folders) {
+				var itm = _folders[idx];
+				$('#folderpicker-table-body').append(folderPickerTableRowTemplate({
+					itm: itm,
+				}));
+			}
+
+
+			$('#popup-container .load').fadeOut(400, function() {
+				$('#popup-container .content').fadeIn();
+			});
+
+			$('#popup-container #folderpicker-table-body .folder').off();
+			$('#popup-container #folderpicker-table-body .folder').click(function() {
+				folders($(this).closest('tr.folder-row').attr('data-id'));
+				return false;
+			});
+
+			$('#popup-container #folderpicker-table-body .select').off();
+			$('#popup-container #folderpicker-table-body .select').click(function() {
+				window._callback.call(this);
+				$.fancybox.close();
+				return false;
+			});
+
+			$('#popup-container .content .breadcrumb').empty();
+			$('#popup-container .content .breadcrumb').append(_ancestors.length == 0 ? '<li class="active"><strong>Home</strong></li>' : '<li><a href="#" data-id="0">Home</a></li>');
+			for (var idx in _ancestors) {
+				var itm = _ancestors[idx];
+				$('#popup-container .content .breadcrumb').append(idx == _ancestors.length - 1 ? '<li class="active"><strong>' + itm.title + '</strong></li>' : '<li><a href="#" data-id="' + itm.id + '">' + itm.title + '</a></li>');
+			}
+
+			$('#popup-container .content .breadcrumb a').click(function() {
+				folders($(this).attr('data-id'));
+				return false;
+			});
+		}
+
+
+		function filepicker() {
+			$('.asset-picker-upload').css('visibility', 'visible');
+			$('#popup-container .title').html('Choose an image');
+			$('#popup-container .content').hide();
+			$('#popup-container .load').show();
+			$.fancybox.open([
+				{
+					href : '#popup-container',
+					type : 'inline',
+					minWidth: 850,
+					minHeight: 600,
+					maxWidth: 850,
+					maxHeight: 600,
+					helpers: {
+						overlay: {
+							locked: false
+						}
+					}
+				},
+			], {
+				padding : 0
+			});
+
+			assets(-1);
+		}
+
+		function assets(parentId) {
+
+			$.ajax({
+				url: '/pz/asset/json/' + parentId + '/',
+				dataType: 'json',
+				beforeSend: function() {
+					$('#popup-container .content').fadeOut(400, function() {
+						$('#popup-container .load').fadeIn();
+					});
+				},
+			}).done(function(json) {
+				_folders = json[0];
+				_files = json[1];
+				_ancestors = json[2];
+				_parentId = json[3];
+				repaintAssetPicker();
+
+			});
+		};
+
+		function repaintAssetPicker() {
+			$('#popup-container .content .modal-body').empty();
+
+			var folderTemplate = Handlebars.compile(_folderSource);
+			for (var idx in _folders) {
+				var itm = _folders[idx];
+				$('#popup-container .content .modal-body').append(folderTemplate({
+					itm: itm,
+				}));
+			}
+
+			var fileTemplate = Handlebars.compile(_fileSource);
+			for (var idx in _files) {
+				var itm = _files[idx];
+				$('#popup-container .content .modal-body').append(fileTemplate({
+					itm: itm,
+				}));
+			}
+
+			$('#popup-container .load').fadeOut(400, function() {
+				$('#popup-container .content').fadeIn();
+			});
+
+			$('#popup-container .my-folder a').off();
+			$('#popup-container .my-folder a').click(function() {
+				assets($(this).closest('div.my-folder').attr('data-id'));
+				return false;
+			});
+
+			$('#popup-container .my-file').off();
+			$('#popup-container .my-file').mousedown(function() {
+				window._callback.call(this);
+				$.fancybox.close();
+				return false;
+			});
+
+			$('#popup-container .content .breadcrumb').empty();
+			$('#popup-container .content .breadcrumb').append(_ancestors.length == 0 ? '<li class="active"><strong>Home</strong></li>' : '<li><a href="#" data-id="0">Home</a></li>');
+			for (var idx in _ancestors) {
+				var itm = _ancestors[idx];
+				$('#popup-container .content .breadcrumb').append(idx == _ancestors.length - 1 ? '<li class="active"><strong>' + itm.title + '</strong></li>' : '<li><a href="#" data-id="' + itm.id + '">' + itm.title + '</a></li>');
+			}
+
+			$('#popup-container .content .breadcrumb a').click(function() {
+				assets($(this).attr('data-id'));
+				return false;
+			});
+		}
+	</script>
+{% endblock %}

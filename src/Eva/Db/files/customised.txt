@@ -1,0 +1,11 @@
+<?php
+
+/**
+ * {TIMESTAMP}
+ */
+namespace {NAMESPACE};
+
+class {CLASSNAME} extends \{NAMESPACE}\Generated\{CLASSNAME} {
+
+
+}
