@@ -9,7 +9,7 @@ class Model extends ORM  {
     public function getFieldMap() {
         return array(
             'id' => 'id',
-            'code' => 'code',
+            'track' => 'track',
             'rank' => 'rank',
             'title' => 'title',
             'className' => 'className',

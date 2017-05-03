@@ -16,7 +16,7 @@ class {CLASSNAME} extends \Eva\Db\ORM implements UserInterface {
             {MAPPING}
         ), array_combine(array_keys($TBL_META), array_keys($TBL_META)), array(
             'id' => 'id',
-            'code' => 'code',
+            'track' => 'track',
         ));
     }
 

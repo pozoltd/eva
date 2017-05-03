@@ -68,7 +68,7 @@ class Model implements ControllerProviderInterface
 //        var_dump($table->getFields());exit;
 
         global $TBL_META, $CMS_WIDGETS;
-        $meta = array_merge(array('id', 'code'), array_keys($TBL_META));
+        $meta = array_merge(array('id', 'track'), array_keys($TBL_META));
         $fields = array_diff($table->getFields(), $meta);
         sort($fields, SORT_NATURAL);
         sort($meta, SORT_NATURAL);

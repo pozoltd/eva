@@ -39,8 +39,8 @@ abstract class ORM
                 if ($itm == 'id') {
                     continue;
                 }
-                if ($itm == 'code') {
-                    $this->code = md5(uniqid() . time() . rand());
+                if ($itm == 'track') {
+                    $this->track = md5(uniqid() . time() . rand());
                 }
 
                 if (isset($this->{$idx})) {
@@ -57,7 +57,7 @@ abstract class ORM
         } else {
             $sql = "UPDATE `{$this->getTable()}` SET ";
             foreach ($fields as $idx => $itm) {
-                if ($itm == 'id' || $itm == 'code') {
+                if ($itm == 'id' || $itm == 'track') {
                     continue;
                 }
                 if (isset($this->{$idx})) {
@@ -75,9 +75,9 @@ abstract class ORM
         return $pdo->lastInsertId();
     }
 
-    public static function getByCode(\Zend_Db_Adapter_Abstract $zdb, $code)
+    public static function getByTrack(\Zend_Db_Adapter_Abstract $zdb, $track)
     {
-        return static::getORMByField($zdb, 'code', $code);
+        return static::getORMByField($zdb, 'track', $track);
     }
 
     public static function getBySlug(\Zend_Db_Adapter_Abstract $zdb, $slug)

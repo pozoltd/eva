@@ -26,8 +26,8 @@ class Table
     {
         $sql = "CREATE TABLE IF NOT EXISTS `$this->table` (
                     `id` int(11) NOT NULL AUTO_INCREMENT, 
-                    `code` varchar(256) COLLATE utf8_unicode_ci NOT NULL, 
-                    INDEX `CODE` (`code` ASC), 
+                    `track` varchar(128) COLLATE utf8_unicode_ci NOT NULL, 
+                    INDEX `TRACK` (`track` ASC), 
                     PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute();

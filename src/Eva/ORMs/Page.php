@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 2017-04-30 18:55:53
+ * 2017-05-03 15:14:36
  */
 namespace Eva\ORMs;
 
@@ -23,7 +23,7 @@ class Page extends \Eva\Db\ORM {
 			'template' => 'authorbio', 
         ), array_combine(array_keys($TBL_META), array_keys($TBL_META)), array(
             'id' => 'id',
-            'code' => 'code',
+            'track' => 'track',
         ));
     }
 
