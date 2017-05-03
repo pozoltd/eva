@@ -28,7 +28,7 @@ class Db implements ServiceProviderInterface
     public function data($className, $options = array())
     {
         if (strpos($className, '\\') === false) {
-            $model = \Eva\ORMs\Model::getORMByField($this->app['zdb'], 'className', $className);
+            $model = \Eva\Db\Model::getORMByField($this->app['zdb'], 'className', $className);
             $className = $model->namespace . '\\' . $model->className;
         }
         return $className::data($this->app['zdb'], $options);

@@ -2,7 +2,7 @@
 
 namespace Eva\Controllers;
 
-use Eva\ORMs\Model;
+use Eva\Db\Model;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -54,6 +54,7 @@ class Content implements ControllerProviderInterface
             'order' => $order,
             'page' => $pageNum,
             'limit' => $limit,
+//            'debug' => 1,
         ));
 
         $total = null;

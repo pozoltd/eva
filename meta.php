@@ -1,7 +1,6 @@
 <?php
 
 $TBL_MODELS = array(
-    'rank' => "int(11) DEFAULT NULL",
     'title' => "varchar(256) COLLATE utf8_unicode_ci NOT NULL",
     'className' => "varchar(128) COLLATE utf8_unicode_ci NOT NULL",
     'namespace' => "varchar(128) COLLATE utf8_unicode_ci NOT NULL",

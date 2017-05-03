@@ -28,7 +28,7 @@ class Model implements ControllerProviderInterface
     public function models(Application $app, Request $request, $modelType = 0)
     {
         $returnURL = $request->get('$returnURL') ?: '/pz/models/';
-        $models = \Eva\ORMs\Model::data($app['zdb'], array(
+        $models = \Eva\Db\Model::data($app['zdb'], array(
             'whereSql' => 'm.modelType = ?',
             'params' => array($modelType),
 //            'debug' => 1,
@@ -42,14 +42,14 @@ class Model implements ControllerProviderInterface
 
     public function model(Application $app, Request $request, $modelType, $id = null)
     {
-        $returnURL = $request->get('$returnURL') ?: '/pz/models/';
+        $returnURL = $request->get('returnURL') ?: '/pz/models/';
         if ($id) {
-            $model = \Eva\ORMs\Model::getById($app['zdb'], $id);
+            $model = \Eva\Db\Model::getById($app['zdb'], $id);
             if (!$model) {
                 $app->abort(404);
             }
         } else {
-            $model = new \Eva\ORMs\Model($app['zdb']);
+            $model = new \Eva\Db\Model($app['zdb']);
             $model->label = 'New models';
             $model->className = 'NewModel';
             $model->namespace = DEFAULT_NAMESPACE . '\\ORMs';
@@ -152,7 +152,7 @@ class Model implements ControllerProviderInterface
             $className = $app['modelClass'];
             $model = $className::findById($app['zdb'], $value);
             if ($model) {
-                $model->rank = $key;
+                $model->__rank = $key;
                 $model->save();
             }
         }

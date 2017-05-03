@@ -75,7 +75,7 @@ abstract class ORM
         return $pdo->lastInsertId();
     }
 
-    public static function getByTrack(\Zend_Db_Adapter_Abstract $zdb, $track)
+    public static function getByCode(\Zend_Db_Adapter_Abstract $zdb, $track)
     {
         return static::getORMByField($zdb, 'track', $track);
     }
@@ -176,6 +176,10 @@ abstract class ORM
         foreach ($replaces as $idx => $itm) {
             $options['whereSql'] = str_replace($idx, $itm, $options['whereSql']);
         }
+
+        $reflect = new \ReflectionClass($m);
+        $options['whereSql'] = $options['whereSql'] . (empty($options['whereSql']) ? '' : ' AND ') . 'm.__modelClass = ?';
+        $options['params'][] = $reflect->getShortName();
 
         $pdo = $zdb->getConnection();
         $sql = "SELECT {$options['select']} FROM {$m->getTable()} AS m";

@@ -30,10 +30,11 @@ class Setup implements ControllerProviderInterface
         $zdb = $app['zdb'];
         $pdo = $zdb->getConnection();
 
-        global $TBL_MODELS;
-        $this->setTable($pdo, '__models', $TBL_MODELS);
+        global $TBL_META, $TBL_MODELS, $TBL_CONTENTS;
 
-        global $TBL_META, $TBL_CONTENTS;
+        $table = $this->setTable($pdo, '__models', array_merge($TBL_META, $TBL_MODELS));
+        $table->addIndex('CLASS', '__modelClass');
+
         $table = $this->setTable($pdo, '__contents', array_merge($TBL_META, $TBL_CONTENTS));
         $table->addIndex('CLASS', '__modelClass');
         return new Response('OK');
@@ -78,10 +79,10 @@ class Setup implements ControllerProviderInterface
     }
 
     private function setModel($app, $modelName, $modelClass) {
-        $model = \Eva\ORMs\Model::getORMByField($app['zdb'], 'className', $modelClass);
+        $model = \Eva\Db\Model::getORMByField($app['zdb'], 'className', $modelClass);
         if (!$model) {
 
-            $model = new \Eva\ORMs\Model($app['zdb']);
+            $model = new \Eva\Db\Model($app['zdb']);
             $model->title = $modelName;
             $model->className = $modelClass;
             $model->namespace = 'Eva\\ORMs';

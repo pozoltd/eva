@@ -1,16 +1,12 @@
 <?php
 
-namespace Eva\ORMs;
-
-use Eva\Db\ORM;
+namespace Eva\Db;
 
 class Model extends ORM  {
 
     public function getFieldMap() {
-        return array(
-            'id' => 'id',
-            'track' => 'track',
-            'rank' => 'rank',
+        global $TBL_META;
+        return array_merge(array(
             'title' => 'title',
             'className' => 'className',
             'namespace' => 'namespace',
@@ -22,7 +18,10 @@ class Model extends ORM  {
             'defaultSortBy' => 'defaultSortBy',
             'defaultOrder' => 'defaultOrder',
             'columnsJson' => 'columnsJson',
-        );
+        ), array_combine(array_keys($TBL_META), array_keys($TBL_META)), array(
+            'id' => 'id',
+            'track' => 'track',
+        ));
     }
 
     public function getTable() {
