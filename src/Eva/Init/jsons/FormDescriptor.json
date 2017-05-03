@@ -38,7 +38,7 @@
   {
     "id": "z1458512459460",
     "column": "content",
-    "widget": "\\Pz\\Forms\\Types\\FormBuilder",
+    "widget": "\\Eva\\Forms\\Types\\FormBuilder",
     "label": "Fields:",
     "field": "fields",
     "required": 1,
@@ -47,7 +47,7 @@
   {
     "id": "z1458531420787",
     "column": "shortdescription",
-    "widget": "\\Pz\\Forms\\Types\\Wysiwyg",
+    "widget": "\\Eva\\Forms\\Types\\Wysiwyg",
     "label": "Thankyou Message:",
     "field": "thankyouMessage",
     "required": 0,

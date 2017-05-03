@@ -20,7 +20,7 @@
   {
     "id": "z1458532423599",
     "column": "date",
-    "widget": "\\Pz\\Forms\\Types\\DatePicker",
+    "widget": "\\Eva\\Forms\\Types\\DatePicker",
     "label": "Date:",
     "field": "date",
     "required": 0,
@@ -47,7 +47,7 @@
   {
     "id": "z1458532375960",
     "column": "content",
-    "widget": "\\Pz\\Forms\\Types\\FormData",
+    "widget": "\\Eva\\Forms\\Types\\FormData",
     "label": "Content:",
     "field": "content",
     "required": 0,
@@ -87,6 +87,6 @@
     "label": "Form Descriptor:",
     "field": "formDescriptorId",
     "required": 0,
-    "sql": "SELECT t1.id AS `key`, t1.title AS value FROM contents AS t1 LEFT JOIN models AS t2 ON  t1.modelId = t2.id WHERE t2.className = 'FormDescriptor' ORDER BY t1.rank"
+    "sql": "SELECT t1.id AS `key`, t1.title AS value FROM __contents AS t1 WHERE t1.__modelClass = 'FormDescriptor' ORDER BY t1.__rank"
   }
 ]

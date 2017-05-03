@@ -18,7 +18,8 @@ class Setup implements ControllerProviderInterface
         return $controllers;
     }
 
-    public function setup(Application $app, Request $request) {
+    public function setup(Application $app, Request $request)
+    {
         $this->tables($app, $request);
         $this->models($app, $request);
         $this->data($app, $request);
@@ -44,11 +45,11 @@ class Setup implements ControllerProviderInterface
     public function models(Application $app, Request $request)
     {
         $this->setModel($app, 'Users', 'User');
-        $this->setModel($app, 'Page categories', 'PageCategory');
-        $this->setModel($app, 'Page templates', 'PageTemplate');
-        $this->setModel($app, 'Pages', 'Page');
-        $this->setModel($app, 'Asset sizes', 'AssetSize');
-        $this->setModel($app, 'Assets', 'Asset');
+        $this->setModel($app, 'Page categories', 'PageCategory', array('dataType' => 1));
+        $this->setModel($app, 'Page templates', 'PageTemplate', array('dataType' => 1));
+        $this->setModel($app, 'Pages', 'Page', array('dataType' => 2));
+        $this->setModel($app, 'Asset sizes', 'AssetSize', array('dataType' => 1));
+        $this->setModel($app, 'Assets', 'Asset', array('dataType' => 2));
         $this->setModel($app, 'Form descriptors', 'FormDescriptor');
         $this->setModel($app, 'Form submissions', 'FormSubmission');
         return new Response('OK');
@@ -69,7 +70,8 @@ class Setup implements ControllerProviderInterface
         return new Response('OK');
     }
 
-    private function setTable($pdo, $tableName, $tableColumns) {
+    private function setTable($pdo, $tableName, $tableColumns)
+    {
         $table = new Table($pdo, $tableName);
         $table->create();
         foreach ($tableColumns as $idx => $itm) {
@@ -78,7 +80,8 @@ class Setup implements ControllerProviderInterface
         return $table;
     }
 
-    private function setModel($app, $modelName, $modelClass) {
+    private function setModel($app, $modelName, $modelClass, $overwrites = array())
+    {
         $model = \Eva\Db\Model::getORMByField($app['zdb'], 'className', $modelClass);
         if (!$model) {
 
@@ -94,12 +97,16 @@ class Setup implements ControllerProviderInterface
             $model->defaultSortBy = 'id';
             $model->defaultOrder = 1;
 
+            foreach ($overwrites as $idx => $itm) {
+                $model->{$idx} = $itm;
+            }
+
             $columnsJson = json_decode(file_get_contents(__DIR__ . "/jsons/{$model->className}.json"));
             $model->columnsJson = json_encode($columnsJson);
             $model->save();
 
             $setup = __DIR__ . '/../ORMs/' . $model->className . '.php';
-            if (!file_exists($setup)) {
+            if (!file_exists($setup) || 1) {
                 $mappings = array_map(function ($value) {
                     return "'{$value->field}' => '{$value->column}', ";
                 }, $columnsJson);

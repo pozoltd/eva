@@ -128,14 +128,14 @@ $CMS_WIDGETS = array(
 $FORM_WIDGETS = array(
     'choice' => 'Choice',
     'checkbox' => 'Checkbox',
-    '\\Pz\\Forms\\Types\\DatePicker' => 'Date picker',
-    '\\Pz\\Forms\\Types\\DateTimePicker' => 'Date time picker',
+    '\\Eva\\Forms\\Types\\DatePicker' => 'Date picker',
+    '\\Eva\\Forms\\Types\\DateTimePicker' => 'Date time picker',
     'email' => 'Email',
     'hidden' => 'Hidden',
     'text' => 'Text',
     'textarea' => 'Textarea',
     'repeated' => 'Repeated',
-    '\\Pz\\Forms\\Types\\Wysiwyg' => 'Wysiwyg',
+    '\\Eva\\Forms\\Types\\Wysiwyg' => 'Wysiwyg',
     'submit' => 'Submit',
 );
 ?>

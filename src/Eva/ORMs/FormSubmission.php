@@ -1,7 +1,6 @@
 <?php
 
 /**
- * 2017-05-03 17:07:56
  */
 namespace Eva\ORMs;
 

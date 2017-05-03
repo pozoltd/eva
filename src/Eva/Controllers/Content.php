@@ -59,7 +59,7 @@ class Content implements ControllerProviderInterface
 
         $total = null;
         if ($model->listType == 0) {
-            $result = $daoClass::data($app['em'], array(
+            $result = $daoClass::data($app['zdb'], array(
                 'select' => 'COUNT(entity.id) AS total',
                 'dao' => false,
             ));
@@ -104,13 +104,13 @@ class Content implements ControllerProviderInterface
     public function copy(Application $app, Request $request, $modelId, $returnURL, $id)
     {
         $modelClass = $app['modelClass'];
-        $model = $modelClass::findById($app['em'], $modelId);
+        $model = $modelClass::findById($app['zdb'], $modelId);
         if (!$model) {
             $app->abort(404);
         }
 
         $daoClass = $model->getFullClass();
-        $content = $daoClass::findById($app['em'], $id);
+        $content = $daoClass::findById($app['zdb'], $id);
         if (!$content) { 
             $app->abort(404);
         }
@@ -133,9 +133,9 @@ class Content implements ControllerProviderInterface
             $options = array(
                 'label' => $itm->label,
             );
-            if ($itm->widget == 'choice' || $itm->widget == '\\Pz\\Forms\\Types\\ChoiceMultiJson') {
-                $conn = $app['em']->getConnection();
-                $stmt = $conn->executeQuery($itm->sql);
+            if ($itm->widget == 'choice' || $itm->widget == '\\Eva\\Forms\\Types\\ChoiceMultiJson') {
+                $conn = $app['zdb']->getConnection();
+                $stmt = $conn->prepare($itm->sql);
                 $stmt->execute();
                 $choices = array();
                 foreach ($stmt->fetchAll() as $key => $val) {
@@ -183,9 +183,9 @@ class Content implements ControllerProviderInterface
         $contentId = $request->get('content');
         $modelId = $request->get('model');
         $modelClass = $app['modelClass'];
-        $model = $modelClass::findById($app['em'], $modelId);
+        $model = $modelClass::findById($app['zdb'], $modelId);
         $className = $model->getFullClass();
-        $content = $className::findById($app['em'], $contentId);
+        $content = $className::findById($app['zdb'], $contentId);
         $content->delete();
         return new Response('OK');
 
@@ -193,11 +193,11 @@ class Content implements ControllerProviderInterface
 
     public function sort(Application $app, Request $request, $modelId) {
         $modelClass = $app['modelClass'];
-        $model = $modelClass::findById($app['em'], $modelId);
+        $model = $modelClass::findById($app['zdb'], $modelId);
         $className = $model->getFullClass();
         $data = json_decode($request->get('data'));
         foreach ($data as $idx => $itm) {
-            $obj = $className::findById($app['em'], $itm);
+            $obj = $className::findById($app['zdb'], $itm);
             $obj->rank = $idx;
             $obj->save();
         }
@@ -206,11 +206,11 @@ class Content implements ControllerProviderInterface
 
     public function nestable(Application $app, Request $request, $modelId) {
         $modelClass = $app['modelClass'];
-        $model = $modelClass::findById($app['em'], $modelId);
+        $model = $modelClass::findById($app['zdb'], $modelId);
         $className =  $model->getFullClass();
         $data = json_decode($request->get('data'));
         foreach ($data as $itm) {
-            $obj = $className::findById($app['em'], $itm->id);
+            $obj = $className::findById($app['zdb'], $itm->id);
             $obj->rank = $itm->rank;
             $obj->parentId = $itm->parentId;
             $obj->save();
@@ -221,13 +221,13 @@ class Content implements ControllerProviderInterface
     public function changeStatus(Application $app, Request $request)
     {
         $modelClass = $app['modelClass'];
-        $model = $modelClass::findById($app['em'], $request->get('model'));
+        $model = $modelClass::findById($app['zdb'], $request->get('model'));
         if (!$model) {
             $app->abort(404);
         }
 
         $daoClass = $model->getFullClass();
-        $content = $daoClass::findById($app['em'], $request->get('content'));
+        $content = $daoClass::findById($app['zdb'], $request->get('content'));
         if (!$content) {
             $app->abort(404);
         }

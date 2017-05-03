@@ -175,7 +175,7 @@
             renderFields();
             renderDefaultSortBy();
             $('#columns select').each(function(key, value) {
-                if ($(value).val() == 'choice' || $(value).val() == '\\Pz\\Forms\\Types\\ChoiceMultiJson') {
+                if ($(value).val() == 'choice' || $(value).val() == '\\Eva\\Forms\\Types\\ChoiceMultiJson') {
                     $('#sql' + $(value).closest('tbody').find('.id').val()).show();
                 } else {
                     $('#sql' + $(value).closest('tbody').find('.id').val()).hide();
