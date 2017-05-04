@@ -1,5 +1,5 @@
 <?php
-namespace Pz\Services;
+namespace Eva\Services;
 
 use Pz\Common\Utils;
 use Silex\ServiceProviderInterface;
