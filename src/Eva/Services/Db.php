@@ -47,11 +47,12 @@ class Db implements ServiceProviderInterface
     public function getByField($className, $field, $value)
     {
         return $this->data($className, array(
-            'whereSql' => 'm.' . $field . ' = :v1',
+            'whereSql' => 'm.' . $field . ' = ?',
             'params' => array(
-                'v1' => $value,
+                $value,
             ),
             'oneOrNull' => 1,
+//            'debug' => 1,
         ));
     }
 }
