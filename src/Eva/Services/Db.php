@@ -22,7 +22,7 @@ class Db implements ServiceProviderInterface
         if (isset($options['whereSql']) && $options['whereSql']) {
             $options['whereSql'] = $options['whereSql'] . ' AND m.__active = 1';
         }
-        return $this->data($this->app['zdb'], $options);
+        return $this->data($className, $options);
     }
 
     public function data($className, $options = array())

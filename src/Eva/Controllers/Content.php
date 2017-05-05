@@ -103,15 +103,14 @@ class Content implements ControllerProviderInterface
 
     public function copy(Application $app, Request $request, $modelId, $returnURL, $id)
     {
-        $modelClass = $app['modelClass'];
-        $model = $modelClass::findById($app['zdb'], $modelId);
+        $model = \Eva\Db\Model::getById($app['zdb'], $modelId);
         if (!$model) {
             $app->abort(404);
         }
 
-        $daoClass = $model->getFullClass();
-        $content = $daoClass::findById($app['zdb'], $id);
-        if (!$content) { 
+        $daoClass = $model->namespace . '\\' . $model->className;
+        $content = $daoClass::getById($app['zdb'], $id);
+        if (!$content) {
             $app->abort(404);
         }
         $content->id = null;

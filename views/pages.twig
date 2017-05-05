@@ -1,0 +1,165 @@
+{% set categories = app.db.active('PageCategory') %}
+
+{% extends 'layout.twig' %}
+
+{% block extraHead %}
+    <link href="{{ constant('CDN') }}/pz/css/nestable.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12 max-1000">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <a href="/pz/content/add/{{ model.id }}/{{ app.get.encodedURL }}/{% if cat %}?cat={{ cat }}{% endif %}">
+                        <button class="btn btn-w-m btn-info">
+                            <i class="fa fa-plus-circle"></i>&nbsp;&nbsp;Add new page
+                        </button>
+                    </a>
+                </div>
+
+                <div class="ibox-content">
+                    <div class="page-category">
+
+                        {% for itm in categories %}
+                            <input data-id="{{ itm.id }}" id="itm{{ itm.id }}" type="radio" name="category" {{ itm.id == cat ? 'checked="checked"' : '' }} />
+                            <label data-id="{{ itm.id }}" for="itm{{ itm.id }}">
+                                <div class="dd other content-{{ itm.id }}" data-id="{{ itm.id }}" >
+                                    <div class="dd-empty"></div>
+                                </div>
+                                <div class="item-title">{{ itm.title }} <span class="number"></span></div>
+                            </label>
+                        {% endfor %}
+
+                        <input data-id="-1"  id="itm-1" type="radio" name="category" {{ -1 == cat ? 'checked="checked"' : '' }} />
+                        <label data-id="-1" for="itm-1">
+                            <div class="other dd content--1" data-id="-1" >
+                                <div class="dd-empty"></div>
+                            </div>
+                            <div class="item-title">Uncategorised <span class="number"></span></div>
+                        </label>
+                    </div>
+
+                    <div class="nestable-lists">
+                        <div class="dd" id="nestable">{{ root|nestable|raw }}</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extraFooter %}
+    <script type="text/javascript" src="{{ constant('CDN') }}/pz/js/jquery.nestable.js"></script>
+    <script>
+        var _ajax;
+
+        $(function() {
+
+            $('#nestable').nestable({ group: 1 }).on('change', update);
+            $('.other').nestable({ group: 1 });
+
+            $('.other').mouseout(function() {
+                setTimeout(function() {
+                    $.each($('.other'), function(key, value) {
+                        if ($(value).children().length == 0) {
+                            $(value).html('<div class="dd-empty"></div>');
+                        }
+                    });
+                }, 1500);
+            });
+
+            $('.dd-empty').on('click', function() {
+                $('#' + $(this).parent().attr('for')).click();
+            });
+
+            $('[name=category]').on('click', function() {
+                $('label.dd').css('cursor', 'wait');
+                $('label.dd').attr('disabled', 'disabled');
+                $('#nestable').html('Loading...');
+                location.href = '?cat=' + $(this).attr('data-id');
+            });
+
+// 		$('.add-child').on('click', function() {
+// 			$('.addForm').attr('action', $('.addForm').attr('action') + '&parentId=' + $(this).parent().parent().attr('data-id'));
+// 			$('.addForm').submit();
+// 		});
+
+            countCat();
+        });
+
+
+        function countCat() {
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('count-pages') }}',
+                data: 'action=countCat',
+                success : function(msg) {
+                    var reuslt = JSON.parse(msg);
+                    $.each($('.other'), function(key, value) {
+                        var count = reuslt['cat' + $(value).attr('data-id')] ?  reuslt['cat' + $(value).attr('data-id')] : 0;
+                        $(value).parent().find('span.number').html('(' + count + ')');
+                    });
+                }
+            });
+        };
+
+        function update() {
+            if (_ajax) _ajax.abort();
+
+            var ignoreMe = false;
+            $.each($('.other'), function(key, value) {
+                var items = $(value).nestable('serialize');
+                if (items.length > 0) {
+                    if ('{{ cat }}' != $(value).attr('data-id')) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '{{ path('change-category') }}',
+                            data: 'oldCat={{ cat }}&newCat=' + $(value).attr('data-id') + '&id=' + items[0].id,
+                            success : function(msg) {
+                                $(value).html('<div class="dd-empty"></div>');
+                                countCat();
+                            }
+                        });
+                        ignoreMe = true;
+                    } else {
+                        $(value).html('<div class="dd-empty"></div>');
+                        $('#nestable').html('Loading...');
+                        location.reload();
+                    }
+                }
+            });
+
+            if (!ignoreMe) {
+                var root = {
+                    id: 0,
+                    children: $('#nestable').nestable('serialize'),
+                }
+
+                _ajax = $.ajax({
+                    type: 'POST',
+                    url: '{{ path('sort-pages') }}',
+                    data: 'cat={{ cat }}&data=' + encodeURIComponent(JSON.stringify(toArray(root))),
+                    success : function(msg) {
+                    }
+                });
+            }
+        }
+
+        function toArray(node) {
+            var result = [];
+            for (var idx in node.children) {
+                var itm = node.children[idx];
+                result.push({
+                    id: itm.id,
+                    parentId: node.id,
+                    rank: idx,
+                    cat: '{{ cat }}'
+                });
+                result = result.concat(toArray(itm));
+            }
+            return result;
+        };
+    </script>
+{% endblock %}
