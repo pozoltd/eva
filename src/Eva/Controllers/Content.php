@@ -16,16 +16,17 @@ class Content extends Pz
     public function connect(Application $app)
     {
         $controllers = $app['controllers_factory'];
-        $controllers->match('/remove/', array($this, 'remove'))->bind('remove-content');
-        $controllers->match('/status/', array($this, 'changeStatus'))->bind('change-status');
+
 
 //        $controllers->match('/{modelId}/{pageNum}/{sort}/{order}/', array($this, 'contents'))->bind('contents-page');
         $controllers->match('/content/{modelId}/add/', array($this, 'content'))->bind('add-content');
         $controllers->match('/content/{modelId}/{id}/edit/', array($this, 'content'))->bind('edit-content');
         $controllers->match('/content/{modelId}/{id}/copy/', array($this, 'copy'))->bind('copy-content');
 
-        $controllers->match('/sort/{modelId}/', array($this, 'sort'))->bind('sort-contents');
-        $controllers->match('/nestable/{modelId}/', array($this, 'nestable'))->bind('nestable');
+        $controllers->match('/remove/', array($this, 'remove'))->bind('remove-content');
+        $controllers->match('/sort/', array($this, 'sort'))->bind('sort-contents');
+        $controllers->match('/status/', array($this, 'changeStatus'))->bind('change-status');
+        $controllers->match('/nestable/', array($this, 'nestable'))->bind('nestable');
 
         $controllers->match('/{modelId}/', array($this, 'contents'))->bind('contents');
         return $controllers;
@@ -213,7 +214,7 @@ class Content extends Pz
         return new Response('OK');
     }
 
-    public function sort(Application $app, Request $request, $modelId)
+    public function sort(Application $app, Request $request)
     {
         $modelClass = $request->get('model');
         $model = \Eva\Db\Model::getORMByField($app['zdb'], 'className', $modelClass);
@@ -227,7 +228,7 @@ class Content extends Pz
         return new Response('OK');
     }
 
-    public function nestable(Application $app, Request $request, $modelId)
+    public function nestable(Application $app, Request $request)
     {
         $modelClass = $app['modelClass'];
         $model = $modelClass::findById($app['zdb'], $modelId);

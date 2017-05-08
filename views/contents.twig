@@ -24,7 +24,7 @@
                                     <tr>
                                         <th style="width: 40px;" class="text-left">ID</th>
                                         <th class="text-left">Title</th>
-                                        <th style="width: 160px;" class="text-left">&nbsp;</th>
+                                        <th style="width: 200px;" class="text-left">&nbsp;</th>
                                     </tr>
                                 </thead>
                                 <tbody id="columns">
@@ -61,14 +61,13 @@
         $(function () {
             {% if model.listType == 1 %}
                 $.each($('#columns td'), function(key, val) {
-                    $(val).css('width', $(val).width() + 'px');
+                    $(val).css('width', $(val).outerWidth() + 'px');
                 });
-
                 $('#columns').sortable({
                     stop: function (event, ui) {
                         $.ajax({
                             type: 'POST',
-                            url: '{{ path('sort-contents', {modelId: model.id}) }}',
+                            url: '{{ path('sort-contents') }}',
                             data: 'model={{ model.className }}&data=' + encodeURIComponent(JSON.stringify($('#columns').sortable("toArray"))),
                             success: function (msg) {
                             }
@@ -88,7 +87,7 @@
 
             _ajax = $.ajax({
                 type: 'POST',
-                url: '{{ path('nestable', {modelId: model.id}) }}',
+                url: '{{ path('nestable') }}',
                 data: 'model={{ model.className }}data=' + encodeURIComponent(JSON.stringify(toArray(root))),
                 success : function(msg) {
                 }
