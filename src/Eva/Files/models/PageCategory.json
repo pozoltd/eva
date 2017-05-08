@@ -1,0 +1,33 @@
+{
+  "__rank": 20,
+  "title": "Page categories",
+  "className": "PageCategory",
+  "namespace": "Eva\\ORMs",
+  "dataTable": "__contents",
+  "modelType": "1",
+  "dataType": "1",
+  "listType": "1",
+  "numberPerPage": "25",
+  "defaultSortBy": "id",
+  "defaultOrder": "1",
+  "columnsJson": [
+    {
+      "id": "z1455697184587",
+      "column": "title",
+      "widget": "text",
+      "label": "Title:",
+      "field": "title",
+      "required": 1,
+      "sql": ""
+    },
+    {
+      "id": "z1455697230599",
+      "column": "extra1",
+      "widget": "text",
+      "label": "Code:",
+      "field": "code",
+      "required": 1,
+      "sql": ""
+    }
+  ]
+}

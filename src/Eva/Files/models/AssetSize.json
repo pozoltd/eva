@@ -1,0 +1,42 @@
+{
+  "__rank": 50,
+  "title": "Asset sizes",
+  "className": "AssetSize",
+  "namespace": "Eva\\ORMs",
+  "dataTable": "__contents",
+  "modelType": "1",
+  "dataType": "1",
+  "listType": "1",
+  "numberPerPage": "25",
+  "defaultSortBy": "id",
+  "defaultOrder": "1",
+  "columnsJson": [
+    {
+      "id": "z1455609111477",
+      "column": "title",
+      "widget": "text",
+      "label": "Title:",
+      "field": "title",
+      "required": 1,
+      "sql": ""
+    },
+    {
+      "id": "z1455609151002",
+      "column": "extra1",
+      "widget": "text",
+      "label": "Width:",
+      "field": "width",
+      "required": 1,
+      "sql": ""
+    },
+    {
+      "id": "z1455609216662",
+      "column": "description",
+      "widget": "textarea",
+      "label": "Description:",
+      "field": "description",
+      "required": 0,
+      "sql": ""
+    }
+  ]
+}

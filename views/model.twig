@@ -17,7 +17,7 @@
         <div class="col-lg-12 max-1000">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h1>{% if id %}{{ form.title.vars.value }}{% else %}New Model{% endif %}</h1>
+                    <h1>{% if model.id %}{{ form.title.vars.value }}{% else %}New Model{% endif %}</h1>
                 </div>
                 <div class="ibox-content">
                     <form method="post" autocomplete="off" novalidate>
@@ -114,7 +114,7 @@
                                 <i class="icon"></i>
                                 <span class="txt">Apply</span>
                             </button>
-                            <a href="{{ returnURL }}" class="btn">
+                            <a href="{{ returnUrl }}" class="btn">
                                 <span class="txt">Cancel</span>
                             </a>
                         </div>

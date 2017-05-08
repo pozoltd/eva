@@ -10,7 +10,6 @@ class Table
     {
         $this->pdo = $pdo;
         $this->table = $table;
-//        $this->create($table);
     }
 
     public function getFields() {
@@ -20,6 +19,13 @@ class Table
         return array_map(function ($itm) {
             return $itm['Field'];
         }, $stmt->fetchAll(\PDO::FETCH_ASSOC));
+    }
+
+    public function drop()
+    {
+        $sql = "DROP TABLE IF EXISTS `$this->table`";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute();
     }
 
     public function create()

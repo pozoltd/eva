@@ -1,0 +1,19 @@
+{% macro nav(node, depth, curr) %}
+    {% from _self import nav as nav %}
+    <li {% if node.contains(curr) %}class="active"{% endif %}>
+        <a href="{{ node.url }}">
+            <i class="{{ node.icon }}"></i>
+            <span class="nav-label">{{ node.title }}</span>
+            {% if node.hasChildren %}
+                <span class="fa arrow"></span>
+            {% endif %}
+        </a>
+        {% if node.hasChildren %}
+            <ul class="nav nav-second-level">
+                {% for itm in node.children %}
+                    {{ nav(itm, depth + 1, curr) }}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </li>
+{% endmacro %}

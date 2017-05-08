@@ -4,6 +4,28 @@ namespace Eva\Tools;
 
 class Utils
 {
+    public static function dump($obj, $what = NULL) {
+        if (defined('DEBUG_ENABLED') && ! DEBUG_ENABLED) {
+            return;
+        }
+        echo "<pre>\n";
+        if (is_null($obj)) {
+            echo ($what !== NULL) ? "$what=!NULL!" : '!NULL!';
+        } else
+            if ($obj === '') {
+                echo ($what !== NULL) ? "$what=!EMPTY!" : '!EMPTY!';
+            } else
+                if ($obj === false) {
+                    echo ($what !== NULL) ? "$what=!FALSE!" : '!FALSE!';
+                } else {
+                    if ($what !== NULL) {
+                        echo "$what=<br>";
+                    }
+                    echo htmlspecialchars(print_r($obj, true));
+                }
+        echo "</pre>\n";
+    }
+
     public static function slugify($str, $options = array())
     {
         // Make sure string is in UTF-8 and strip invalid UTF-8 characters
@@ -108,41 +130,5 @@ class Utils
         $str = trim($str, $options['delimiter']);
 
         return $options['lowercase'] ? mb_strtolower($str, 'UTF-8') : $str;
-    }
-
-    public static function buildTree($node, $arr)
-    {
-        if (!isset($node->_c)) {
-            $node->_c = array();
-        }
-        foreach ($arr as $itm) {
-            if ($itm->parentId == $node->id) {
-                $node->_c[] = static::buildTree($itm, $arr);
-            }
-        }
-        return $node;
-    }
-
-    public static function getURL()
-    {
-        return 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
-    }
-
-    public static function encodeURL($url)
-    {
-        return urlencode(urlencode($url));
-    }
-
-    public static function withChildIds($node, $id, $status = 0)
-    {
-        $result = array();
-        if ($node->id == $id || $status == 1) {
-            $result[] = $node->id;
-            $status = 1;
-        }
-        foreach ($node->_c as $itm) {
-            $result = array_merge($result, static::withChildIds($itm, $id, $status));
-        }
-        return $result;
     }
 }

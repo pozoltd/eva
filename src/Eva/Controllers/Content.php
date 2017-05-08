@@ -3,6 +3,7 @@
 namespace Eva\Controllers;
 
 use Eva\Db\Model;
+use Eva\Tools\Utils;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -10,46 +11,51 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
 
-class Content implements ControllerProviderInterface
+class Content extends Pz
 {
     public function connect(Application $app)
     {
         $controllers = $app['controllers_factory'];
-        $controllers->match('/add/{modelId}/{returnURL}/', array($this, 'content'))->bind('add-content');
-        $controllers->match('/edit/{modelId}/{returnURL}/{id}/', array($this, 'content'))->bind('edit-content');
-        $controllers->match('/copy/{modelId}/{returnURL}/{id}/', array($this, 'copy'))->bind('copy-content');
         $controllers->match('/remove/', array($this, 'remove'))->bind('remove-content');
+        $controllers->match('/status/', array($this, 'changeStatus'))->bind('change-status');
+
+//        $controllers->match('/{modelId}/{pageNum}/{sort}/{order}/', array($this, 'contents'))->bind('contents-page');
+        $controllers->match('/content/{modelId}/add/', array($this, 'content'))->bind('add-content');
+        $controllers->match('/content/{modelId}/{id}/edit/', array($this, 'content'))->bind('edit-content');
+        $controllers->match('/content/{modelId}/{id}/copy/', array($this, 'copy'))->bind('copy-content');
+
         $controllers->match('/sort/{modelId}/', array($this, 'sort'))->bind('sort-contents');
         $controllers->match('/nestable/{modelId}/', array($this, 'nestable'))->bind('nestable');
-        $controllers->match('/status/', array($this, 'changeStatus'))->bind('change-status');
+
         $controllers->match('/{modelId}/', array($this, 'contents'))->bind('contents');
-        $controllers->match('/{modelId}/{pageNum}/{sort}/{order}/', array($this, 'contents'))->bind('contents-page');
         return $controllers;
     }
 
     public function contents(Application $app, Request $request, $modelId, $pageNum = null, $sort = null, $order = null)
     {
-        $model = Model::getById($app['zdb'], $modelId);
-        if (!$model) {
+        $options = parent::getOptionsFromUrl();
+
+        $options['model'] = Model::getById($app['zdb'], $modelId);
+        if (!$options['model']) {
             $app->abort(404);
         }
 
         $sort = null;
         $order = null;
         $limit = null;
-        if ($model->listType == 0) {
-            $sort = $sort ?: $model->defaultSortBy;
-            $order = $order ?: ($model->defaultOrder == 0 ? 'ASC' : 'DESC');
+        if ($options['model']->listType == 0) {
+            $sort = $sort ?: $options['model']->defaultSortBy;
+            $order = $order ?: ($options['model']->defaultOrder == 0 ? 'ASC' : 'DESC');
             $pageNum = $pageNum ?: 1;
-            $limit = $model->numberPerPage;
-        } else if ($model->listType == 1 || $model->listType == 2) {
+            $limit = $options['model']->numberPerPage;
+        } else if ($options['model']->listType == 1 || $options['model']->listType == 2) {
             $sort = '__rank';
             $order = 'ASC';
         }
 
 
-        $daoClass = $model->namespace . '\\' . $model->className;
-        $daos = $daoClass::data($app['zdb'], array(
+        $ormClass = $options['model']->namespace . '\\' . $options['model']->className;
+        $options['contents'] = $ormClass::data($app['zdb'], array(
             'sort' => $sort,
             'order' => $order,
             'page' => $pageNum,
@@ -57,156 +63,175 @@ class Content implements ControllerProviderInterface
 //            'debug' => 1,
         ));
 
-        $total = null;
-        if ($model->listType == 0) {
-            $result = $daoClass::data($app['zdb'], array(
-                'select' => 'COUNT(entity.id) AS total',
-                'dao' => false,
-            ));
-            $total = $result[0]['total'];
-        } else if ($model->listType == 2) {
-            $root = new \stdClass();
-            $root->id = 0;
-            $daos = Utils::buildTree($root, $daos);
-        }
+//        $total = null;
+//        if ($options['model']->listType == 0) {
+//            $result = $ormClass::data($app['zdb'], array(
+//                'count' => 1,
+//            ));
+////            $total = $result[0]['total'];
+//        } else if ($options['model']->listType == 2) {
+//            $root = new \stdClass();
+//            $root->id = 0;
+//            $orms = URL::buildTree($root, $orms);
+//        }
+        return $app['twig']->render($options['page']->twig, $options);
 
-        return $app['twig']->render("contents.twig", array(
-            'model' => $model,
-            'contents' => $daos,
-            'returnURL' => 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}",
-            'pageNum' => $pageNum,
-            'limit' => $limit,
-            'sort' => $sort,
-            'order' => $order,
-            'total' => $total,
-        ));
+//        return $app['twig']->render("contents.twig", array(
+//            'model' => $options['model'],
+//            'contents' => $orms,
+//            'returnURL' => 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}",
+//            'pageNum' => $pageNum,
+//            'limit' => $limit,
+//            'sort' => $sort,
+//            'order' => $order,
+//            'total' => $total,
+//        ));
     }
 
-    public function content(Application $app, Request $request, $modelId, $returnURL, $id = null)
+    public function content(Application $app, Request $request, $modelId, $id = null)
     {
-        $model = Model::getById($app['zdb'], $modelId);
-        if (!$model) {
+        $options = parent::getOptionsFromUrl();
+
+        $options['model'] = Model::getById($app['zdb'], $modelId);
+        if (!$options['model']) {
             $app->abort(404);
         }
 
-        $daoClass = $model->namespace . '\\' . $model->className;
-        $content = new $daoClass($app['zdb']);
+        $ormClass = $options['model']->namespace . '\\' . $options['model']->className;
+        $options['content'] = new $ormClass($app['zdb']);
         if ($id) {
-            $content = $daoClass::getById($app['zdb'], $id);
-            if (!$content) {
+            $options['content'] = $ormClass::getById($app['zdb'], $id);
+            if (!$options['content']) {
                 $app->abort(404);
             }
         }
+//Utils::dump($options['page']);exit;
+        $options['form'] = $this->getForm($request, $options);
+        return $app['twig']->render($options['page']->twig, $options);
 
-        return $this->_content($app, $request, $modelId, $returnURL, $id, $content, $model);
+//        return $this->getForm($app, $request, $modelId, $id, $content, $model);
     }
 
-    public function copy(Application $app, Request $request, $modelId, $returnURL, $id)
+    public function copy(Application $app, Request $request, $modelId, $id)
     {
-        $model = \Eva\Db\Model::getById($app['zdb'], $modelId);
-        if (!$model) {
+        $options = parent::getOptionsFromUrl();
+
+        $options['model'] = Model::getById($app['zdb'], $modelId);
+        if (!$options['model']) {
             $app->abort(404);
         }
 
-        $daoClass = $model->namespace . '\\' . $model->className;
-        $content = $daoClass::getById($app['zdb'], $id);
-        if (!$content) {
-            $app->abort(404);
+        $ormClass = $options['model']->namespace . '\\' . $options['model']->className;
+        $options['content'] = new $ormClass($app['zdb']);
+        if ($id) {
+            $options['content'] = $ormClass::getById($app['zdb'], $id);
+            if (!$options['content']) {
+                $app->abort(404);
+            }
         }
-        $content->id = null;
+        $options['content']->id = null;
 
-        return $this->_content($app, $request, $modelId, $returnURL, $id, $content, $model);
+        $options['form'] = $this->getForm($request, $options);
+        return $app['twig']->render($options['page']->twig, $options);
     }
 
-    private function _content(Application $app, Request $request, $modelId, $returnURL, $id, $content, $model) {
+    private function getForm($request, $options)
+    {
+        $form = $this->app['form.factory']->createBuilder('form', $options['content']);
 
-        $form = $app['form.factory']->createBuilder('form', $content);
-        $model->columnsJson = json_decode($model->columnsJson);
-        foreach ($model->columnsJson as $itm) {
+        $columnsJson = json_decode($options['model']->columnsJson);
+        foreach ($columnsJson as $itm) {
             $widget = $itm->widget;
             if (strpos($itm->widget, '\\') !== FALSE) {
                 $wgtClass = $itm->widget;
                 $widget = new $wgtClass();
-
             }
-            $options = array(
+            $opts = array(
                 'label' => $itm->label,
             );
             if ($itm->widget == 'choice' || $itm->widget == '\\Eva\\Forms\\Types\\ChoiceMultiJson') {
-                $conn = $app['zdb']->getConnection();
+                $conn = $this->app['zdb']->getConnection();
                 $stmt = $conn->prepare($itm->sql);
                 $stmt->execute();
                 $choices = array();
                 foreach ($stmt->fetchAll() as $key => $val) {
                     $choices[$val['key']] = $val['value'];
                 }
-                $options['choices'] = $choices;
-                $options['empty_data'] = null;
-                $options['required'] = false;
-                $options['placeholder'] = 'Choose an option...';
+                $opts['choices'] = $choices;
+                $opts['empty_data'] = null;
+                $opts['required'] = false;
+                $opts['placeholder'] = 'Choose an option...';
             }
             if ($itm->required == 1) {
-                $options['constraints'] = array(
+                $opts['constraints'] = array(
                     new Assert\NotBlank(),
                 );
             }
-            $form->add($itm->field, $widget, $options);
-
+            $form->add($itm->field, $widget, $opts);
         }
         $form = $form->getForm();
-//        Utils::dump($form);exit;
 
         if ($request->isMethod("POST")) {
             $form->bind($request);
             if ($form->isValid()) {
-                $content->save();
+                if (!$options['content']->id) {
+                    $options['content']->__active = 1;
+                }
+                $options['content']->save();
 
-                if ($request->request->get('submit') == 'Save') {
-                    return $app->redirect(urldecode($returnURL));
+                if ($request->get('submit') == 'Save') {
+                    return $this->app->abort(302, urldecode($options['returnUrl']));
                 } else {
-                    return $app->redirect($app->url('edit-content', array('modelId' => $modelId, 'returnURL' => $returnURL, 'id' => $content->id)));
+                    return $this->app->abort(302, $this->app->url('edit-content', array(
+                        'modelId' => $options['model']->id,
+                        'id' => $options['content']->id)) . '?returnUrl=' . urlencode($options['returnUrl'])
+                    );
                 }
             }
         }
 
-        return $app['twig']->render("content.twig", array(
-            'form' => $form->createView(),
-            'model' => $model,
-            'content' => $content,
-            'returnURL' => urldecode($returnURL),
-        ));
+        return $form->createView();
     }
 
     public function remove(Application $app, Request $request)
     {
-        $contentId = $request->get('content');
-        $modelId = $request->get('model');
-        $modelClass = $app['modelClass'];
-        $model = $modelClass::findById($app['zdb'], $modelId);
-        $className = $model->getFullClass();
-        $content = $className::findById($app['zdb'], $contentId);
+        $model = \Eva\Db\Model::getORMByField($app['zdb'], 'className', $request->get('model'));
+        $className = $model->namespace . '\\' . $model->className;
+        $content = $className::getById($app['zdb'], $request->get('content'));
         $content->delete();
         return new Response('OK');
-
     }
 
-    public function sort(Application $app, Request $request, $modelId) {
-        $modelClass = $app['modelClass'];
-        $model = $modelClass::findById($app['zdb'], $modelId);
-        $className = $model->getFullClass();
+
+    public function changeStatus(Application $app, Request $request)
+    {
+        $model = \Eva\Db\Model::getORMByField($app['zdb'], 'className', $request->get('model'));
+        $className = $model->namespace . '\\' . $model->className;
+        $content = $className::getById($app['zdb'], $request->get('content'));
+        $content->__active = $request->get('status');
+        $content->save();
+        return new Response('OK');
+    }
+
+    public function sort(Application $app, Request $request, $modelId)
+    {
+        $modelClass = $request->get('model');
+        $model = \Eva\Db\Model::getORMByField($app['zdb'], 'className', $modelClass);
+        $className = $model->namespace . '\\' . $model->className;
         $data = json_decode($request->get('data'));
         foreach ($data as $idx => $itm) {
-            $obj = $className::findById($app['zdb'], $itm);
-            $obj->rank = $idx;
+            $obj = $className::getById($app['zdb'], $itm);
+            $obj->__rank = $idx;
             $obj->save();
         }
         return new Response('OK');
     }
 
-    public function nestable(Application $app, Request $request, $modelId) {
+    public function nestable(Application $app, Request $request, $modelId)
+    {
         $modelClass = $app['modelClass'];
         $model = $modelClass::findById($app['zdb'], $modelId);
-        $className =  $model->getFullClass();
+        $className = $model->getFullClass();
         $data = json_decode($request->get('data'));
         foreach ($data as $itm) {
             $obj = $className::findById($app['zdb'], $itm->id);
@@ -214,25 +239,6 @@ class Content implements ControllerProviderInterface
             $obj->parentId = $itm->parentId;
             $obj->save();
         }
-        return new Response('OK');
-    }
-
-    public function changeStatus(Application $app, Request $request)
-    {
-        $modelClass = $app['modelClass'];
-        $model = $modelClass::findById($app['zdb'], $request->get('model'));
-        if (!$model) {
-            $app->abort(404);
-        }
-
-        $daoClass = $model->getFullClass();
-        $content = $daoClass::findById($app['zdb'], $request->get('content'));
-        if (!$content) {
-            $app->abort(404);
-        }
-
-        $content->active = $request->get('status');
-        $content->save();
         return new Response('OK');
     }
 }

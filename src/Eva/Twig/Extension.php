@@ -1,6 +1,7 @@
 <?php
 namespace Eva\Twig;
 
+use Eva\Route\URL;
 use Eva\Tools\Utils;
 use PrettyDateTime\PrettyDateTime;
 use \Twig_Extension;
@@ -54,8 +55,8 @@ class Extension extends Twig_Extension
             $str .= '<div class="dd3-content">';
             $str .= '<span>' . $itm->title . '</span>';
             $str .= '<a href="#" data-content="' . $itm->id . '" data-model="' . $itm->__modelClass . '" data-status="' . $itm->__active . '" class="js-status isactive btn btn-xs btn-circle ' . ($itm->__active == 1 ? 'btn-info' : 'btn-danger') . ' btn-outline"><i class="fa ' . ($itm->__active == 1 ? 'fa-check' : 'fa-ban') . '"></i></a>';
-            $str .= '<a href="/pz/content/edit/4/' . Utils::encodeURL(Utils::getURL()) . '/' . $itm->id . '/" class="edit btn btn-xs btn-circle btn-primary"><i class="fa fa-pencil"></i></a>';
-            $str .= '<a href="/pz/content/copy/4/' . Utils::encodeURL(Utils::getURL()) . '/' . $itm->id . '/" class="copy btn btn-xs btn-circle btn-default"><i class="fa fa-copy"></i></a>';
+            $str .= '<a href="/pz/content/edit/4/' . URL::encodeURL(URL::getUrl()) . '/' . $itm->id . '/" class="edit btn btn-xs btn-circle btn-primary"><i class="fa fa-pencil"></i></a>';
+            $str .= '<a href="/pz/content/copy/4/' . URL::encodeURL(URL::getUrl()) . '/' . $itm->id . '/" class="copy btn btn-xs btn-circle btn-default"><i class="fa fa-copy"></i></a>';
             $str .= '<a href="#" data-content="' . $itm->id . '" data-model="' . $itm->__modelClass . '" class="js-delete delete btn btn-xs btn-circle btn-danger"><i class="fa fa-times"></i></a>';
             $str .= '</div>';
             $str .= $this->nestable($itm);

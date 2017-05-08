@@ -1,0 +1,105 @@
+{
+  "__rank": 80,
+  "title": "Form submissions",
+  "className": "FormSubmission",
+  "namespace": "Eva\\ORMs",
+  "dataTable": "__contents",
+  "modelType": "1",
+  "dataType": "0",
+  "listType": "1",
+  "numberPerPage": "25",
+  "defaultSortBy": "id",
+  "defaultOrder": "1",
+  "columnsJson": [
+    {
+      "id": "z1458532331244",
+      "column": "title",
+      "widget": "text",
+      "label": "Title:",
+      "field": "title",
+      "required": 0,
+      "sql": ""
+    },
+    {
+      "id": "z1458532588584",
+      "column": "about",
+      "widget": "text",
+      "label": "Code:",
+      "field": "uniqueId",
+      "required": 0,
+      "sql": ""
+    },
+    {
+      "id": "z1458532423599",
+      "column": "date",
+      "widget": "\\Eva\\Forms\\Types\\DatePicker",
+      "label": "Date:",
+      "field": "date",
+      "required": 0,
+      "sql": ""
+    },
+    {
+      "id": "z1458532480306",
+      "column": "extra4",
+      "widget": "text",
+      "label": "Form Address:",
+      "field": "from",
+      "required": 0,
+      "sql": ""
+    },
+    {
+      "id": "z1458532553952",
+      "column": "extra5",
+      "widget": "textarea",
+      "label": "Recipients:",
+      "field": "recipients",
+      "required": 0,
+      "sql": ""
+    },
+    {
+      "id": "z1458532375960",
+      "column": "content",
+      "widget": "\\Eva\\Forms\\Types\\FormData",
+      "label": "Content:",
+      "field": "content",
+      "required": 0,
+      "sql": ""
+    },
+    {
+      "id": "z1458532379580",
+      "column": "extra1",
+      "widget": "choice",
+      "label": "Email Status:",
+      "field": "emailStatus",
+      "required": 0,
+      "sql": "SELECT 0 AS `key`, 'Pending' AS value UNION SELECT 1 AS `key`, 'Success' AS value UNION SELECT 2 AS `key`, 'Failed' AS value "
+    },
+    {
+      "id": "z1458532382418",
+      "column": "extra2",
+      "widget": "textarea",
+      "label": "Email Request:",
+      "field": "emailRequest",
+      "required": 0,
+      "sql": ""
+    },
+    {
+      "id": "z1458532385129",
+      "column": "extra3",
+      "widget": "textarea",
+      "label": "Email Response:",
+      "field": "emailResponse",
+      "required": 0,
+      "sql": ""
+    },
+    {
+      "id": "z1458533470377",
+      "column": "extra6",
+      "widget": "choice",
+      "label": "Form Descriptor:",
+      "field": "formDescriptorId",
+      "required": 0,
+      "sql": "SELECT t1.id AS `key`, t1.title AS value FROM __contents AS t1 WHERE t1.__modelClass = 'FormDescriptor' ORDER BY t1.__rank"
+    }
+  ]
+}

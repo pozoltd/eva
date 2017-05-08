@@ -18,6 +18,14 @@ abstract class ORM
         }
     }
 
+    public function delete()
+    {
+        $pdo = $this->zdb->getConnection();
+        $sql = "DELETE FROM `{$this->getTable()}` WHERE id = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(array($this->id));
+    }
+
     public function save()
     {
         $reflect = new \ReflectionClass($this);
@@ -117,7 +125,7 @@ abstract class ORM
         $options['joins'] = isset($options['joins']) && !empty($options['joins']) ? $options['joins'] : null;
         $options['whereSql'] = isset($options['whereSql']) && !empty($options['whereSql']) ? $options['whereSql'] : null;
         $options['params'] = isset($options['params']) && gettype($options['params']) == 'array' && count($options['params']) ? $options['params'] : [];
-        $options['sort'] = isset($options['sort']) && !empty($options['sort']) ? $options['sort'] : null;
+        $options['sort'] = isset($options['sort']) && !empty($options['sort']) ? $options['sort'] : 'm.__rank';
         $options['order'] = isset($options['order']) && !empty($options['order']) ? $options['order'] : 'ASC';
         $options['groupby'] = isset($options['groupby']) && !empty($options['groupby']) ? $options['groupby'] : null;
         $options['page'] = isset($options['page']) ? $options['page'] : 1;

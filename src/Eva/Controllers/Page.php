@@ -2,6 +2,7 @@
 namespace Eva\Controllers;
 
 use Eva\Db\Model;
+use Eva\Route\URL;
 use Eva\Tools\Utils;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
@@ -10,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
-class Page implements ControllerProviderInterface
+class Page extends Pz
 {
     public function connect(Application $app)
     {
@@ -23,49 +24,11 @@ class Page implements ControllerProviderInterface
         return $controllers;
     }
 
-    public function pages(Application $app, Request $request)
-    {
-        $model = Model::getORMByField($app['zdb'], 'className', 'Page');
-        if (!$model) {
-            $app->abort(404);
-        }
-
-        $categories = \Eva\ORMs\PageCategory::data($app['zdb']);
-        $cat = $request->get('cat');
-        if (!$cat && count($categories) > 0) {
-            $cat = $categories[0]->id;
-        }
-
-        $result = \Eva\ORMs\Page::data($app['zdb']);
-        $pages = array();
-        foreach ($result as $itm) {
-            $itm->categoryRank = ((empty($itm->categoryRank) || !$itm->categoryRank)) ? array() : (array)json_decode($itm->categoryRank);
-            $itm->categoryParent = ((empty($itm->categoryParent) || !$itm->categoryParent)) ? array() : (array)json_decode($itm->categoryParent);
-            $itm->category = ((empty($itm->category) || !$itm->category)) ? array() : (array)json_decode($itm->category);
-
-            $itm->rank = isset($itm->categoryRank['cat' . $cat]) ? $itm->categoryRank['cat' . $cat] : 0;
-            $itm->parentId = isset($itm->categoryParent['cat' . $cat]) ? $itm->categoryParent['cat' . $cat] : 0;
-            if ($cat == -1 && count($itm->category) == 0) {
-                $pages[] = $itm;
-            } else if (in_array($cat, $itm->category)) {
-                $pages[] = $itm;
-            }
-        }
-
-        usort($pages, function ($a, $b) {
-            return $a->rank > $b->rank ? 1 : -1;
-        });
-
-        $root = new \stdClass();
-        $root->id = 0;
-        $root = Utils::buildTree($root, $pages);
-//var_dump('<pre>', $root, '</pre>');
-        return $app['twig']->render("pages.twig", array(
-            'root' => $root,
-            'returnURL' => Utils::getURL(),
-            'cat' => $cat,
-            'model' => $model,
-        ));
+    public function pages(Application $app, Request $request) {
+        $categories = \Eva\ORMs\PageCategory::data($this->app['zdb']);
+        $options = parent::getOptionsFromUrl('pz/pages/');
+        $options['cat'] = $this->app['request']->get('cat') ?: (count($categories) > 0 ? $categories[0]->id : -1);
+        return $app['twig']->render($options['page']->twig, $options);
     }
 
 //	public function remove(Application $app, Request $request) {
@@ -80,8 +43,8 @@ class Page implements ControllerProviderInterface
 //		$id = $request->request->get('id');
 //		$repo = $app['zdb']->getRepository('Secret\Entities\Content');
 //		$result = $repo->data('Page', '', array(), array('sort' => 'rank', 'order' => 'ASC'));
-//		$root = Utils::buildTree(array('id' => 0), $result);
-//		$ids = Utils::withChildIds($root, $id);
+//		$root = URL::buildTree(array('id' => 0), $result);
+//		$ids = URL::withChildIds($root, $id);
 //		foreach ($ids as $itm) {
 //			$entity = $repo->find($itm);
 //			$app['zdb']->remove($entity);
@@ -134,10 +97,10 @@ class Page implements ControllerProviderInterface
         }
         $root = new \stdClass();
         $root->id = 0;
-        $root = Utils::buildTree($root, $pages);
+        $root = URL::buildTree($root, $pages);
 
         $result = \Eva\ORMs\Page::data($app['zdb']);
-        $ids = Utils::withChildIds($root, $request->get('id'));
+        $ids = URL::withChildIds($root, $request->get('id'));
         foreach ($ids as $itm) {
             if ($itm != $request->get('id')) {
                 foreach ($result as &$itm2) {
