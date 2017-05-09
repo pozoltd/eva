@@ -17,10 +17,10 @@ class Model extends Pz
     {
         $controllers = $app['controllers_factory'];
         $controllers->match('/', array($this, 'models'));
-        $controllers->match('/{modelType}/', array($this, 'models'));
         $controllers->match('/detail/{modelType}/', array($this, 'model'))->bind('add-model');
         $controllers->match('/detail/{modelType}/{id}/', array($this, 'model'))->bind('edit-model');
         $controllers->match('/sort/', array($this, 'sort'))->bind('sort-models');
+        $controllers->match('/{modelType}/', array($this, 'models'));
         return $controllers;
     }
 
@@ -99,11 +99,10 @@ class Model extends Pz
     public function sort(Application $app, Request $request)
     {
         $data = json_decode($request->get('data'));
-        foreach ($data as $key => $value) {
-            $className = $app['modelClass'];
-            $model = $className::findById($app['zdb'], $value);
+        foreach ($data as $idx => $itm) {
+            $model = \Eva\Db\Model::getById($app['zdb'], $itm);
             if ($model) {
-                $model->__rank = $key;
+                $model->__rank = $idx;
                 $model->save();
             }
         }
