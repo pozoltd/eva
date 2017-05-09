@@ -80,7 +80,10 @@ abstract class ORM
         $pdo = $this->zdb->getConnection();
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
-        return $pdo->lastInsertId();
+        if (!isset($this->id) || !$this->id) {
+            $this->id = $pdo->lastInsertId();
+        }
+        return $this->id;
     }
 
     public static function getByCode(\Zend_Db_Adapter_Abstract $zdb, $track)

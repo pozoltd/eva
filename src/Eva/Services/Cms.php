@@ -23,7 +23,7 @@ class Cms implements ServiceProviderInterface
 
         $pages = new Node('pages', null, 10, 1, 'pages.twig', '/pz/pages/', 'Pages', 'fa fa-sitemap');
         $database = new Node('database', null, 20, 1, null, '#', 'Database', 'fa fa-database');
-        $files = new Node('files', null, 30, 1, 'pages.twig', '/pz/files/', 'Files', 'fa fa-file-image-o');
+        $files = new Node('files', null, 30, 1, 'files.twig', '/pz/files/', 'Files', 'fa fa-file-image-o');
         $admin = new Node('admin', null, 40, 1, null, '#', 'Admin', 'fa fa-cogs');
         $customs = new Node('customs', 'admin', 1000, 1, 'models.twig', '/pz/models/0/', 'Customised models');
         $builtins = new Node('builtins', 'admin', 1100, 1, 'models.twig', '/pz/models/1/', 'Built-in models');
