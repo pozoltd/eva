@@ -127,6 +127,11 @@ abstract class ORM
         ));
     }
 
+    public static function active(\Zend_Db_Adapter_Abstract $zdb, $options = array())
+    {
+        $options['whereSql'] = (isset($options['whereSql']) && !empty($options['whereSql']) ? '(' . $options['whereSql'] . ') AND ' : '') . 'm.__active = 1';
+        return static::data($zdb, $options);
+    }
 
     public static function data(\Zend_Db_Adapter_Abstract $zdb, $options = array())
     {

@@ -3,6 +3,7 @@
 namespace Eva\Controllers;
 
 use Eva\Db\Table;
+use Eva\Route\Nav;
 use Eva\Route\URL;
 use Eva\Tools\ModelIO;
 use Eva\Tools\Utils;
@@ -16,17 +17,29 @@ class File extends Pz
     public function connect(Application $app)
     {
         $controllers = $app['controllers_factory'];
-        $controllers->match('/', array($this, 'files'));
+        $controllers->match('/', array($this, 'route'));
+        $controllers->match('/folders/', array($this, 'folders'))->bind('fetch-folders');
+        $controllers->match('/files/', array($this, 'files'))->bind('fetch-files');
         $controllers->match('/upload/', array($this, 'upload'))->bind('upload-assets');
-        $controllers->match('/{folderId}/', array($this, 'files'));
         return $controllers;
     }
 
-    public function files(Application $app, Request $request, $folderId = null)
+    public function folders(Application $app, Request $request)
     {
-        $options = parent::getOptionsFromUrl();
-        $options['folderId'] = $folderId;
-        return $app['twig']->render($options['page']->twig, $options);
+        $nodes = array();
+        $data = \Eva\ORMs\Asset::data($app['zdb'], array('whereSql' => 'm.isFolder = 1'));
+        foreach ($data as $itm) {
+            $nodes[] = new Node($itm->id, $itm->__parentId, $itm->__rank, 1, $itm->title);
+        }
+        $nav = new Nav($nodes);
+        return $app->json($nav->root());
+    }
+
+    public function files(Application $app, Request $request)
+    {
+        $folderId = $request->get('folder') ?: 0;
+        $data = \Eva\ORMs\Asset::data($app['zdb'], array('whereSql' => 'm.isFolder = 0 AND m.__parentId = ?', 'params' => array($folderId)));
+        return $app->json($data);
     }
 
     public function upload(Application $app, Request $request)

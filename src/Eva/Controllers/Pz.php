@@ -6,9 +6,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Pz extends Route
 {
-    public function route(Application $app, Request $request, $url)
+    public function route(Application $app, Request $request, $url = null)
     {
-        if (!$url) {
+        if (empty($url) && $url !== null) {
             return $this->app->abort(301, '/pz/pages/');
         }
         return parent::route($app, $request, $url);

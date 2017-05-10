@@ -16,7 +16,7 @@ class Node
     public $icon;
     public $children;
 
-    public function __construct($id, $parentId, $rank = null, $visible = 1, $twig = null, $url = null, $title = null, $icon = null, $children = array())
+    public function __construct($id, $parentId, $rank = null, $visible = 1, $title = null, $twig = null, $url = null, $icon = null, $children = array())
     {
         $this->id = $id;
         $this->parentId = $parentId;

@@ -128,7 +128,8 @@
     <script id="file-list-item" type="text/x-handlebars-template">{% include 'handlebars/file-list-item.twig' %}</script>
     <script>
         var _fileListItem = $("#file-list-item").html();
-        var _files = {{ app.db.active('Asset',{whereSql:'m.isFolder=0 AND m.__parentId=?',params:[folderId]})|json_encode|raw }};
+        var _files = [];
+        var _folders = {};
 
         $(function () {
             $('#fileupload').fileupload({
@@ -211,7 +212,25 @@
 //            console.log()
             })
 
-            renderFiles();
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('fetch-folders') }}',
+                success: function (data) {
+                    _folders = data;
+                    console.log(_folders)
+                }
+            });
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('fetch-files') }}',
+                data: 'folder={{ folderId }}',
+                success: function (data) {
+                    _files = data;
+                    renderFiles();
+                }
+            });
+
         });
 
         function renderFiles() {
