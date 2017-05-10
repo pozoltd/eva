@@ -34,12 +34,19 @@ abstract class ORM
             $this->__slug = Utils::slugify($this->title);
         }
 
+        $this->__modified = date('Y-m-d H:i:s');
+
         $fields = $this->getFieldMap();
 //        var_dump('<pre>', $fields, '</pre>');exit;
 
         $sql = '';
         $params = array();
         if (!isset($this->id) || !$this->id) {
+            $this->__added = date('Y-m-d H:i:s');
+            if (!isset($this->__active)) {
+                $this->__active = 1;
+            }
+
             $sql = "INSERT INTO `{$this->getTable()}` ";
             $part1 = '(';
             $part2 = ' VALUES (';
@@ -60,7 +67,6 @@ abstract class ORM
             $part1 = rtrim($part1, ', ') . ')';
             $part2 = rtrim($part2, ', ') . ')';
             $sql = $sql . $part1 . $part2;
-
 //            var_dump('<pre>', $sql, $params, '</pre>');exit;
         } else {
             $sql = "UPDATE `{$this->getTable()}` SET ";

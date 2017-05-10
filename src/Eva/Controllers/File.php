@@ -36,32 +36,31 @@ class File extends Pz
             $originalName = $files[0]->getClientOriginalName();
             $ext = pathinfo($originalName, PATHINFO_EXTENSION);
 
-            $newFile = new \Eva\ORMs\Asset($app['zdb']);
-            $newFile->isFolder = 0;
-            $newFile->__parentId = $request->request->get('parentId');
-            $newFile->title = $originalName;
-            $newFile->description = '';
-            $newFile->fileName = $originalName;
-            $newFile->save();
+            $orm = new \Eva\ORMs\Asset($app['zdb']);
+            $orm->isFolder = 0;
+            $orm->__parentId = $request->request->get('parentId');
+            $orm->title = $originalName;
+            $orm->description = '';
+            $orm->fileName = $originalName;
+            $orm->save();
 
             require_once CMS . '/vendor/blueimp/jquery-file-upload/server/php/UploadHandler.php';
             $uploader = new \UploadHandler(array(
                 'upload_dir' => dirname($_SERVER['SCRIPT_FILENAME']) . '/../uploads/',
                 'image_versions' => array()
             ), false);
-            $_SERVER['HTTP_CONTENT_DISPOSITION'] = $newFile->id;
+            $_SERVER['HTTP_CONTENT_DISPOSITION'] = $orm->id;
             $result = $uploader->post(false);
 
-            $newFile->fileLocation = $newFile->id . '.' . $ext;
-            $newFile->fileType = $result['files'][0]->type;
-            $newFile->fileSize = $result['files'][0]->size;
-            $newFile->save();
+            $orm->fileLocation = $orm->id . '.' . $ext;
+            $orm->fileType = $result['files'][0]->type;
+            $orm->fileSize = $result['files'][0]->size;
+            $orm->save();
 
             if (file_exists(dirname($_SERVER['SCRIPT_FILENAME']) . '/../uploads/' . $result['files'][0]->name)) {
-                rename(dirname($_SERVER['SCRIPT_FILENAME']) . '/../uploads/' . $result['files'][0]->name, dirname($_SERVER['SCRIPT_FILENAME']) . '/../uploads/' . $newFile->id . '.' . $ext);
+                rename(dirname($_SERVER['SCRIPT_FILENAME']) . '/../uploads/' . $result['files'][0]->name, dirname($_SERVER['SCRIPT_FILENAME']) . '/../uploads/' . $orm->id . '.' . $ext);
             }
-
-            return new Response(json_encode($newFile));
+            return new Response(json_encode($orm));
         }
         return new Response(json_encode(array(
             'failed'
