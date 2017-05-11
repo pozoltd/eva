@@ -4,6 +4,7 @@ namespace Eva\Controllers;
 
 use Eva\Db\Table;
 use Eva\Route\Nav;
+use Eva\Route\Node;
 use Eva\Route\URL;
 use Eva\Tools\ModelIO;
 use Eva\Tools\Utils;
@@ -21,6 +22,11 @@ class File extends Pz
         $controllers->match('/folders/', array($this, 'folders'))->bind('fetch-folders');
         $controllers->match('/files/', array($this, 'files'))->bind('fetch-files');
         $controllers->match('/upload/', array($this, 'upload'))->bind('upload-assets');
+
+        $controllers->match('/manage-folder/', array($this, 'manageFolder'))->bind('manage-folder');
+        $controllers->match('/delete-folder/', array($this, 'deleteFolder'))->bind('delete-folder');
+        $controllers->match('/update-folders/', array($this, 'updateFolders'))->bind('update-folders');
+
         return $controllers;
     }
 
@@ -32,7 +38,7 @@ class File extends Pz
             $nodes[] = new Node($itm->id, $itm->__parentId, $itm->__rank, 1, $itm->title);
         }
         $nav = new Nav($nodes);
-        return $app->json($nav->root());
+        return $app->json($nav->root(0, null, 'Home'));
     }
 
     public function files(Application $app, Request $request)
@@ -51,7 +57,7 @@ class File extends Pz
 
             $orm = new \Eva\ORMs\Asset($app['zdb']);
             $orm->isFolder = 0;
-            $orm->__parentId = $request->request->get('parentId');
+            $orm->__parentId = $request->get('parentId');
             $orm->title = $originalName;
             $orm->description = '';
             $orm->fileName = $originalName;
@@ -80,4 +86,33 @@ class File extends Pz
         )));
     }
 
+    public function manageFolder(Application $app, Request $request)
+    {
+        $orm = new \Eva\ORMs\Asset($app['zdb']);
+        if ($request->get('id')) {
+            $orm = \Eva\ORMs\Asset::getById($app['zdb'], $request->get('id'));
+        }
+
+        $fields = array_keys($orm->getFieldMap());
+        foreach ($fields as $itm) {
+            if ($request->get($itm)) {
+                $orm->$itm = $request->get($itm);
+            }
+        }
+        $orm->isFolder = 1;
+        $orm->save();
+        return new Response('OK');
+    }
+
+    public function updateFolders(Application $app, Request $request)
+    {
+        $data = json_decode($request->get('data'));
+        foreach ($data as $itm) {
+            $orm = \Eva\ORMs\Asset::getById($app['zdb'], $itm->id);
+            $orm->__parentId = $itm->__parentId;
+            $orm->__rank = $itm->__rank;
+            $orm->save();
+        }
+        return new Response('OK');
+    }
 }

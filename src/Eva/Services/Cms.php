@@ -21,10 +21,10 @@ class Cms implements ServiceProviderInterface
     {
         $this->app = $app;
 
-        $pages = new Node('pages', null, 10, 1, 'Pages', 'pages.twig', '/pz/pages/', 'fa fa-sitemap');
-        $database = new Node('database', null, 20, 1, 'Database', null, '#', 'fa fa-database');
-        $files = new Node('files', null, 30, 1, 'Files', 'files.twig', '/pz/files/', 'fa fa-file-image-o');
-        $admin = new Node('admin', null, 40, 1, 'Admin', null, '#', 'fa fa-cogs');
+        $pages = new Node('pages', -1, 10, 1, 'Pages', 'pages.twig', '/pz/pages/', 'fa fa-sitemap');
+        $database = new Node('database', -1, 20, 1, 'Database', null, '#', 'fa fa-database');
+        $files = new Node('files', -1, 30, 1, 'Files', 'files.twig', '/pz/files/', 'fa fa-file-image-o');
+        $admin = new Node('admin', -1, 40, 1, 'Admin', null, '#', 'fa fa-cogs');
         $customs = new Node('customs', 'admin', 1000, 1, 'Customised models', 'models.twig', '/pz/models/0/');
         $builtins = new Node('builtins', 'admin', 1100, 1, 'Built-in models', 'models.twig', '/pz/models/1/');
 

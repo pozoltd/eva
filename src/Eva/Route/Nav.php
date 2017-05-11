@@ -17,8 +17,8 @@ class Nav
     }
 
     public function root() {
-        $node = new Node(null, null);
-        return $this->_root($node, $this->nodes);
+        $node = new Node(-1, -2);
+        return $this->_root($node);
     }
 
     private function _root($node)
@@ -28,7 +28,7 @@ class Nav
         }
         foreach ($this->nodes as $itm) {
             if ($itm->parentId == $node->id) {
-                $node->children[] = $this->_root($itm, $this->nodes);
+                $node->children[] = $this->_root($itm);
             }
         }
         return $node;

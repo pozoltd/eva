@@ -10,9 +10,9 @@ class Node
     public $parentId;
     public $rank;
     public $visible;
+    public $title;
     public $twig;
     public $url;
-    public $title;
     public $icon;
     public $children;
 
@@ -22,9 +22,9 @@ class Node
         $this->parentId = $parentId;
         $this->rank = $rank;
         $this->visible = $visible;
+        $this->title = $title;
         $this->twig = $twig;
         $this->url = $url;
-        $this->title = $title;
         $this->icon = $icon;
         $this->children = $children;
     }

@@ -1,0 +1,8 @@
+{% verbatim %}
+    <li id="js-folder-{{ folder.id }}" class="{{#compare 1 hasChildren operator="=="}}jstree-open{{/compare}}">
+        {{ folder.title }}
+        {{#compare 1 hasChildren operator="=="}}
+            <ul id="js-children-{{ folder.id }}"></ul>
+        {{/compare}}
+    </li>
+{% endverbatim %}

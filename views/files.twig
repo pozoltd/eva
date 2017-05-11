@@ -1,6 +1,6 @@
 {% extends 'layout.twig' %}
 
-{% set folderId = app.request.get('folder') ?: 0 %}
+{% set folderId = app.request.get('folder') ?: -1 %}
 
 {% block extraHead %}
     <link href="{{ constant('CDN') }}/inspinia/css/plugins/jsTree/style.min.css" rel="stylesheet">
@@ -45,24 +45,9 @@
                             </div>
                             <button class="btn btn-primary btn-block" onclick="$('#fileupload').click();">Upload Files</button>
                             <div class="hr-line-dashed"></div>
-                            <h5>Folders</h5>
+                            <h5 id="js-folder--1"><a class="jstree-anchor" href="#">Home</a></h5>
                             <div id="jstree1">
-                                <ul>
-                                    <li class="jstree-open">Home
-                                        <ul>
-                                            <li data-tgt="tgt1">css</li>
-                                            <li data-tgt="tgt2">email-templates</li>
-                                            <li data-tgt="tgt3" class="jstree-open highlight">fonts
-                                                <ul>
-                                                    <li data-tgt="tgt4">glyphicons-halflings-regular.eot</li>
-                                                    <li data-tgt="tgt5">glyphicons-halflings-regular.svg</li>
-                                                    <li data-tgt="tgt6">glyphicons-halflings-regular.ttf</li>
-                                                    <li data-tgt="tgt7">glyphicons-halflings-regular.woff</li>
-                                                </ul>
-                                            </li>
-
-                                        </ul>
-                                    </li>
+                                <ul id="js-folders">
                                 </ul>
                             </div>
                             <div class="clearfix"></div>
@@ -90,16 +75,22 @@
                                     </ol>
                                 </div>
 
-                                <div class="ibox-tools" d>
-                                    <button class="btn btn-xs btn-circle btn-warning">
-                                        <i class="fa fa-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-xs btn-circle btn-primary">
+                                <div class="ibox-tools">
+                                    {% if folderId %}
+                                        <button class="btn btn-xs btn-circle btn-warning" data-toggle="modal" data-target="#js-edit-dialog">
+                                            <i class="fa fa-pencil"></i>
+                                        </button>
+                                    {% endif %}
+
+                                    <button class="btn btn-xs btn-circle btn-primary" data-toggle="modal" data-target="#js-add-dialog">
                                         <i class="fa fa-plus"></i>
                                     </button>
-                                    <button class="btn btn-xs btn-circle btn-danger">
-                                        <i class="fa fa-times"></i>
-                                    </button>
+
+                                    {% if folderId %}
+                                        <button class="btn btn-xs btn-circle btn-danger">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    {% endif %}
                                 </div>
 
                             </div>
@@ -113,23 +104,64 @@
             </div>
         </div>
     </div>
+
+    <div id="js-add-dialog" class="modal inmodal fade in" aria-hidden="true" role="dialog" tabindex="-1" >
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content animated flipInY">
+                <form method="POST" autocomplete="off" novalidate>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Folder name:</label>
+                            <input type="text" name="name" placeholder="Enter a new name" class="form-control js-add-name">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm pull-right m-t-n-xs" data-dismiss="modal"><strong>Close</strong></button>
+                        <button type="submit" class="btn btn-sm btn-primary pull-right m-t-n-xs js-add"><strong>Add</strong></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="js-edit-dialog" class="modal inmodal fade in" aria-hidden="true" role="dialog" tabindex="-1" >
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content animated flipInY">
+                <form method="POST" autocomplete="off" novalidate>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Folder name:</label>
+                            <input type="text" name="name" placeholder="" class="form-control js-edit-name">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm pull-right m-t-n-xs" data-dismiss="modal"><strong>Close</strong></button>
+                        <button type="submit" class="btn btn-sm btn-primary pull-right m-t-n-xs js-edit"><strong>Update</strong></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 
 {% block extraFooter %}
-    <script src="{{ constant('CDN') }}/inspinia/js/plugins/jsTree/jstree.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.7/jquery.iframe-transport.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.7/jquery.fileupload.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/3.0.4/jquery.imagesloaded.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.14.0/jquery.validate.min.js"></script>
-
+    <script src="{{ constant('CDN') }}/inspinia/js/plugins/jsTree/jstree.min.js"></script>
+    <script src="{{ constant('CDN') }}/inspinia/js/plugins/validate/jquery.validate.min.js"></script>
 
     <script id="file-list-item" type="text/x-handlebars-template">{% include 'handlebars/file-list-item.twig' %}</script>
+    <script id="folder-item" type="text/x-handlebars-template">{% include 'handlebars/folder-item.twig' %}</script>
     <script>
         var _fileListItem = $("#file-list-item").html();
+        var _fileListItemTemplate = Handlebars.compile(_fileListItem);
+        var _folderItem = $("#folder-item").html();
+        var _folderItemTemplate = Handlebars.compile(_folderItem);
+
         var _files = [];
         var _folders = {};
+        var _folder = '{{ folderId }}';
 
         $(function () {
             $('#fileupload').fileupload({
@@ -137,7 +169,7 @@
                 dataType: 'json',
                 sequentialUploads: true,
                 formData: {
-                    parentId: '{{ folderId }}',
+                    parentId: _folder,
                 },
                 add: function(e, data) {
                     var uploadErrors = [];
@@ -167,10 +199,94 @@
                 }
             }).prop('disabled', !$.support.fileInput).parent().addClass($.support.fileInput ? undefined : 'disabled');
 
-
-            $('#nestable2').sortable({
-                cursorAt: {left: -30, top: -30}
+            $("#js-add-dialog form").validate({
+                rules: {
+                    name: "required",
+                },
             });
+            $(document).on('click', '.js-add', function () {
+                if ($("#js-add-dialog form").valid()) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{ path('manage-folder') }}',
+                        data: {
+                            title: $('.js-add-name').val(),
+                            __parentId: _folder,
+                        },
+                        success: function (data) {
+                            $('#js-add-dialog').modal('toggle');
+                        }
+                    });
+                }
+                return false;
+            });
+
+            $(document).on('click', '.jstree-anchor', function () {
+                _folder = $(this).parent().attr('id').replace('js-folder-', '');
+                history.pushState(null, null, '/pz/files/?folder=' + _folder);
+                getFiles();
+                if (_folder == -1) {
+                    $(this).parent().addClass('bg-info p-xs b-r-sm');
+                    $(this).parent().css('width', '100px')
+                    $('.jstree-anchor').removeClass('jstree-clicked');
+                } else {
+                    $(this).parent().removeClass('btn btn-xs btn-info');
+                    $('.jstree-anchor').parent().removeClass('bg-info');
+                    $('.jstree-anchor').parent().removeClass('p-xs');
+                    $('.jstree-anchor').parent().removeClass('b-r-sm');
+                }
+                return false;
+            });
+
+
+
+//            window._src = null;
+//            $('body').mousedown(function(ev) {
+//                window._src = $(ev.target).data('src');
+//                if (!window._src) {
+//                    window._src = $(ev.target).closest('.file-box').data('src');
+//                }
+//                console.log(window._src)
+//            });
+//            $('body').mouseup(function(ev) {
+//                var tgt = $(ev.target).closest('li').data('tgt')
+////            console.log(window._src, tgt)
+////                if (window._src && tgt) {
+////                    for (var idx in files) {
+////                        var itm = files[idx];
+////                        if (itm.id == window._src) {
+////                            files.splice(idx, 1)
+////                        }
+////                    }
+//////                console.log(files)
+//////                    renderFiles();
+////                }
+//                window._src = null;
+////            console.log()
+//            });
+
+            getFiles();
+            getFolders();
+        });
+
+        //
+        function getFolders() {
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('fetch-folders') }}',
+                success: function (data) {
+                    _folders = data;
+                    renderFolders()
+                }
+            });
+        };
+        //
+        function renderFolders() {
+            $('#js-folders').empty();
+            for (var idx in _folders.children) {
+                var itm = _folders.children[idx];
+                _renderFolders(itm, $('#js-folders'));
+            }
 
             $('#jstree1').jstree({
                 'core': {
@@ -185,63 +301,64 @@
                 }
             });
 
-            window._src = null;
-            $('body').mousedown(function(ev) {
-                window._src = $(ev.target).data('src');
-                if (!window._src) {
-                    window._src = $(ev.target).closest('.file-box').data('src');
+            $('#jstree1').bind("move_node.jstree", function (e, data) {
+                var nodes = $('#jstree1').jstree().get_json($('#jstree1'), {
+                    flat: true
+                });
+                var data = [];
+                for (var idx in nodes) {
+                    var itm = nodes[idx];
+                    data.push({
+                        id: itm.id.replace('js-folder-', ''),
+                        __parentId: itm.parent == '#' ? -1 : itm.parent.replace('js-folder-', ''),
+                        __rank: idx,
+                    });
                 }
-
-                    console.log(window._src)
-            })
-
-            $('body').mouseup(function(ev) {
-                var tgt = $(ev.target).closest('li').data('tgt')
-//            console.log(window._src, tgt)
-//                if (window._src && tgt) {
-//                    for (var idx in files) {
-//                        var itm = files[idx];
-//                        if (itm.id == window._src) {
-//                            files.splice(idx, 1)
-//                        }
-//                    }
-////                console.log(files)
-////                    renderFiles();
-//                }
-                window._src = null;
-//            console.log()
-            })
-
-            $.ajax({
-                type: 'POST',
-                url: '{{ path('fetch-folders') }}',
-                success: function (data) {
-                    _folders = data;
-                    console.log(_folders)
-                }
+                $.ajax({
+                    type: 'GET',
+                    url: '{{ path('update-folders') }}',
+                    data: 'data=' + encodeURIComponent(JSON.stringify(data)),
+                    success: function (data) {
+                    }
+                });
             });
 
+            $('#js-folder-' + _folder + ' > a').addClass('jstree-clicked');
+        };
+        //
+        function _renderFolders(node, elem) {
+            elem.append(_folderItemTemplate({
+                folder: node,
+                hasChildren: node.children.length ? 1 : 0
+            }))
+            for (var idx in node.children) {
+                var itm = node.children[idx];
+                _renderFolders(itm, $('#js-children-' + node.id));
+            }
+        };
+        //
+        function getFiles() {
             $.ajax({
                 type: 'POST',
                 url: '{{ path('fetch-files') }}',
-                data: 'folder={{ folderId }}',
+                data: 'folder=' + _folder,
                 success: function (data) {
                     _files = data;
                     renderFiles();
                 }
             });
-
-        });
-
+        };
+        //
         function renderFiles() {
-            var template = Handlebars.compile(_fileListItem);
-
             $('#nestable2').empty();
             for (var idx in _files) {
                 var itm = _files[idx];
-                $('#nestable2').append(template(itm))
+                $('#nestable2').append(_fileListItemTemplate(itm))
             }
-        }
+            $('#nestable2').sortable({
+                cursorAt: {left: -30, top: -30}
+            });
+        };
     </script>
 
 
