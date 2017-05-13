@@ -2,28 +2,23 @@
 
 namespace Eva\Controllers;
 
-use Eva\Db\Table;
 use Eva\Route\Nav;
 use Eva\Route\Node;
-use Eva\Route\URL;
-use Eva\Tools\ModelIO;
-use Eva\Tools\Utils;
 use PrettyDateTime\PrettyDateTime;
 use Silex\Application;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
-class File extends Pz
+class File extends FileView
 {
     public function connect(Application $app)
     {
-        $controllers = $app['controllers_factory'];
+        $controllers = parent::connect($app);
         $controllers->match('/', array($this, 'route'));
         $controllers->match('/folders/', array($this, 'folders'));
         $controllers->match('/files/', array($this, 'files'));
         $controllers->match('/upload/', array($this, 'upload'));
-
         $controllers->match('/move-file/', array($this, 'moveFile'));
         $controllers->match('/add-folder/', array($this, 'addFolder'));
         $controllers->match('/edit-folder/', array($this, 'editFolder'));
@@ -35,7 +30,7 @@ class File extends Pz
 
     public function folders(Application $app, Request $request)
     {
-        $folderOpenMaxLimit = 5;
+        $folderOpenMaxLimit = 10;
         $currentFolderId = $request->get('currentFolderId');
 
         $childrenCount = array();
@@ -88,7 +83,18 @@ class File extends Pz
         $root = $nav->root($root);
         $path = $root->path($currentFolderId);
 
-        $data = \Eva\ORMs\Asset::data($app['zdb'], array('whereSql' => 'm.isFolder = 0 AND m.__parentId = ? AND m.title LIKE ?', 'params' => array($currentFolderId, "%$keyword%")));
+        if ($keyword) {
+            $data = \Eva\ORMs\Asset::data($app['zdb'], array(
+                'whereSql' => 'm.isFolder = 0 AND m.title LIKE ?',
+                'params' => array("%$keyword%"),
+            ));
+        } else {
+            $data = \Eva\ORMs\Asset::data($app['zdb'], array(
+                'whereSql' => 'm.isFolder = 0 AND m.__parentId = ?',
+                'params' => array($currentFolderId),
+            ));
+        }
+
         foreach ($data as &$itm) {
             $itm->__added = PrettyDateTime::parse(new \DateTime($itm->__added));
         }

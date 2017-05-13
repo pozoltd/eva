@@ -1,10 +1,11 @@
 {% verbatim %}
     <div class="file-box" data-id="{{id}}">
+        <button class="pz-file-delete btn btn-danger btn-circle js-file-delete"><i class="fa fa-times"></i></button>
         <div class="file ui-state-default">
-            <a href="#">
+            <a href="/pz/files/download/{{id}}/">
                 <span class="corner"></span>
                 <div class="icon">
-                    <i class="fa fa-file"></i>
+                    <img src="/pz/files/image/{{id}}/cms_file_preview/" />
                 </div>
                 <div class="file-name">
                     {{title}}
