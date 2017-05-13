@@ -16,8 +16,9 @@ class Nav
         });
     }
 
-    public function root() {
-        $node = new Node(-1, -2);
+    public function root($root = null)
+    {
+        $node = $root ?: new Node(-1, -2);
         return $this->_root($node);
     }
 
@@ -34,7 +35,8 @@ class Nav
         return $node;
     }
 
-    public function getNodeByField($field, $value) {
+    public function getNodeByField($field, $value)
+    {
         foreach ($this->nodes as $itm) {
             if ($itm->$field == $value) {
                 return $itm;

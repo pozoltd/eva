@@ -29,7 +29,8 @@ class Node
         $this->children = $children;
     }
 
-    public function hasChildren() {
+    public function hasChildren()
+    {
         $count = 0;
         foreach ($this->children as $itm) {
             if ($itm->visible) {
@@ -39,7 +40,8 @@ class Node
         return $count;
     }
 
-    public function contains($needle) {
+    public function contains($needle)
+    {
 //        while (@ob_end_clean());
 //        Utils::dump($needle);exit;
         if (!$needle) {
@@ -48,7 +50,8 @@ class Node
         return static::_contains($this, $needle);
     }
 
-    private static function _contains($node, $needle) {
+    private static function _contains($node, $needle)
+    {
         if ($node->id == $needle->id) {
             return 1;
         }
@@ -61,4 +64,26 @@ class Node
         return 0;
     }
 
+    public function path($needleId)
+    {
+        return static::_path($this, $needleId);
+    }
+
+    private static function _path($node, $needleId)
+    {
+        $n = clone $node;
+        unset($n->children);
+        $result = array($n);
+
+        if ($node->id == $needleId) {
+            return $result;
+        }
+        foreach ($node->children as $itm) {
+            $r = static::_path($itm, $needleId);
+            if ($r !== false) {
+                return array_merge($result, $r);
+            }
+        }
+        return false;
+    }
 }

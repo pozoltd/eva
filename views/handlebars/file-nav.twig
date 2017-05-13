@@ -1,0 +1,98 @@
+{% verbatim %}
+    <div class="pz-nav">
+        {{#compare '' keyword operator="=="}}
+            <ol class="breadcrumb">
+                {{#each path}}
+                    {{#compare id ../currentFolder.id operator="!="}}
+                        <li>
+                            <a href="{{url}}">{{title}}</a>
+                        </li>
+                    {{/compare}}
+                    {{#compare id ../currentFolder.id operator="=="}}
+                        <li class="active">
+                            <strong>{{title}}</strong>
+                        </li>
+                    {{/compare}}
+                {{/each}}
+            </ol>
+        {{/compare}}
+
+        {{#compare '' keyword operator="!="}}
+            {{length files}} results found
+        {{/compare}}
+    </div>
+
+    <div class="ibox-tools pz-tools">
+        {{#compare '' keyword operator="=="}}
+            <button class="btn btn-xs btn-circle btn-primary btn-outline" onclick="$('#fileupload').click();">
+                <i class="fa fa-upload"></i>
+            </button>
+        {{/compare}}
+
+        {{#compare '' keyword operator="=="}}
+            {{#ifMoreThan1 path}}
+                <button class="btn btn-xs btn-circle btn-warning" data-toggle="modal" data-target="#js-edit-dialog">
+                    <i class="fa fa-pencil"></i>
+                </button>
+            {{/ifMoreThan1}}
+        {{/compare}}
+
+        {{#compare '' keyword operator="=="}}
+            <button class="btn btn-xs btn-circle btn-info" data-toggle="modal" data-target="#js-add-dialog">
+                <i class="fa fa-plus"></i>
+            </button>
+        {{/compare}}
+
+        {{#compare '' keyword operator="=="}}
+            {{#ifMoreThan1 path}}
+                <button class="btn btn-xs btn-circle btn-danger js-folder-delete" data-id="{{currentFolder.id}}" data-parent="{{currentFolder.parentId}}">
+                    <i class="fa fa-times"></i>
+                </button>
+            {{/ifMoreThan1}}
+        {{/compare}}
+    </div>
+
+    <div id="js-add-dialog" class="modal inmodal fade in" aria-hidden="true" role="dialog" tabindex="-1" >
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content animated flipInUp">
+                <form method="POST" autocomplete="off" novalidate>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Add a new folder:</label>
+                            <input type="text" name="name" placeholder="Enter a new name" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm pull-right m-t-n-xs" data-dismiss="modal"><strong>Close</strong></button>
+                        <button type="submit" class="btn btn-sm btn-primary pull-right m-t-n-xs"><strong>Add</strong></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="js-edit-dialog" class="modal inmodal fade in" aria-hidden="true" role="dialog" tabindex="-1" >
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content animated flipInUp">
+                <form method="POST" autocomplete="off" novalidate>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Change name:</label>
+                            <input type="text" name="name" value="{{currentFolder.title}}" placeholder="" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm pull-right m-t-n-xs" data-dismiss="modal"><strong>Close</strong></button>
+                        <button type="submit" class="btn btn-sm btn-primary pull-right m-t-n-xs"><strong>Update</strong></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <input id="fileupload" type="file" name="files[]" multiple style="display: none;">
+    <div class="progress progress-striped" style="display: none;">
+        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+    </div>
+{% endverbatim %}
+
