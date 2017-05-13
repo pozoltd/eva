@@ -2,6 +2,8 @@
 namespace Eva\Controllers;
 
 use Eva\Db\Model;
+use Eva\Route\Nav;
+use Eva\Route\Node;
 use Eva\Route\URL;
 use Eva\Tools\Utils;
 use Silex\Application;
@@ -28,6 +30,24 @@ class Page extends Pz
         $categories = \Eva\ORMs\PageCategory::data($this->app['zdb']);
         $options = parent::getOptionsFromUrl('pz/pages/');
         $options['cat'] = $this->app['request']->get('cat') ?: (count($categories) > 0 ? $categories[0]->id : -1);
+
+        $nodes = array();
+        $result = \Eva\ORMs\Page::data($app['zdb']);
+        foreach ($result as $itm) {
+            $itm->categoryRank = ((empty($itm->categoryRank) || !$itm->categoryRank)) ? array() : (array)json_decode($itm->categoryRank);
+            $itm->categoryParent = ((empty($itm->categoryParent) || !$itm->categoryParent)) ? array() : (array)json_decode($itm->categoryParent);
+            $itm->category = ((empty($itm->category) || !$itm->category)) ? array() : (array)json_decode($itm->category);
+
+            $itm->rank = isset($itm->categoryRank['cat' . $options['cat']]) ? $itm->categoryRank['cat' . $options['cat']] : 0;
+            $itm->parentId = isset($itm->categoryParent['cat' . $options['cat']]) ? $itm->categoryParent['cat' . $options['cat']] : -1;
+            if ($options['cat'] == -1 && count($itm->category) == 0 || in_array($options['cat'], $itm->category)) {
+                $node = new Node($itm->id, $itm->parentId, $itm->rank, $itm->__active, $itm->title, $itm->template, $itm->url);
+                $node->__modelClass = $itm->__modelClass;
+                $nodes[] = $node;
+            }
+        }
+        $nav = new Nav($nodes);
+        $options['root'] = $nav->root();
         return $app['twig']->render($options['page']->twig, $options);
     }
 
@@ -80,82 +100,74 @@ class Page extends Pz
 
     public function change(Application $app, Request $request)
     {
+        $categories = \Eva\ORMs\PageCategory::data($this->app['zdb']);
+        $options = parent::getOptionsFromUrl('pz/pages/');
+        $options['cat'] = $this->app['request']->get('cat') ?: (count($categories) > 0 ? $categories[0]->id : -1);
+
+        $nodes = array();
         $result = \Eva\ORMs\Page::data($app['zdb']);
-        $pages = array();
         foreach ($result as $itm) {
             $itm->categoryRank = ((empty($itm->categoryRank) || !$itm->categoryRank)) ? array() : (array)json_decode($itm->categoryRank);
             $itm->categoryParent = ((empty($itm->categoryParent) || !$itm->categoryParent)) ? array() : (array)json_decode($itm->categoryParent);
             $itm->category = ((empty($itm->category) || !$itm->category)) ? array() : (array)json_decode($itm->category);
 
-            $itm->rank = isset($itm->categoryRank['cat' . $request->get('oldCat')]) ? $itm->categoryRank['cat' . $request->get('oldCat')] : 0;
-            $itm->parentId = isset($itm->categoryParent['cat' . $request->get('oldCat')]) ? $itm->categoryParent['cat' . $request->get('oldCat')] : 0;
-            if ($request->get('oldCat') == -1 && count($itm->category) == 0) {
-                $pages[] = $itm;
-            } else if (in_array($request->get('oldCat'), $itm->category)) {
-                $pages[] = $itm;
+            $itm->rank = isset($itm->categoryRank['cat' . $options['cat']]) ? $itm->categoryRank['cat' . $options['cat']] : 0;
+            $itm->parentId = isset($itm->categoryParent['cat' . $options['cat']]) ? $itm->categoryParent['cat' . $options['cat']] : -1;
+            if ($request->get('oldCat') == -1 && count($itm->category) == 0 || in_array($request->get('oldCat'), $itm->category)) {
+                $nodes[] = $itm;
             }
         }
-        $root = new \stdClass();
-        $root->id = 0;
-        $root = URL::buildTree($root, $pages);
+        $nav = new Nav($nodes);
+        $root = $nav->root();
 
-        $result = \Eva\ORMs\Page::data($app['zdb']);
-        $ids = URL::withChildIds($root, $request->get('id'));
-        foreach ($ids as $itm) {
-            if ($itm != $request->get('id')) {
-                foreach ($result as &$itm2) {
-                    $itm2->categoryRank = ((empty($itm2->categoryRank) || !$itm2->categoryRank)) ? array() : (array)json_decode($itm2->categoryRank);
-                    $itm2->categoryParent = ((empty($itm2->categoryParent) || !$itm2->categoryParent)) ? array() : (array)json_decode($itm2->categoryParent);
-                    $itm2->category = (empty($itm2->category) || !$itm2->category) ? array() : json_decode($itm2->category);
+        $descendants = $root->descendants($request->get('id'));
+        foreach ($descendants as $itm) {
+            if ($itm->id != $request->get('id')) {
+                $itm->categoryRank['cat' . $request->get('newCat')] = $itm->categoryRank['cat' . $request->get('oldCat')];
+                $itm->categoryParent['cat' . $request->get('newCat')] = $itm->categoryParent['cat' . $request->get('oldCat')];
 
-                    if ($itm2->id == $itm) {
-                        $itm2->categoryRank['cat' . $request->get('newCat')] = $itm2->categoryRank['cat' . $request->get('oldCat')];
-                        $itm2->categoryParent['cat' . $request->get('newCat')] = $itm2->categoryParent['cat' . $request->get('oldCat')];
-
-                        $categories = array();
-                        foreach ($itm2->category as $itm3) {
-                            if ($request->get('oldCat') != $itm3) {
-                                $categories[] = $itm3;
-                            }
-                        }
-                        $itm2->category = $categories;
-                        if (!in_array($request->get('newCat'), $itm2->category)) {
-                            $itm2->category[] = $request->get('newCat');
-                        }
+                $categories = array();
+                foreach ($itm->category as $cat) {
+                    if ($request->get('oldCat') != $cat) {
+                        $categories[] = $cat;
                     }
-
-                    $itm2->categoryRank = json_encode($itm2->categoryRank);
-                    $itm2->categoryParent = json_encode($itm2->categoryParent);
-                    $itm2->category = json_encode($itm2->category);
-                    $itm2->save();
                 }
+                $itm->category = $categories;
+                if (!in_array($request->get('newCat'), $itm->category)) {
+                    $itm->category[] = $request->get('newCat');
+                }
+
+                $itm->categoryRank = json_encode($itm->categoryRank);
+                $itm->categoryParent = json_encode($itm->categoryParent);
+                $itm->category = json_encode($itm->category);
+                $itm->save();
             }
         }
 
-        $result = \Eva\ORMs\Page::getById($app['zdb'], $request->get('id'));
-        if ($result) {
-            $result->category = (empty($result->category) || !$result->category) ? array() : json_decode($result->category);
+        $orm = \Eva\ORMs\Page::getById($app['zdb'], $request->get('id'));
+        if ($orm) {
+            $orm->categoryRank = ((empty($orm->categoryRank) || !$orm->categoryRank)) ? array() : (array)json_decode($orm->categoryRank);
+            $orm->categoryParent = ((empty($orm->categoryParent) || !$orm->categoryParent)) ? array() : (array)json_decode($orm->categoryParent);
+            $orm->category = (empty($orm->category) || !$orm->category) ? array() : json_decode($orm->category);
+
             $categories = array();
-            foreach ($result->category as $itm) {
-                if ($request->get('oldCat') != $itm) {
-                    $categories[] = $itm;
+            foreach ($orm->category as $cat) {
+                if ($request->get('oldCat') != $cat) {
+                    $categories[] = $cat;
                 }
             }
-            $result->category = $categories;
-            if (!in_array($request->get('newCat'), $result->category)) {
-                $result->category[] = $request->get('newCat');
+            $orm->category = $categories;
+            if (!in_array($request->get('newCat'), $orm->category)) {
+                $orm->category[] = $request->get('newCat');
             }
 
-            $result->categoryRank = ((empty($result->categoryRank) || !$result->categoryRank)) ? array() : (array)json_decode($result->categoryRank);
-            $result->categoryParent = ((empty($result->categoryParent) || !$result->categoryParent)) ? array() : (array)json_decode($result->categoryParent);
+            $orm->categoryRank['cat' . $request->get('newCat')] = 0;
+            $orm->categoryParent['cat' . $request->get('newCat')] = -1;
 
-            $result->categoryRank['cat' . $request->get('newCat')] = 0;
-            $result->categoryParent['cat' . $request->get('newCat')] = 0;
-
-            $result->categoryRank = json_encode($result->categoryRank);
-            $result->categoryParent = json_encode($result->categoryParent);
-            $result->category = json_encode($result->category);
-            $result->save();
+            $orm->categoryRank = json_encode($orm->categoryRank);
+            $orm->categoryParent = json_encode($orm->categoryParent);
+            $orm->category = json_encode($orm->category);
+            $orm->save();
         }
 
         return new Response('OK');
@@ -164,8 +176,7 @@ class Page extends Pz
 
     public function sort(Application $app, Request $request)
     {
-        $pageClass = $app['pageClass'];
-        $result = $pageClass::data($app['zdb']);
+        $result = \Eva\ORMs\Page::data($app['zdb']);
         $data = json_decode($request->get('data'));
         foreach ($result as &$itm) {
             $itm->categoryRank = ((empty($itm->categoryRank) || !$itm->categoryRank)) ? array() : (array)json_decode($itm->categoryRank);
@@ -175,7 +186,7 @@ class Page extends Pz
                 $itm2 = (object)$itm2;
                 if ($itm->id == $itm2->id) {
                     $itm->categoryRank['cat' . $request->get('cat')] = $itm2->rank;
-                    $itm->categoryParent['cat' . $request->get('cat')] = $itm2->parentId;
+                    $itm->categoryParent['cat' . $request->get('cat')] = $itm2->parentId ?: -1;
                 }
             }
             $itm->categoryRank = json_encode($itm->categoryRank);

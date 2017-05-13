@@ -42,8 +42,6 @@ class Node
 
     public function contains($needle)
     {
-//        while (@ob_end_clean());
-//        Utils::dump($needle);exit;
         if (!$needle) {
             return 0;
         }
@@ -85,5 +83,28 @@ class Node
             }
         }
         return false;
+    }
+
+    public function descendants($needleId)
+    {
+        return static::_descendants($this, $needleId, 0);
+    }
+
+    private static function _descendants($node, $needleId, $added)
+    {
+        $n = clone $node;
+        unset($n->children);
+        $result = array();
+        if ($node->id == $needleId || $added) {
+            $added = 1;
+            $result[] = $n;
+        }
+        foreach ($node->children as $itm) {
+            $r = static::_descendants($itm, $needleId, $added);
+            if ($added || count($r) > 0) {
+                $result = array_merge($result, $r);
+            }
+        }
+        return $result;
     }
 }

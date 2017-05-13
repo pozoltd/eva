@@ -1,3 +1,4 @@
+{% from "includes/nestableNav.twig" import nest as nest %}
 {% set categories = app.db.active('PageCategory') %}
 
 {% extends 'layout.twig' %}
@@ -41,7 +42,13 @@
                     </div>
 
                     <div class="nestable-lists">
-                        {#<div class="dd" id="nestable">{{ root|nestable|raw }}</div>#}
+                        <div class="dd" id="nestable">
+                            <ol class="dd-list">
+                                {% for itm in root.children %}
+                                    {{ nest(itm, 1) }}
+                                {% endfor %}
+                            </ol>
+                        </div>
                     </div>
 
                 </div>
@@ -51,16 +58,15 @@
 {% endblock %}
 
 {% block extraFooter %}
-    {#<script type="text/javascript" src="{{ constant('CDN') }}/pz/js/jquery.nestable.js"></script>#}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Nestable/2012-10-15/jquery.nestable.min.js"></script>
+    <script type="text/javascript" src="{{ constant('CDN') }}/pz/js/jquery.nestable.js"></script>
+    {#<script src="https://cdnjs.cloudflare.com/ajax/libs/Nestable/2012-10-15/jquery.nestable.min.js"></script>#}
     <script>
         var _ajax;
 
         $(function() {
-
             $('#nestable').nestable({ group: 1 }).on('change', update);
-            $('.other').nestable({ group: 1 });
 
+            $('.other').nestable({ group: 1 });
             $('.other').mouseout(function() {
                 setTimeout(function() {
                     $.each($('.other'), function(key, value) {
@@ -115,7 +121,7 @@
                 if (items.length > 0) {
                     if ('{{ cat }}' != $(value).attr('data-id')) {
                         $.ajax({
-                            type: 'POST',
+                            type: 'GET',
                             url: '{{ path('change-category') }}',
                             data: 'oldCat={{ cat }}&newCat=' + $(value).attr('data-id') + '&id=' + items[0].id,
                             success : function(msg) {
