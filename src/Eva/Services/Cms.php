@@ -29,7 +29,7 @@ class Cms implements ServiceProviderInterface
         $builtins = new Node('builtins', 'admin', 1100, 1, 'Built-in models', 'models.twig', '/pz/models/1/');
 
         $model = \Eva\Db\Model::getORMByField($this->app['zdb'], 'className', 'Page');
-        $page = new Node(uniqid(), 'pages', 1, 0, 'Pages detail', 'content.twig', "/pz/contents/content/$model->id/");
+        $page = new Node(uniqid(), 'pages', 1, 0, 'Pages detail', 'content.twig', "/pz/contents/content/$model->className/");
         $custom = new Node(uniqid(), 'customs', 1000, 0, 'Customised models detail', 'model.twig', '/pz/models/detail/0/');
         $builtin = new Node(uniqid(), 'builtins', 1000, 0, 'Customised models detail', 'model.twig', '/pz/models/detail/1/');
 
@@ -40,7 +40,7 @@ class Cms implements ServiceProviderInterface
         ));
         foreach ($data as $itm) {
             $this->nodes[] = new Node($itm->id, $itm->dataType == 0 ? 'database' : 'admin', $itm->__rank, 1, $itm->title, 'contents.twig', "/pz/contents/$itm->id/");
-            $this->nodes[] = new Node(uniqid(), $itm->id, 1, 0, $itm->title . ' detail', 'content.twig', "/pz/contents/content/$itm->id/");
+            $this->nodes[] = new Node(uniqid(), $itm->id, 1, 0, $itm->title . ' detail', 'content.twig', "/pz/contents/content/$itm->className/");
         }
     }
 

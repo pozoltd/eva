@@ -82,6 +82,7 @@ class Model extends Pz
                 ModelIO::generateCustomOrmFile($options['model']);
             }
 
+            $options['returnUrl'] = $request->get('returnUrl') ?: '/pz/models/' . $options['model']->modelType . '/';
             if ($request->get('submit') == 'apply') {
                 return $app->redirect($app->url('edit-model', array(
                         'modelType' => $options['model']->modelType,

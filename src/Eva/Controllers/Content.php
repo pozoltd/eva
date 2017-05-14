@@ -19,9 +19,9 @@ class Content extends Pz
 
 
 //        $controllers->match('/{modelId}/{pageNum}/{sort}/{order}/', array($this, 'contents'))->bind('contents-page');
-        $controllers->match('/content/{modelId}/add/', array($this, 'content'))->bind('add-content');
-        $controllers->match('/content/{modelId}/{id}/edit/', array($this, 'content'))->bind('edit-content');
-        $controllers->match('/content/{modelId}/{id}/copy/', array($this, 'copy'))->bind('copy-content');
+        $controllers->match('/content/{modelClass}/add/', array($this, 'content'))->bind('add-content');
+        $controllers->match('/content/{modelClass}/{id}/edit/', array($this, 'content'))->bind('edit-content');
+        $controllers->match('/content/{modelClass}/{id}/copy/', array($this, 'copy'))->bind('copy-content');
 
         $controllers->match('/remove/', array($this, 'remove'))->bind('remove-content');
         $controllers->match('/sort/', array($this, 'sort'))->bind('sort-contents');
@@ -89,11 +89,11 @@ class Content extends Pz
 //        ));
     }
 
-    public function content(Application $app, Request $request, $modelId, $id = null)
+    public function content(Application $app, Request $request, $modelClass, $id = null)
     {
         $options = parent::getOptionsFromUrl();
 
-        $options['model'] = Model::getById($app['zdb'], $modelId);
+        $options['model'] = Model::getORMByField($app['zdb'], 'className', $modelClass);
         if (!$options['model']) {
             $app->abort(404);
         }

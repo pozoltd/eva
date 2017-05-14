@@ -1,0 +1,24 @@
+{
+  "__rank": 60,
+  "title": "Relationship tags",
+  "className": "RelationshipTag",
+  "namespace": "Eva\\ORMs",
+  "dataTable": "__contents",
+  "modelType": "1",
+  "dataType": "1",
+  "listType": "0",
+  "numberPerPage": "25",
+  "defaultSortBy": "id",
+  "defaultOrder": "1",
+  "columnsJson": [
+    {
+      "id": "z1494744948230",
+      "column": "title",
+      "widget": "text",
+      "label": "Title:",
+      "field": "title",
+      "required": 0,
+      "sql": ""
+    }
+  ]
+}

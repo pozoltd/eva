@@ -9,8 +9,8 @@
                 <a href="#" data-content="{{ node.id }}" data-model="{{ node.__modelClass }}" data-status="{{ node.visible }}" class="js-status isactive btn btn-xs btn-circle {{ node.visible ? 'btn-info' : 'btn-danger' }} btn-outline">
                     <i class="fa {{ node.visible ? 'fa-check' : 'fa-ban' }}"></i>
                 </a>
-                <a href="/pz/content/edit/4/{{ node.id }}/" class="edit btn btn-xs btn-circle btn-primary"><i class="fa fa-pencil"></i></a>
-                <a href="/pz/content/copy/4/{{ node.id }}/" class="copy btn btn-xs btn-circle btn-default"><i class="fa fa-copy"></i></a>
+                <a href="/pz/contents/content/Page/{{ node.id }}/edit/" class="edit btn btn-xs btn-circle btn-primary"><i class="fa fa-pencil"></i></a>
+                <a href="/pz/contents/content/Page/{{ node.id }}/copy/" class="copy btn btn-xs btn-circle btn-default"><i class="fa fa-copy"></i></a>
                 <a href="#" data-content="{{ node.id }}" data-model="{{ node.__modelClass }}" class="js-delete delete btn btn-xs btn-circle btn-danger"><i class="fa fa-times"></i></a>
             </div>
             {% if node.children|length %}
@@ -22,20 +22,3 @@
             {% endif %}
         </li>
 {% endmacro %}
-
-
-<ol class="dd-list">
-    <li class="dd-item dd3-item content-container" data-id="105">
-        <div class="dd-handle dd3-handle"></div>
-        <div class="dd-handle dd3-handle"></div>
-        <div class="dd3-content">
-            <span>bbb</span>
-            <a href="#" data-content="105" data-model="Page" data-status="1" class="js-status isactive btn btn-xs btn-circle btn-info btn-outline">
-                <i class="fa fa-check"></i>
-            </a>
-            <a href="/pz/content/edit/4/105/" class="edit btn btn-xs btn-circle btn-primary"><i class="fa fa-pencil"></i></a>
-            <a href="/pz/content/copy/4/105/" class="copy btn btn-xs btn-circle btn-default"><i class="fa fa-copy"></i></a>
-            <a href="#" data-content="105" data-model="Page" class="js-delete delete btn btn-xs btn-circle btn-danger"><i class="fa fa-times"></i></a>
-        </div>
-    </li>
-</ol>

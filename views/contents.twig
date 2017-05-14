@@ -12,7 +12,7 @@
                     <h1>{{ model.title }}</h1>
                 </div>
                 <div class="ibox-content">
-                    <a href="{{ path('add-content', { modelId: model.id }) }}?returnUrl={{ returnUrl|url_encode }}">
+                    <a href="{{ path('add-content', { modelClass: model.className }) }}?returnUrl={{ returnUrl|url_encode }}">
                         <button class="btn btn-success">
                             <span class="txt">Add new</span>
                         </button>
@@ -34,8 +34,8 @@
                                             <td>{{ itm.title }}</td>
                                             <td>
                                                 <a href="#" data-content="{{ itm.id }}" data-model="{{ itm.__modelClass }}" data-status="{{ itm.__active }}" type="button" class="js-status btn {% if itm.__active == 1 %}btn-info{% else %}btn-danger{% endif %} btn-circle btn-outline"><i class="fa {% if itm.__active == 1 %}fa-check{% else %}fa-ban{% endif %}"></i></a>
-                                                <a href="{{ path('edit-content', { modelId: model.id, id: itm.id }) }}?returnUrl={{ returnUrl|url_encode }}" class="btn btn-xs btn-circle btn-primary"><i class="fa fa-pencil"></i></a>
-                                                <a href="{{ path('copy-content', { modelId: model.id, id: itm.id }) }}?returnUrl={{ returnUrl|url_encode }}" class="btn btn-xs btn-circle btn-default"><i class="fa fa-copy"></i></a>
+                                                <a href="{{ path('edit-content', { modelClass: model.className, id: itm.id }) }}?returnUrl={{ returnUrl|url_encode }}" class="btn btn-xs btn-circle btn-primary"><i class="fa fa-pencil"></i></a>
+                                                <a href="{{ path('copy-content', { modelClass: model.className, id: itm.id }) }}?returnUrl={{ returnUrl|url_encode }}" class="btn btn-xs btn-circle btn-default"><i class="fa fa-copy"></i></a>
                                                 <a href="#" data-content="{{ itm.id }}" data-model="{{ itm.__modelClass }}" class="js-delete btn btn-xs btn-circle btn-danger"><i class="fa fa-times"></i></a>
                                             </td>
                                         </tr>
