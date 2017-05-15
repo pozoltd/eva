@@ -106,12 +106,13 @@ $TBL_CONTENTS = array(
 );
 
 $CMS_WIDGETS = array(
+    '\\Eva\\Forms\\Types\\ContentBlockItem' => '*Content block item',
     '\\Eva\\Forms\\Types\\FormBuilder' => '*Form builder',
     '\\Eva\\Forms\\Types\\FormData' => '*Form data',
     '\\Eva\\Forms\\Types\\AssetPicker' => 'Asset picker',
     '\\Eva\\Forms\\Types\\AssetFolderPicker' => 'Asset folder picker',
     '\\Eva\\Forms\\Types\\Blocks' => 'Blocks',
-    '\\Eva\\Forms\\Types\\ChoiceMultiJson' => 'Choice Multi JSON',
+    '\\Eva\\Forms\\Types\\ChoiceMultiJson' => 'Choice multi json',
     '\\Eva\\Forms\\Types\\DatePicker' => 'Date picker',
     '\\Eva\\Forms\\Types\\DateTimePicker' => 'Date time picker',
     '\\Eva\\Forms\\Types\\Wysiwyg' => 'Wysiwyg',
@@ -137,5 +138,20 @@ $FORM_WIDGETS = array(
     'repeated' => 'Repeated',
     '\\Eva\\Forms\\Types\\Wysiwyg' => 'Wysiwyg',
     'submit' => 'Submit',
+);
+
+$CONTNET_BLOCK_WIDGETS = array(
+    0 => 'Text',
+    1 => 'Textarea',
+    2 => 'Asset picker',
+    3 => 'Asset folder picker',
+    4 => 'Checkbox',
+    5 => 'Wysiwyg',
+    6 => 'Date',
+    7 => 'Datetime',
+    8 => 'Time',
+    9 => 'Choice',
+    10 => 'Choice multi json',
+    11 => 'Placeholder',
 );
 ?>

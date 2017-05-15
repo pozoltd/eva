@@ -105,7 +105,7 @@
 				minHeight: 300,
 			});
 
-			$('select').chosen();
+			$('select:not(.no-chosen)').chosen();
 
 			{#var pb = $('.progress-bar').progressbar();
 			var url = '{{ path('upload-assets') }}';

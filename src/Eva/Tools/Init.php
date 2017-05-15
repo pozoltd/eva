@@ -60,15 +60,29 @@ class Init implements ControllerProviderInterface
 
     public function data(Application $app, Request $request)
     {
-        $user = \Eva\ORMs\User::getByTitle($app['zdb'], 'admin');
-        if (!$user) {
+        $orm = \Eva\ORMs\User::getByTitle($app['zdb'], 'admin');
+        if (!$orm) {
             $encoder = new MessageDigestPasswordEncoder();
-            $user = new \Eva\ORMs\User($app['zdb']);
-            $user->title = 'admin';
-            $user->password = $encoder->encodePassword('20120628', '');
-            $user->email = 'weida@hsh.co.nz';
-            $user->__active = 1;
-            $user->save();
+            $orm = new \Eva\ORMs\User($app['zdb']);
+            $orm->title = 'admin';
+            $orm->password = $encoder->encodePassword('20120628', '');
+            $orm->email = 'weida@hsh.co.nz';
+            $orm->save();
+        }
+
+        $orm = \Eva\ORMs\AssetSize::getByTitle($app['zdb'], 'cms_file_preview');
+        if (!$orm) {
+            $orm = new \Eva\ORMs\AssetSize($app['zdb']);
+            $orm->title = 'cms_file_preview';
+            $orm->width = 100;
+            $orm->save();
+        }
+
+        $orm = \Eva\ORMs\RelationshipTag::getByTitle($app['zdb'], 'Page content');
+        if (!$orm) {
+            $orm = new \Eva\ORMs\RelationshipTag($app['zdb']);
+            $orm->title = 'Page content';
+            $orm->save();
         }
         return new Response('OK');
     }

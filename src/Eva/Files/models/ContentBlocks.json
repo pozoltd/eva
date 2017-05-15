@@ -1,7 +1,7 @@
 {
   "__rank": 55,
-  "title": "Relationship tags",
-  "className": "RelationshipTag",
+  "title": "Content blocks",
+  "className": "ContentBlocks",
   "namespace": "Eva\\ORMs",
   "dataTable": "__contents",
   "modelType": "1",
@@ -36,12 +36,12 @@
       "label": "Tags:",
       "field": "tags",
       "required": 0,
-      "sql": ""
+      "sql": "SELECT t1.id AS `key`, t1.title AS value FROM __contents AS t1 WHERE t1.__modelClass = 'RelationshipTag' ORDER BY t1.__rank"
     },
     {
       "id": "z1494744812562",
       "column": "extra1",
-      "widget": "textarea",
+      "widget": "\\Eva\\Forms\\Types\\ContentBlockItem",
       "label": "Items:",
       "field": "items",
       "required": 0,

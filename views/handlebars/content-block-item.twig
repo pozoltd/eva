@@ -1,0 +1,22 @@
+{% verbatim %}
+    <tbody class="js-row">
+        <tr>
+            <td class="col-md-4">
+                <select class="form-control no-chosen js-cbi-item js-cbi-widget">
+                    {{#each widgets}}
+                        <option value="{{@key}}" {{#compare ../data.widget @key operator="=="}}selected{{/compare}}>{{this}}</option>
+                    {{/each}}
+                </select>
+            </td>
+            <td class="col-md-4">
+                <input type="text" class="form-control js-cbi-item js-cbi-id" value="{{data.id}}" />
+            </td>
+            <td class="col-md-4">
+                <input type="text" class="form-control js-cbi-item js-cbi-title" value="{{data.title}}" />
+            </td>
+        </tr>
+        <tr id="js-sql" style="{{#compare 9 data.widget operator='!='}}display: none;{{/compare}} {{#compare 10 data.widget operator='!='}}display: none;{{/compare}}">
+            <td colspan="3"><textarea class="form-control js-cbi-item js-cbi-sql" placeholder="SQL statement">{{ data.sql }}</textarea></td>
+        </tr>
+    </tbody>
+{% endverbatim %}

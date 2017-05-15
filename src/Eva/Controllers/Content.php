@@ -184,7 +184,7 @@ class Content extends Pz
                     return $this->app->abort(302, urldecode($options['returnUrl']));
                 } else {
                     return $this->app->abort(302, $this->app->url('edit-content', array(
-                        'modelId' => $options['model']->id,
+                        'modelClass' => $options['model']->className,
                         'id' => $options['content']->id)) . '?returnUrl=' . urlencode($options['returnUrl'])
                     );
                 }
