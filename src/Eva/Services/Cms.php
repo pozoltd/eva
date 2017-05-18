@@ -30,7 +30,7 @@ class Cms implements ServiceProviderInterface
             $builtins = new Node('builtins', 'admin', 1100, 1, 'Built-in models', 'models.twig', '/pz/secured/models/1');
 
             $model = \Eva\Db\Model::getORMByField($this->app['zdb'], 'className', 'Page');
-            $page = new Node(uniqid(), 'pages', 1, 0, 'Pages detail', 'content.twig', "/pz/secured/contents/content/$model->className");
+            $page = new Node(uniqid(), 'pages', 1, 0, 'Pages detail', 'content.twig', "/pz/secured/contents/content/$model->className", null, 1, 2);
             $custom = new Node(uniqid(), 'customs', 1000, 0, 'Customised models detail', 'model.twig', '/pz/secured/models/detail/0', null, 1, 1);
             $builtin = new Node(uniqid(), 'builtins', 1000, 0, 'Customised models detail', 'model.twig', '/pz/secured/models/detail/1', null, 1, 1);
 
