@@ -15,9 +15,9 @@ class FileView extends Pz
     public function connect(Application $app)
     {
         $controllers = $app['controllers_factory'];
-        $controllers->match('/image/{id}/', array($this, 'preview'));
-        $controllers->match('/image/{id}/{size}/', array($this, 'preview'));
-        $controllers->match('/download/{id}/', array($this, 'download'));
+        $controllers->match('/files/image/{id}', array($this, 'preview'));
+        $controllers->match('/files/image/{id}/{size}', array($this, 'preview'));
+        $controllers->match('/files/download/{id}', array($this, 'download'));
         return $controllers;
     }
 
