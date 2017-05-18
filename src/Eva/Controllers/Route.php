@@ -28,6 +28,7 @@ abstract class Route implements ControllerProviderInterface
 
     public function route(Application $app, Request $request, $url)
     {
+        $url = str_replace(DOMAIN, '', URL::getUrlWq());
         $options = $this->getOptionsFromUrl($url);
         return $app['twig']->render($options['page']->twig, $options);
     }
@@ -35,7 +36,7 @@ abstract class Route implements ControllerProviderInterface
     protected function getOptionsFromUrl($url = null)
     {
         if (!$url) {
-            $url = str_replace(DOMAIN, '', URL::getURL());
+            $url = str_replace(DOMAIN, '', URL::getUrlWq());
         }
         $url = trim($url, '/');
         $args = explode('/', $url);
@@ -46,7 +47,11 @@ abstract class Route implements ControllerProviderInterface
             for ($i = count($args), $il = 0; $i > $il; $i--) {
                 $parts = array_slice($args, 0, $i);
                 $result = $nav->getNodeByField('url', '/' . implode('/', $parts));
-                if ($result) {
+                if (
+                    $result && (
+                    (!$result->allowExtra && (count($args) - count($parts) == 0)) ||
+                    ($result->allowExtra && $result->maxParams >= (count($args) - count($parts)))
+                )) {
                     $node = $result;
                     break;
                 }

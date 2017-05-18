@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class URL
 {
-    public static function getURL()
+    public static function getUrl()
     {
         return 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
     }

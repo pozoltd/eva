@@ -31,8 +31,8 @@ class Cms implements ServiceProviderInterface
 
             $model = \Eva\Db\Model::getORMByField($this->app['zdb'], 'className', 'Page');
             $page = new Node(uniqid(), 'pages', 1, 0, 'Pages detail', 'content.twig', "/pz/secured/contents/content/$model->className");
-            $custom = new Node(uniqid(), 'customs', 1000, 0, 'Customised models detail', 'model.twig', '/pz/secured/models/detail/0');
-            $builtin = new Node(uniqid(), 'builtins', 1000, 0, 'Customised models detail', 'model.twig', '/pz/secured/models/detail/1');
+            $custom = new Node(uniqid(), 'customs', 1000, 0, 'Customised models detail', 'model.twig', '/pz/secured/models/detail/0', null, 1, 1);
+            $builtin = new Node(uniqid(), 'builtins', 1000, 0, 'Customised models detail', 'model.twig', '/pz/secured/models/detail/1', null, 1, 1);
 
             $this->nodes = array($pages, $page, $database, $files, $admin, $customs, $custom, $builtins, $builtin);
 
@@ -41,7 +41,7 @@ class Cms implements ServiceProviderInterface
             ));
             foreach ($data as $itm) {
                 $this->nodes[] = new Node($itm->id, $itm->dataType == 0 ? 'database' : 'admin', $itm->__rank, 1, $itm->title, 'contents.twig', "/pz/secured/contents/$itm->id");
-                $this->nodes[] = new Node(uniqid(), $itm->id, 1, 0, $itm->title . ' detail', 'content.twig', "/pz/secured/contents/content/$itm->className");
+                $this->nodes[] = new Node(uniqid(), $itm->id, 1, 0, $itm->title . ' detail', 'content.twig', "/pz/secured/contents/content/$itm->className", null, 1, 2);
             }
         } catch (\PDOException $ex) {
         }

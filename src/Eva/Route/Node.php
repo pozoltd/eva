@@ -15,8 +15,10 @@ class Node
     public $url;
     public $icon;
     public $children;
+    public $allowExtra;
+    public $maxParams;
 
-    public function __construct($id, $parentId, $rank = null, $visible = 1, $title = null, $twig = null, $url = null, $icon = null, $children = array())
+    public function __construct($id, $parentId, $rank = null, $visible = 1, $title = null, $twig = null, $url = null, $icon = null, $allowExtra = false, $maxParams = 0, $children = array())
     {
         $this->id = $id;
         $this->parentId = $parentId;
@@ -27,6 +29,8 @@ class Node
         $this->url = $url;
         $this->icon = $icon;
         $this->children = $children;
+        $this->allowExtra = $allowExtra;
+        $this->maxParams = $maxParams;
     }
 
     public function hasChildren()
