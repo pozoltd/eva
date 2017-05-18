@@ -17,18 +17,17 @@ class Content extends Pz
     {
         $controllers = $app['controllers_factory'];
 
+//        $controllers->match('/{modelId}/{pageNum}/{sort}/{order}', array($this, 'contents'))->bind('contents-page');
+        $controllers->match('/contents/content/{modelClass}/add', array($this, 'content'))->bind('add-content');
+        $controllers->match('/contents/content/{modelClass}/{id}/edit', array($this, 'content'))->bind('edit-content');
+        $controllers->match('/contents/content/{modelClass}/{id}/copy', array($this, 'copy'))->bind('copy-content');
 
-//        $controllers->match('/{modelId}/{pageNum}/{sort}/{order}/', array($this, 'contents'))->bind('contents-page');
-        $controllers->match('/content/{modelClass}/add/', array($this, 'content'))->bind('add-content');
-        $controllers->match('/content/{modelClass}/{id}/edit/', array($this, 'content'))->bind('edit-content');
-        $controllers->match('/content/{modelClass}/{id}/copy/', array($this, 'copy'))->bind('copy-content');
+        $controllers->match('/contents/remove', array($this, 'remove'))->bind('remove-content');
+        $controllers->match('/contents/sort', array($this, 'sort'))->bind('sort-contents');
+        $controllers->match('/contents/status', array($this, 'changeStatus'))->bind('change-status');
+        $controllers->match('/contents/nestable', array($this, 'nestable'))->bind('nestable');
 
-        $controllers->match('/remove/', array($this, 'remove'))->bind('remove-content');
-        $controllers->match('/sort/', array($this, 'sort'))->bind('sort-contents');
-        $controllers->match('/status/', array($this, 'changeStatus'))->bind('change-status');
-        $controllers->match('/nestable/', array($this, 'nestable'))->bind('nestable');
-
-        $controllers->match('/{modelId}/', array($this, 'contents'))->bind('contents');
+        $controllers->match('/contents/{modelId}', array($this, 'contents'))->bind('contents');
         return $controllers;
     }
 

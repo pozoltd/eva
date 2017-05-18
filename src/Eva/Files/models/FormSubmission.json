@@ -17,7 +17,7 @@
       "widget": "text",
       "label": "Title:",
       "field": "title",
-      "required": 0,
+      "required": 1,
       "sql": ""
     },
     {

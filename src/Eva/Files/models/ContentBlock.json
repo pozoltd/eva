@@ -1,7 +1,7 @@
 {
   "__rank": 55,
   "title": "Content blocks",
-  "className": "ContentBlocks",
+  "className": "ContentBlock",
   "namespace": "Eva\\ORMs",
   "dataTable": "__contents",
   "modelType": "1",
@@ -17,7 +17,7 @@
       "widget": "text",
       "label": "Title:",
       "field": "title",
-      "required": 0,
+      "required": 1,
       "sql": ""
     },
     {

@@ -15,7 +15,7 @@
                 <input type="text" class="form-control js-cbi-item js-cbi-title" value="{{data.title}}" />
             </td>
         </tr>
-        <tr id="js-sql" style="{{#compare 9 data.widget operator='!='}}display: none;{{/compare}} {{#compare 10 data.widget operator='!='}}display: none;{{/compare}}">
+        <tr id="js-sql" style="{{#compare 9 data.widget operator='!='}}{{#compare 10 data.widget operator='!='}}display: none;{{/compare}}{{/compare}}">
             <td colspan="3"><textarea class="form-control js-cbi-item js-cbi-sql" placeholder="SQL statement">{{ data.sql }}</textarea></td>
         </tr>
     </tbody>

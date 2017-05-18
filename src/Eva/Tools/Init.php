@@ -15,7 +15,7 @@ class Init implements ControllerProviderInterface
     public function connect(Application $app)
     {
         $controllers = $app['controllers_factory'];
-        $controllers->match('/', array($this, 'setup'));
+        $controllers->match('/init', array($this, 'setup'));
         return $controllers;
     }
 

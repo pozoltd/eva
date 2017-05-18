@@ -41,11 +41,11 @@ abstract class Route implements ControllerProviderInterface
         $args = explode('/', $url);
 
         $nav = new Nav($this->getNodes());
-        $node = $nav->getNodeByField('url', '/' . $url . '/');
+        $node = $nav->getNodeByField('url', '/' . $url);
         if (!$node) {
             for ($i = count($args), $il = 0; $i > $il; $i--) {
                 $parts = array_slice($args, 0, $i);
-                $result = $nav->getNodeByField('url', '/' . implode('/', $parts) . '/');
+                $result = $nav->getNodeByField('url', '/' . implode('/', $parts));
                 if ($result) {
                     $node = $result;
                     break;
@@ -58,7 +58,7 @@ abstract class Route implements ControllerProviderInterface
         return array(
             'page' => $node,
             'args' => $args,
-            'returnUrl' => $this->app['request']->get('returnUrl') ?: '/' . $url . '/',
+            'returnUrl' => $this->app['request']->get('returnUrl') ?: '/' . $url,
         );
     }
 

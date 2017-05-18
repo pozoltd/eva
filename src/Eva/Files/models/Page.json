@@ -30,6 +30,24 @@
       "sql": "SELECT 1 AS `key`, 'General' AS `value`UNION SELECT 2 AS `key`, 'Redirect' AS `value`"
     },
     {
+      "id": "z1455698300495",
+      "column": "extra6",
+      "widget": "text",
+      "label": "Redirect to:",
+      "field": "redirectTo",
+      "required": 0,
+      "sql": ""
+    },
+    {
+      "id": "z1455698333592",
+      "column": "authorbio",
+      "widget": "choice",
+      "label": "Template File:",
+      "field": "template",
+      "required": 1,
+      "sql": "SELECT t1.id AS `key`, t1.title AS value FROM __contents AS t1 WHERE t1.__modelClass = 'PageTemplate' ORDER BY t1.__rank"
+    },
+    {
       "id": "z1455697942372",
       "column": "category",
       "widget": "\\Eva\\Forms\\Types\\ChoiceMultiJson",
@@ -50,7 +68,7 @@
     {
       "id": "z1455698083432",
       "column": "content",
-      "widget": "\\Eva\\Forms\\Types\\Blocks",
+      "widget": "\\Eva\\Forms\\Types\\ContentBlock",
       "label": "Content:",
       "field": "content",
       "required": 0,
@@ -93,22 +111,22 @@
       "sql": ""
     },
     {
-      "id": "z1455698300495",
-      "column": "extra6",
-      "widget": "text",
-      "label": "Redirect to:",
-      "field": "redirectTo",
+      "id": "z1494927699444",
+      "column": "extra1",
+      "widget": "checkbox",
+      "label": "Allow extra URL slug parameters?",
+      "field": "allowExtra",
       "required": 0,
       "sql": ""
     },
     {
-      "id": "z1455698333592",
-      "column": "authorbio",
-      "widget": "choice",
-      "label": "Template File:",
-      "field": "template",
-      "required": 1,
-      "sql": "SELECT t1.id AS `key`, t1.title AS value FROM __contents AS t1 WHERE t1.__modelClass = 'PageTemplate' ORDER BY t1.__rank"
+      "id": "z1494927702496",
+      "column": "extra7",
+      "widget": "text",
+      "label": "Max URL slug parameters:",
+      "field": "maxParams",
+      "required": 0,
+      "sql": ""
     }
   ]
 }

@@ -9,7 +9,7 @@ class Pz extends Route
     public function route(Application $app, Request $request, $url = null)
     {
         if (empty($url) && $url !== null) {
-            return $this->app->abort(301, '/pz/pages/');
+            return $this->app->abort(301, '/pz/secured/pages');
         }
         return parent::route($app, $request, $url);
     }

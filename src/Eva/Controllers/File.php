@@ -15,16 +15,16 @@ class File extends FileView
     public function connect(Application $app)
     {
         $controllers = parent::connect($app);
-        $controllers->match('/', array($this, 'route'));
-        $controllers->match('/folders/', array($this, 'folders'));
-        $controllers->match('/files/', array($this, 'files'));
-        $controllers->match('/upload/', array($this, 'upload'));
-        $controllers->match('/move-file/', array($this, 'moveFile'));
-        $controllers->match('/add-folder/', array($this, 'addFolder'));
-        $controllers->match('/edit-folder/', array($this, 'editFolder'));
-        $controllers->match('/update-folders/', array($this, 'updateFolders'));
-        $controllers->match('/delete-folder/{id}/', array($this, 'deleteFolder'));
-        $controllers->match('/delete-file/{id}/', array($this, 'deleteFile'));
+        $controllers->match('/files', array($this, 'route'));
+        $controllers->match('/files/folders', array($this, 'folders'));
+        $controllers->match('/files/files', array($this, 'files'));
+        $controllers->match('/files/upload', array($this, 'upload'));
+        $controllers->match('/files/move-file', array($this, 'moveFile'));
+        $controllers->match('/files/add-folder', array($this, 'addFolder'));
+        $controllers->match('/files/edit-folder', array($this, 'editFolder'));
+        $controllers->match('/files/update-folders', array($this, 'updateFolders'));
+        $controllers->match('/files/delete-folder/{id}', array($this, 'deleteFolder'));
+        $controllers->match('/files/delete-file/{id}', array($this, 'deleteFile'));
         return $controllers;
     }
 

@@ -116,6 +116,7 @@ $CMS_WIDGETS = array(
     '\\Eva\\Forms\\Types\\DatePicker' => 'Date picker',
     '\\Eva\\Forms\\Types\\DateTimePicker' => 'Date time picker',
     '\\Eva\\Forms\\Types\\Wysiwyg' => 'Wysiwyg',
+    '\\Eva\\Forms\\Types\\ContentBlock' => 'Content blocks',
     'checkbox' => 'Checkbox',
     'choice' => 'Choice',
     'email' => 'Email',

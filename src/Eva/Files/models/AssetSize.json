@@ -28,15 +28,6 @@
       "field": "width",
       "required": 1,
       "sql": ""
-    },
-    {
-      "id": "z1455609216662",
-      "column": "description",
-      "widget": "textarea",
-      "label": "Description:",
-      "field": "description",
-      "required": 0,
-      "sql": ""
     }
   ]
 }

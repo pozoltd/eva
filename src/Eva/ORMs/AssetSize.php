@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 2017-05-06 11:51:28
+ * 2017-05-16 21:45:33
  */
 namespace Eva\ORMs;
 
@@ -12,7 +12,6 @@ class AssetSize extends \Eva\Db\ORM {
         return array_merge(array(
             'title' => 'title', 
 			'width' => 'extra1', 
-			'description' => 'description', 
         ), array_combine(array_keys($TBL_META), array_keys($TBL_META)), array(
             'id' => 'id',
             'track' => 'track',

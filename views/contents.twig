@@ -4,6 +4,10 @@
     <link href="{{ constant('CDN') }}/pz/css/nestable.css" rel="stylesheet">
 {% endblock %}
 
+{% block extraHeaderLeft %}
+    <h2>Manage <label class="label label-warning-light">{{ model.title }}</label></h2>
+{% endblock %}
+
 {% block content %}
     <div class="row">
         <div class="col-lg-12 max-1000">
@@ -33,10 +37,10 @@
                                             <td>{{ itm.id }}</td>
                                             <td>{{ itm.title }}</td>
                                             <td>
-                                                <a href="#" data-content="{{ itm.id }}" data-model="{{ itm.__modelClass }}" data-status="{{ itm.__active }}" type="button" class="js-status btn {% if itm.__active == 1 %}btn-info{% else %}btn-danger{% endif %} btn-circle btn-outline"><i class="fa {% if itm.__active == 1 %}fa-check{% else %}fa-ban{% endif %}"></i></a>
-                                                <a href="{{ path('edit-content', { modelClass: model.className, id: itm.id }) }}?returnUrl={{ returnUrl|url_encode }}" class="btn btn-xs btn-circle btn-primary"><i class="fa fa-pencil"></i></a>
-                                                <a href="{{ path('copy-content', { modelClass: model.className, id: itm.id }) }}?returnUrl={{ returnUrl|url_encode }}" class="btn btn-xs btn-circle btn-default"><i class="fa fa-copy"></i></a>
-                                                <a href="#" data-content="{{ itm.id }}" data-model="{{ itm.__modelClass }}" class="js-delete btn btn-xs btn-circle btn-danger"><i class="fa fa-times"></i></a>
+                                                <a href="#" data-content="{{ itm.id }}" data-model="{{ itm.__modelClass }}" data-status="{{ itm.__active }}" type="button" class="js-status btn-xs btn {% if itm.__active == 1 %}btn-info{% else %}btn-danger{% endif %} btn-circle btn-outline"><i class="fa {% if itm.__active == 1 %}fa-check{% else %}fa-ban{% endif %}"></i></a>
+                                                <a href="{{ path('edit-content', { modelClass: model.className, id: itm.id }) }}?returnUrl={{ returnUrl|url_encode }}" class="btn-xs btn btn-xs btn-circle btn-primary"><i class="fa fa-pencil"></i></a>
+                                                <a href="{{ path('copy-content', { modelClass: model.className, id: itm.id }) }}?returnUrl={{ returnUrl|url_encode }}" class="btn-xs btn btn-xs btn-circle btn-default"><i class="fa fa-copy"></i></a>
+                                                <a href="#" data-content="{{ itm.id }}" data-model="{{ itm.__modelClass }}" class="js-delete btn-xs btn btn-xs btn-circle btn-danger"><i class="fa fa-times"></i></a>
                                             </td>
                                         </tr>
                                     {% endfor %}

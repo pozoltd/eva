@@ -16,11 +16,11 @@ class Model extends Pz
     public function connect(Application $app)
     {
         $controllers = $app['controllers_factory'];
-        $controllers->match('/', array($this, 'models'));
-        $controllers->match('/detail/{modelType}/', array($this, 'model'))->bind('add-model');
-        $controllers->match('/detail/{modelType}/{id}/', array($this, 'model'))->bind('edit-model');
-        $controllers->match('/sort/', array($this, 'sort'))->bind('sort-models');
-        $controllers->match('/{modelType}/', array($this, 'models'));
+        $controllers->match('/models', array($this, 'models'));
+        $controllers->match('/models/detail/{modelType}', array($this, 'model'))->bind('add-model');
+        $controllers->match('/models/detail/{modelType}/{id}', array($this, 'model'))->bind('edit-model');
+        $controllers->match('/models/sort', array($this, 'sort'))->bind('sort-models');
+        $controllers->match('/models/{modelType}', array($this, 'models'));
         return $controllers;
     }
 
@@ -82,7 +82,7 @@ class Model extends Pz
                 ModelIO::generateCustomOrmFile($options['model']);
             }
 
-            $options['returnUrl'] = $request->get('returnUrl') ?: '/pz/models/' . $options['model']->modelType . '/';
+            $options['returnUrl'] = $request->get('returnUrl') ?: '/pz/models/' . $options['model']->modelType;
             if ($request->get('submit') == 'apply') {
                 return $app->redirect($app->url('edit-model', array(
                         'modelType' => $options['model']->modelType,

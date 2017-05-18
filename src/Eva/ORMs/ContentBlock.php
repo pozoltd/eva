@@ -1,11 +1,11 @@
 <?php
 
 /**
- * 2017-05-15 19:23:58
+ * 2017-05-16 21:45:33
  */
 namespace Eva\ORMs;
 
-class ContentBlocks extends \Eva\Db\ORM {
+class ContentBlock extends \Eva\Db\ORM {
 
     function getFieldMap() {
         global $TBL_META;

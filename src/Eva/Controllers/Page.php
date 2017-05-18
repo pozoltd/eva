@@ -18,17 +18,17 @@ class Page extends Pz
     public function connect(Application $app)
     {
         $controllers = $app['controllers_factory'];
-        $controllers->match('/', array($this, 'pages'))->bind('pages');
+        $controllers->match('/pages', array($this, 'pages'))->bind('pages');
 //		$controllers->match('/remove/', array($this,'remove'))->bind('remove-page');
-        $controllers->match('/count/', array($this, 'count'))->bind('count-pages');
-        $controllers->match('/change/', array($this, 'change'))->bind('change-category');
-        $controllers->match('/sort/', array($this, 'sort'))->bind('sort-pages');
+        $controllers->match('/pages/count', array($this, 'count'))->bind('count-pages');
+        $controllers->match('/pages/change', array($this, 'change'))->bind('change-category');
+        $controllers->match('/pages/sort', array($this, 'sort'))->bind('sort-pages');
         return $controllers;
     }
 
     public function pages(Application $app, Request $request) {
         $categories = \Eva\ORMs\PageCategory::data($this->app['zdb']);
-        $options = parent::getOptionsFromUrl('pz/pages/');
+        $options = parent::getOptionsFromUrl('/pz/secured/pages');
         $options['cat'] = $this->app['request']->get('cat') ?: (count($categories) > 0 ? $categories[0]->id : -1);
 
         $nodes = array();

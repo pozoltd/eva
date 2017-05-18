@@ -10,8 +10,6 @@
     {% endspaceless %}
 {% endblock form_row %}
 
-
-{# error #}
 {%- block form_errors -%}
     {%- if errors|length > 0 -%}
         <ul class="formValidationErrors">
@@ -335,68 +333,6 @@
     </ul>
 {%- endblock formdata_widget -%}
 
-{% block content_block_item_widget -%}
-    <table id="{{ id }}_container" class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>Widget</th>
-                <th>ID</th>
-                <th>Title</th>
-            </tr>
-        </thead>
-    </table>
-    <textarea {{ block('widget_attributes') }}>{{ value ?: '[]' }}</textarea>
+{% use 'widgets/content-block-item.twig' %}
 
-    <script id="{{ id }}_row" type="text/x-handlebars-template">{% include 'handlebars/content-block-item.twig' %}</script>
-    <script>
-        var _{{ id }}_template = Handlebars.compile($("#{{ id }}_row").html());;
-        $(function () {
-            render{{ id }}();
-        });
-
-        function render{{ id }}() {
-            $("#{{ id }}_container tbody").remove();
-            var data = JSON.parse($('#{{ id }}').val());
-            for (var idx in data) {
-                var itm = data[idx];
-                $("#{{ id }}_container").append(_{{ id }}_template({
-                    widgets: {{ app.cms.contentBlockWidgets|json_encode|raw }},
-                    data: itm,
-                }));
-            }
-            $('#{{ id }}_container').sortable({
-                items: 'tbody',
-                stop: function(event, ui) {
-                    assemble{{ id }}();
-                },
-                placeholder: {
-                    element: function(currentItem) {
-                        return $('<tr><td colspan="3" style="background: lightyellow; height: ' + $(currentItem).height() + 'px">&nbsp;</td></tr>')[0];
-                    },
-                    update: function(container, p) {
-                        return;
-                    }
-                }
-            });
-            $('.js-cbi-item').on('keyup change', function () {
-                assemble{{ id }}();
-            });
-            $.each($('#{{ id }}_container td'), function (key, value) {
-                $(value).css('width', $(value).outerWidth() + 'px');
-            });
-        };
-
-        function assemble{{ id }}() {
-            var data = [];
-            $.each($('#{{ id }}_container tbody.js-row'), function (idx, itm) {
-                data.push({
-                    widget: $(itm).find('.js-cbi-widget').val(),
-                    id: $(itm).find('.js-cbi-id').val(),
-                    title: $(itm).find('.js-cbi-title').val(),
-                    sql: $(itm).find('.js-cbi-sql').val(),
-                });
-            });
-            $('#{{ id }}').val(JSON.stringify(data));
-        };
-    </script>
-{%- endblock content_block_item_widget -%}
+{% use 'widgets/content-block.twig' %}
