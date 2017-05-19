@@ -84,6 +84,65 @@ class Init implements ControllerProviderInterface
             $orm->title = 'Page content';
             $orm->save();
         }
+
+        $orm = \Eva\ORMs\ContentBlock::getByTitle($app['zdb'], 'Header + content');
+        if (!$orm) {
+            $orm = new \Eva\ORMs\ContentBlock($app['zdb']);
+            $orm->title = 'Header + content';
+            $orm->twig = 'header-content.twig';
+            $orm->tags = "[\"$orm->id\"]";
+            $orm->items = 'Header + content';
+            $orm->save();
+        }
+
+        $orm = \Eva\ORMs\PageCategory::getByTitle($app['zdb'], 'Main nav');
+        if (!$orm) {
+            $orm = new \Eva\ORMs\PageCategory($app['zdb']);
+            $orm->title = 'Main nav';
+            $orm->code = 'main';
+            $orm->save();
+        }
+
+        $orm = \Eva\ORMs\PageCategory::getByTitle($app['zdb'], 'Footer nav');
+        if (!$orm) {
+            $orm = new \Eva\ORMs\PageCategory($app['zdb']);
+            $orm->title = 'Footer nav';
+            $orm->code = 'footer';
+            $orm->save();
+        }
+
+        $orm = \Eva\ORMs\PageTemplate::getByTitle($app['zdb'], 'home.twig');
+        if (!$orm) {
+            $orm = new \Eva\ORMs\PageTemplate($app['zdb']);
+            $orm->title = 'home.twig';
+            $orm->filename = 'home.twig';
+            $orm->save();
+        }
+
+        $orm = \Eva\ORMs\Page::getByTitle($app['zdb'], 'Home');
+        if (!$orm) {
+            $tmpl = \Eva\ORMs\PageTemplate::getByTitle($app['zdb'], 'home.twig');
+            $cat = \Eva\ORMs\PageCategory::getByTitle($app['zdb'], 'Main nav');
+
+            $orm = new \Eva\ORMs\Page($app['zdb']);
+            $orm->title = 'Home';
+            $orm->type = 1;
+
+            $orm->template = $tmpl->id;
+            $orm->category = "[\"$cat->id\"]";
+            $orm->url = '/';
+//            $orm->categoryRank = 1;
+//            $orm->categoryParent = 1;
+            $orm->save();
+        }
+
+        $orm = \Eva\ORMs\Asset::getByTitle($app['zdb'], 'Pages');
+        if (!$orm) {
+            $orm = new \Eva\ORMs\Asset($app['zdb']);
+            $orm->title = 'Pages';
+            $orm->isFolder = 1;
+            $orm->save();
+        }
         return new Response('OK');
     }
 
