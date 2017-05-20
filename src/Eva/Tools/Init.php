@@ -140,6 +140,7 @@ class Init implements ControllerProviderInterface
         if (!$orm) {
             $orm = new \Eva\ORMs\Asset($app['zdb']);
             $orm->title = 'Pages';
+            $orm->__parentId = -1;
             $orm->isFolder = 1;
             $orm->save();
         }
