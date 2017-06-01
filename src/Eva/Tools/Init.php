@@ -87,11 +87,13 @@ class Init implements ControllerProviderInterface
 
         $orm = \Eva\ORMs\ContentBlock::getByTitle($app['zdb'], 'Header + content');
         if (!$orm) {
+            $tag = \Eva\ORMs\RelationshipTag::getByTitle($app['zdb'], 'Page content');
+
             $orm = new \Eva\ORMs\ContentBlock($app['zdb']);
             $orm->title = 'Header + content';
             $orm->twig = 'header-content.twig';
-            $orm->tags = "[\"$orm->id\"]";
-            $orm->items = 'Header + content';
+            $orm->tags = "[\"$tag->id\"]";
+            $orm->items = '[{"widget":"0","id":"text","title":"Text:","sql":""},{"widget":"1","id":"textarea","title":"Textarea:","sql":""},{"widget":"2","id":"assetPicker","title":"Asset picker:","sql":""},{"widget":"3","id":"assetFolderPicker","title":"Asset folder picker:","sql":""},{"widget":"4","id":"checkbox","title":"Check box:","sql":""},{"widget":"5","id":"wysiwyg","title":"Wysiwyg:","sql":""},{"widget":"6","id":"date","title":"Date:","sql":""},{"widget":"7","id":"dateTime","title":"Date time:","sql":""},{"widget":"8","id":"time","title":"Time:","sql":""},{"widget":"9","id":"choice","title":"Choice:","sql":"SELECT t1.id AS `key`, t1.title AS value FROM contents AS t1 LEFT JOIN models AS t2 ON  t1.modelId = t2.id WHERE t2.className = \'Page\' ORDER BY t1.rank\n"},{"widget":"10","id":"choiceMultiJson","title":"Choice multi json:","sql":"SELECT t1.id AS `key`, t1.title AS value FROM contents AS t1 LEFT JOIN models AS t2 ON  t1.modelId = t2.id WHERE t2.className = \'Page\' ORDER BY t1.rank\n"},{"widget":"11","id":"placeholder","title":"Place holder:","sql":""}]';
             $orm->save();
         }
 

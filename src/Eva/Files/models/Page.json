@@ -42,7 +42,7 @@
       "id": "z1455698333592",
       "column": "authorbio",
       "widget": "choice",
-      "label": "Template File:",
+      "label": "Template file:",
       "field": "template",
       "required": 1,
       "sql": "SELECT t1.id AS `key`, t1.title AS value FROM __contents AS t1 WHERE t1.__modelClass = 'PageTemplate' ORDER BY t1.__rank"
@@ -60,7 +60,7 @@
       "id": "z1455697989222",
       "column": "url",
       "widget": "text",
-      "label": "URL Fragment:",
+      "label": "URL fragment:",
       "field": "url",
       "required": 1,
       "sql": ""
@@ -78,7 +78,7 @@
       "id": "z1455698026309",
       "column": "extra2",
       "widget": "hidden",
-      "label": "Category Rank:",
+      "label": "Category rank:",
       "field": "categoryRank",
       "required": 0,
       "sql": ""
@@ -87,7 +87,7 @@
       "id": "z1455698069595",
       "column": "extra3",
       "widget": "hidden",
-      "label": "Category Parent:",
+      "label": "Category parent:",
       "field": "categoryParent",
       "required": 0,
       "sql": ""
@@ -96,7 +96,7 @@
       "id": "z1455698197447",
       "column": "extra4",
       "widget": "text",
-      "label": "Page Title:",
+      "label": "Page title:",
       "field": "pageTitle",
       "required": 0,
       "sql": ""
@@ -105,7 +105,7 @@
       "id": "z1455698173218",
       "column": "description",
       "widget": "text",
-      "label": "Metadata Description:",
+      "label": "Metadata description:",
       "field": "description",
       "required": 0,
       "sql": ""

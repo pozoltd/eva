@@ -1,0 +1,111 @@
+{% verbatim %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="left">
+                <h4>{{block.title}}</h4>
+            </div>
+            <div class="right">
+                <a href="#" class="text-info"><i class="fa-lg fa fa-eye"></i></a>
+                <a href="#" class="text-danger"><i class="fa-lg fa fa-times"></i></a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="panel-body">
+            <div class="alert">
+                <div class="row">
+                    {{#each block.items}}
+                        {{#compare widget 0 operator='==' }}
+                            <div class="inner-box">
+                                <label>{{title}}</label>
+                                <input type="text">
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 1 operator='==' }}
+                            <div class="inner-box inner-fullwidth">
+                                <label>{{title}}</label>
+                                <textarea></textarea>
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 2 operator='==' }}
+                            <div class="inner-box">
+                                <label>{{title}}</label>
+                                <input type="text">
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 3 operator='==' }}
+                            <div class="inner-box">
+                                <label>{{title}}</label>
+                                <input type="text">
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 4 operator='==' }}
+                            <div class="inner-box">
+                                <label>{{title}}</label>
+                                <input type="checkbox">
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 5 operator='==' }}
+                            <div class="inner-box inner-fullwidth">
+                                <label>{{title}}</label>
+                                <textarea class="js-redactor"></textarea>
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 6 operator='==' }}
+                            <div class="inner-box">
+                                <label>{{title}}</label>
+                                <input type="text" class="js-date">
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 7 operator='==' }}
+                            <div class="inner-box">
+                                <label>{{title}}</label>
+                                <input type="text" class="js-datetime">
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 8 operator='==' }}
+                            <div class="inner-box">
+                                <label>{{title}}</label>
+                                <input type="text" class="js-time">
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 9 operator='==' }}
+                            <div class="inner-box">
+                                <label>{{title}}</label>
+                                <select class="no-chosen after-chosen">
+                                    {{#each __choices}}
+                                        <option value="{{@key}}">{{this}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 10 operator='==' }}
+                            <div class="inner-box">
+                                <label>{{title}}</label>
+                                <select class="no-chosen after-chosen" multiple>
+                                    {{#each __choices}}
+                                        <option value="{{@key}}">{{this}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 11 operator='==' }}
+                            <div class="inner-box">&nbsp;</div>
+                        {{/compare}}
+                    {{/each}}
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+{% endverbatim %}

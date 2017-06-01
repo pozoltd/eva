@@ -3,8 +3,8 @@
 
 {% block content_block_widget -%}
 
-    {% for i in 0..3 %}
-        <hr />
+    {#{% for i in 0..3 %}
+        <hr/>
         <div class="left">
             <h2>SECTION:</h2>
             <h4>Content</h4>
@@ -14,7 +14,6 @@
             <select class="no-chosen">
                 <option>Add a block</option>
             </select>
-            {#<button type="button" class="btn btn-xs btn-circle btn-danger"><i class="fa fa-eye-slash"></i></button>#}
             <a href="#" class="text-muted"><i class="fa-lg fa fa-angle-up"></i></a>
             <a href="#" class="text-muted"><i class="fa-lg fa fa-angle-down"></i></a>
             <a href="#" class="text-info"><i class="fa-lg fa fa-eye"></i></a>
@@ -53,80 +52,181 @@
                 </div>
             {% endfor %}
         </div>
-    {% endfor %}
+    {% endfor %}#}
 
+    <div id="{{ id }}_container"></div>
     <button id="{{ id }}_add" type="button" class="btn" data-toggle="modal" data-target="#{{ id }}-section-modal"><i class="fa fa-plus"></i> section</button>
     <textarea {{ block('widget_attributes') }}>{{ value ?: '[]' }}</textarea>
 
-    <div id="{{ id }}-section-modal" class="modal inmodal fade in" aria-hidden="true" role="dialog" tabindex="-1" >
+    <div id="{{ id }}-section-modal" class="modal fade" aria-hidden="true" role="dialog" tabindex="-1">
         <div class="modal-dialog modal-sm">
-            <div class="modal-content animated flipInUp">
-                <form method="POST" autocomplete="off" novalidate>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>Section name:</label>
-                            <input type="text" name="name" value="" placeholder="Enter a name" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label>Section ID:</label>
-                            <input type="text" name="name" value="" placeholder="Enter an ID" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label>Relationship tags:</label>
-                            <select class="no-chosen form-control js-tag-{{ id }}" multiple>
-                                <option>Choose a tag</option>
-                            </select>
-                        </div>
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Section name:</label>
+                        <input type="text" name="name" value="" placeholder="Enter a name" class="form-control">
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-sm pull-right m-t-n-xs" data-dismiss="modal"><strong>Close</strong></button>
-                        <button type="submit" class="btn btn-sm btn-primary pull-right m-t-n-xs"><strong>Update</strong></button>
+                    <div class="form-group">
+                        <label>Section ID:</label>
+                        <input type="text" name="id" value="" placeholder="Enter an ID" class="form-control">
                     </div>
-                </form>
+                    <div class="form-group">
+                        <label>Relationship tags:</label>
+                        <select name="tags" class="no-chosen form-control js-tag-{{ id }}" data-placeholder="Choose tags" multiple>
+                            {% set data = app.db.active('RelationshipTag') %}
+                            {% for itm in data %}
+                                <option value="{{ itm.id }}">{{ itm.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-primary m-t-n-xs js-save-{{ id }}"><strong>Save</strong></button>
+                    <button type="button" class="btn btn-sm pull-right m-t-n-xs" data-dismiss="modal"><strong>Close</strong></button>
+                </div>
             </div>
         </div>
     </div>
 
-    <script id="{{ id }}_row" type="text/x-handlebars-template">{% include 'handlebars/contents/content-block-section.twig' %}</script>
+    <script id="{{ id }}_section" type="text/x-handlebars-template">{% include 'handlebars/contents/content-block-section.twig' %}</script>
+    <script id="{{ id }}_block" type="text/x-handlebars-template">{% include 'handlebars/contents/content-block-section-block.twig' %}</script>
     <script>
-        var _{{ id }}_template = Handlebars.compile($("#{{ id }}_row").html());;
+        var _{{ id }}_template_section = Handlebars.compile($("#{{ id }}_section").html());
+        var _{{ id }}_template_block = Handlebars.compile($("#{{ id }}_block").html());
+        var _{{ id }}_blocks = {{ app.cms.contentBlocks|json_encode|raw }};
+        var _{{ id }}_value = {{ app.cms.contentBlocksValue(value)|json_encode|raw }};
+
         $(function () {
             $('.js-blocks-{{ id }}').sortable({
                 connectWith: ".js-blocks-{{ id }}",
                 handle: ".panel-heading",
             }).disableSelection();
 
+            $('#{{ id }}_add').click(function () {
+                $('#{{ id }}-section-modal [name=id]').val('Content');
+                $('#{{ id }}-section-modal [name=name]').val('content')
+                $('#{{ id }}-section-modal select').val('').trigger("chosen:updated");
+            });
+
             $('#{{ id }}-section-modal').on('shown.bs.modal', function () {
                 $('.js-tag-{{ id }}').chosen();
             });
+
+            $('.js-save-{{ id }}').click(function () {
+                var data = JSON.parse($('#{{ id }}').val());
+                data.unshift({
+                    id: Math.random().toString(36).substr(2, 9),
+                    title: $('#{{ id }}-section-modal [name=name]').val(),
+                    attr: $('#{{ id }}-section-modal [name=id]').val(),
+                    tags: $('#{{ id }}-section-modal [name=tags]').val() ? $('#{{ id }}-section-modal [name=tags]').val(): [],
+                    blocks: [],
+                });
+                $('#{{ id }}').val(JSON.stringify(data));
+
+                render{{ id }}();
+//                $('html').addClass('no-transition');
+                $('#{{ id }}-section-modal').modal('hide');
+//                $('body').removeClass('no-transition');
+            });
+
+            $(document).on('change', '.js-section-{{ id }} .js-add-block', function () {
+                var section = getById{{ id }}(_{{ id }}_value, $(this).closest('.js-section-{{ id }}').data('id'));
+                if (section) {
+                    var block = getById{{ id }}(_{{ id }}_blocks, $(this).val());
+                    if (block) {
+                        var items = JSON.parse(block.items);
+                        var obj = {
+                            id: Math.random().toString(36).substr(2, 9),
+                            title: block.title,
+                            block: block.id,
+                            items: items,
+                            values: {},
+                        };
+                        for (var idx in items) {
+                            var item = items[idx];
+                            obj.values[item.id] = '';
+                        }
+                        section.blocks.unshift(obj);
+                    }
+                }
+                $('#{{ id }}').val(clean{{ id }}(_{{ id }}_value));
+                $(this).val('');
+                render{{ id }}()
+            });
+
             render{{ id }}();
             sidebar{{ id }}();
         });
 
         function render{{ id }}() {
-            $("#{{ id }}_container tbody").remove();
-            var data = JSON.parse($('#{{ id }}').val());
-            for (var idx in data) {
-                var itm = data[idx];
-                $("#{{ id }}_container").append(_{{ id }}_template({
-                    widgets: {{ app.cms.contentBlockWidgets|json_encode|raw }},
-                    data: itm,
+            $("#{{ id }}_container").empty();
+
+            for (var idx in _{{ id }}_value) {
+                var itm = _{{ id }}_value[idx];
+                $("#{{ id }}_container").append(_{{ id }}_template_section({
+                    id: '{{ id }}',
+                    blocks: _{{ id }}_blocks,
+                    section: itm,
                 }));
+
+                for (var idxBlk in itm.blocks) {
+                    var block = itm.blocks[idxBlk];
+                    $('.js-section-{{ id }}-' + itm.id + ' .js-blocks').append(_{{ id }}_template_block({
+                        id: '{{ id }}',
+                        block: block,
+                    }));
+                }
+
+                if (!itm.blocks.length) {
+                    $('.js-section-{{ id }}-' + itm.id + ' .js-blocks .js-no-blocks').fadeIn();
+                }
             }
+
             $('#{{ id }}_container').sortable({
-                items: 'tbody',
-                stop: function(event, ui) {
+                handle: '.panel-heading',
+                items: '.panel-default',
+                stop: function (event, ui) {
                     assemble{{ id }}();
                 },
-                placeholder: {
-                    element: function(currentItem) {
-                        return $('<tr><td colspan="3" style="background: lightyellow; height: ' + $(currentItem).height() + 'px">&nbsp;</td></tr>')[0];
-                    },
-                    update: function(container, p) {
-                        return;
-                    }
-                }
+//                placeholder: {
+//                    element: function (currentItem) {
+//                        return $('<tr><td colspan="3" style="background: lightyellow; height: ' + $(currentItem).height() + 'px">&nbsp;</td></tr>')[0];
+//                    },
+//                    update: function (container, p) {
+//                        return;
+//                    }
+//                }
             });
+
+            $('#{{ id }}_container select.after-chosen').chosen();
+
+            $('#{{ id }}_container .js-date').datetimepicker({
+                timepicker: false,
+                format: 'Y-m-d',
+                scrollInput: false,
+            });
+
+            $('#{{ id }}_container .js-datetime').datetimepicker({
+                timepicker: true,
+                format: 'Y-m-d H:i',
+                scrollInput: false,
+                step: 5,
+            });
+
+            $('#{{ id }}_container .js-time').datetimepicker({
+                timepicker: true,
+                datepicker: false,
+                format: 'H:i',
+                scrollInput: false,
+                step: 5,
+            });
+
+            $('#{{ id }}_container .js-redactor').redactor({
+                plugins: ['filePicker', 'imagePicker', 'video', 'table'],
+                minHeight: 300,
+            });
+
+            {#
             $('.js-cbi-widget').on('change', function () {
                 assemble{{ id }}();
                 render{{ id }}();
@@ -137,11 +237,10 @@
             $.each($('#{{ id }}_container td'), function (key, value) {
                 $(value).css('width', $(value).outerWidth() + 'px');
             });
-            $('.scroll-content').slimscroll({
-                height: $(window).height() - 150 - 100 + 'px',
-            })
+            #}
+
         };
-        
+
         function sidebar{{ id }}() {
             if ($(window).scrollTop() > 150) {
                 $('.content-block-overview').css('top', 0);
@@ -155,7 +254,6 @@
                     $('.content-block-overview').css('top', '150px');
                 }
             });
-
             $('#jstree1').jstree({
                 'plugins': ['types'],
                 'types': {
@@ -164,10 +262,14 @@
                     },
                 }
             });
-        }
+            $('.scroll-content').slimscroll({
+                height: $(window).height() - 150 - 100 + 'px',
+            });
+        };
 
         function assemble{{ id }}() {
-            var data = [];
+            {#
+             var data = [];
             $.each($('#{{ id }}_container tbody.js-row'), function (idx, itm) {
                 data.push({
                     widget: $(itm).find('.js-cbi-widget').val(),
@@ -176,7 +278,32 @@
                     sql: $(itm).find('.js-cbi-sql').val(),
                 });
             });
-            $('#{{ id }}').val(JSON.stringify(data));
+            $('#{{ id }}').val(JSON.stringify(data));#}
         };
+
+        function getById{{ id }}(data, id) {
+            for (var idx in data) {
+                var itm = data[idx];
+                if (itm.id == id) {
+                    return itm;
+                }
+            }
+            return null;
+        };
+
+        function clean{{ id }}(sections) {
+            sections = JSON.parse(JSON.stringify(sections));
+            for (var idxSection in sections) {
+                var section = sections[idxSection];
+                for (var idxBlock in section.blocks) {
+                    var block = section.blocks[idxBlock];
+                    for (var idxItem in block.items) {
+                        var item = block.items[idxItem];
+                        delete item.__choices;
+                    }
+                }
+            }
+            return JSON.stringify(sections)
+        }
     </script>
 {%- endblock content_block_widget -%}

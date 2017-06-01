@@ -1,20 +1,33 @@
 {% verbatim %}
-    <hr />
-    <div class="left">
-        <h2>SECTION:</h2>
-        <h4>Content</h4>
-        <small>content</small>
+    <div class="js-section-{{id}} js-section-{{id}}-{{section.id}}" data-id="{{section.id}}">
+        <hr />
+        <div class="left">
+            <h2>SECTION:</h2>
+            <h4>{{section.title}}</h4>
+            <small>{{section.attr}}</small>
+        </div>
+        <div class="right">
+            <select class="no-chosen js-add-block">
+                <option value="">Add a block</option>
+                {{#each blocks}}
+                    <option value="{{id}}">{{title}}</option>
+                {{/each}}
+            </select>
+            <a href="#" class="text-muted"><i class="fa-lg fa fa-angle-up"></i></a>
+            <a href="#" class="text-muted"><i class="fa-lg fa fa-angle-down"></i></a>
+            <a href="#" class="text-info"><i class="fa-lg fa fa-eye"></i></a>
+            <a href="#" class="text-success" data-toggle="modal" data-target="#{{ id }}-section-modal"><i class="fa-lg fa fa-pencil"></i></a>
+            <a href="#" class="text-danger"><i class="fa-lg fa fa-times"></i></a>
+        </div>
+        <div class="clearfix first-row"></div>
+        <div class="js-blocks section-blocks">
+            <div class="panel panel-default js-no-blocks" style="display: none;">
+                <div class="panel-heading">
+                    <div>
+                        <h4>&nbsp;</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="right">
-        <select class="no-chosen">
-            <option>Add a block</option>
-        </select>
-        <a href="#" class="text-muted"><i class="fa-lg fa fa-angle-up"></i></a>
-        <a href="#" class="text-muted"><i class="fa-lg fa fa-angle-down"></i></a>
-        <a href="#" class="text-info"><i class="fa-lg fa fa-eye"></i></a>
-        <a href="#" class="text-success" data-toggle="modal" data-target="#{{ id }}-section-modal"><i class="fa-lg fa fa-pencil"></i></a>
-        <a href="#" class="text-danger"><i class="fa-lg fa fa-times"></i></a>
-    </div>
-    <div class="clearfix first-row"></div>
-    <div class="js-blocks-{{id}} section-blocks"></div>
 {% endverbatim %}
