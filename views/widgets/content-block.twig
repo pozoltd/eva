@@ -2,62 +2,10 @@
 {%- endblock content_block_label -%}
 
 {% block content_block_widget -%}
-
-    {#{% for i in 0..3 %}
-        <hr/>
-        <div class="left">
-            <h2>SECTION:</h2>
-            <h4>Content</h4>
-            <small>content</small>
-        </div>
-        <div class="right">
-            <select class="no-chosen">
-                <option>Add a block</option>
-            </select>
-            <a href="#" class="text-muted"><i class="fa-lg fa fa-angle-up"></i></a>
-            <a href="#" class="text-muted"><i class="fa-lg fa fa-angle-down"></i></a>
-            <a href="#" class="text-info"><i class="fa-lg fa fa-eye"></i></a>
-            <a href="#" class="text-success" data-toggle="modal" data-target="#{{ id }}-section-modal"><i class="fa-lg fa fa-pencil"></i></a>
-            <a href="#" class="text-danger"><i class="fa-lg fa fa-times"></i></a>
-        </div>
-        <div class="clearfix first-row"></div>
-        <div class="js-blocks-{{ id }} js-blocks-{{ i }}-{{ id }} section-blocks">
-            {% for j in 0..2 %}
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <div class="left">
-                            <h4>HEADER + CONTENT</h4>
-                        </div>
-                        <div class="right">
-                            <a href="#" class="text-info"><i class="fa-lg fa fa-eye"></i></a>
-                            <a href="#" class="text-danger"><i class="fa-lg fa fa-times"></i></a>
-                        </div>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="panel-body">
-                        <div class="alert">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <label>Header</label>
-                                    <input type="text">
-                                </div>
-                                <div class="col-sm-6">
-                                    <label>Header</label>
-                                    <input type="text">
-                                </div>
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% endfor %}#}
-
     <div id="{{ id }}_container"></div>
     <button id="{{ id }}_add" type="button" class="btn" data-toggle="modal" data-target="#{{ id }}-section-modal"><i class="fa fa-plus"></i> section</button>
-    <textarea {{ block('widget_attributes') }}>{{ value ?: '[]' }}</textarea>
-
+    <textarea {{ block('widget_attributes') }} style="display: none;">{{ value ?: '[]' }}</textarea>
+    <hr/>
     <div id="{{ id }}-section-modal" class="modal fade" aria-hidden="true" role="dialog" tabindex="-1">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
@@ -90,11 +38,13 @@
 
     <script id="{{ id }}_section" type="text/x-handlebars-template">{% include 'handlebars/contents/content-block-section.twig' %}</script>
     <script id="{{ id }}_block" type="text/x-handlebars-template">{% include 'handlebars/contents/content-block-section-block.twig' %}</script>
+    <script id="{{ id }}_overview" type="text/x-handlebars-template">{% include 'handlebars/contents/content-block-overview.twig' %}</script>
     <script>
         var _{{ id }}_template_section = Handlebars.compile($("#{{ id }}_section").html());
         var _{{ id }}_template_block = Handlebars.compile($("#{{ id }}_block").html());
-        var _{{ id }}_blocks = {{ app.cms.contentBlocks|json_encode|raw }};
-        var _{{ id }}_value = {{ app.cms.contentBlocksValue(value)|json_encode|raw }};
+        var _{{ id }}_template_overview = Handlebars.compile($("#{{ id }}_overview").html());
+        var _{{ id }}_blocks = {{ app.blocks.data|json_encode|raw }};
+        var _{{ id }}_value = {{ app.blocks.value(value)|json_encode|raw }};
 
         $(function () {
             $('.js-blocks-{{ id }}').sortable({
@@ -102,31 +52,30 @@
                 handle: ".panel-heading",
             }).disableSelection();
 
+
+            $('#{{ id }}-section-modal').on('shown.bs.modal', function () {
+                $('.js-tag-{{ id }}').chosen({
+                    allow_single_deselect: true
+                });
+            });
+
             $('#{{ id }}_add').click(function () {
-                $('#{{ id }}-section-modal [name=id]').val('Content');
-                $('#{{ id }}-section-modal [name=name]').val('content')
+                $('#{{ id }}-section-modal [name=id]').val('content');
+                $('#{{ id }}-section-modal [name=name]').val('Content')
                 $('#{{ id }}-section-modal select').val('').trigger("chosen:updated");
             });
 
-            $('#{{ id }}-section-modal').on('shown.bs.modal', function () {
-                $('.js-tag-{{ id }}').chosen();
-            });
-
             $('.js-save-{{ id }}').click(function () {
-                var data = JSON.parse($('#{{ id }}').val());
-                data.unshift({
+                _{{ id }}_value.unshift({
                     id: Math.random().toString(36).substr(2, 9),
                     title: $('#{{ id }}-section-modal [name=name]').val(),
                     attr: $('#{{ id }}-section-modal [name=id]').val(),
                     tags: $('#{{ id }}-section-modal [name=tags]').val() ? $('#{{ id }}-section-modal [name=tags]').val(): [],
                     blocks: [],
                 });
-                $('#{{ id }}').val(JSON.stringify(data));
-
-                render{{ id }}();
-//                $('html').addClass('no-transition');
+                $('#{{ id }}').val(cleanString{{ id }}(_{{ id }}_value));
                 $('#{{ id }}-section-modal').modal('hide');
-//                $('body').removeClass('no-transition');
+                render{{ id }}();
             });
 
             $(document).on('change', '.js-section-{{ id }} .js-add-block', function () {
@@ -134,7 +83,7 @@
                 if (section) {
                     var block = getById{{ id }}(_{{ id }}_blocks, $(this).val());
                     if (block) {
-                        var items = JSON.parse(block.items);
+                        var items = block.items;
                         var obj = {
                             id: Math.random().toString(36).substr(2, 9),
                             title: block.title,
@@ -149,13 +98,12 @@
                         section.blocks.unshift(obj);
                     }
                 }
-                $('#{{ id }}').val(clean{{ id }}(_{{ id }}_value));
+                $('#{{ id }}').val(cleanString{{ id }}(_{{ id }}_value));
                 $(this).val('');
                 render{{ id }}()
             });
 
             render{{ id }}();
-            sidebar{{ id }}();
         });
 
         function render{{ id }}() {
@@ -198,7 +146,9 @@
 //                }
             });
 
-            $('#{{ id }}_container select.after-chosen').chosen();
+            $('#{{ id }}_container select.after-chosen').chosen({
+                allow_single_deselect: true
+            });
 
             $('#{{ id }}_container .js-date').datetimepicker({
                 timepicker: false,
@@ -224,61 +174,100 @@
             $('#{{ id }}_container .js-redactor').redactor({
                 plugins: ['filePicker', 'imagePicker', 'video', 'table'],
                 minHeight: 300,
+                changeCallback: function() {
+                    assemble{{ id }}();
+                },
             });
 
-            {#
-            $('.js-cbi-widget').on('change', function () {
-                assemble{{ id }}();
-                render{{ id }}();
-            });
-            $('.js-cbi-item').on('keyup', function () {
-                assemble{{ id }}();
-            });
-            $.each($('#{{ id }}_container td'), function (key, value) {
-                $(value).css('width', $(value).outerWidth() + 'px');
-            });
-            #}
 
+            $('.js-elem').on('change', function () {
+                assemble{{ id }}();
+            });
+            {#$('.js-cbi-item').on('keyup', function () {
+                assemble{{ id }}();
+            });#}
+
+            sidebar{{ id }}();
         };
 
         function sidebar{{ id }}() {
+            $('.overview{{ id }}').remove();
+            $('body').append(_{{ id }}_template_overview({
+                className: 'overview{{ id }}',
+            }));
+            $('.overview{{ id }} .panel-body').append('<div class="jstree"></div>');
+
             if ($(window).scrollTop() > 150) {
-                $('.content-block-overview').css('top', 0);
+                $('.overview{{ id }}').css('top', 0);
             } else {
-                $('.content-block-overview').css('top', '150px');
+                $('.overview{{ id }}').css('top', '150px');
             }
             $(window).on('scroll resize', function () {
                 if ($(window).scrollTop() > 150) {
-                    $('.content-block-overview').css('top', 0);
+                    $('.overview{{ id }}').css('top', 0);
                 } else {
-                    $('.content-block-overview').css('top', '150px');
+                    $('.overview{{ id }}').css('top', '150px');
                 }
             });
-            $('#jstree1').jstree({
+
+            var data = [];
+            for (var idxSec in _{{ id }}_value) {
+                var section = _{{ id }}_value[idxSec];
+                var obj = {
+                    text: section.title,
+                    state: {
+                        opened: true,
+                        selected: false
+                    },
+                    children: []
+                };
+                for (var idxBlk in section.blocks) {
+                    var block = section.blocks[idxBlk];
+                    obj.children.push({
+                        text: block.title,
+                    })
+                }
+                data.push(obj);
+            }
+
+            $('.overview{{ id }} .jstree').jstree({
+                core: {
+                    data: data,
+                },
                 'plugins': ['types'],
                 'types': {
                     'default': {
                         'icon': 'fa fa-file-text-o'
                     },
+                },
+            }).on('ready.jstree',
+                function() {
+                    setTimeout($.proxy(function () {
+                        $('.scroll-content').slimscroll({
+                            height: Math.min($(window).height() - 50, $('.overview{{ id }}').outerHeight()) + 'px',
+                        })
+                    }, this), 100);
                 }
-            });
-            $('.scroll-content').slimscroll({
-                height: $(window).height() - 150 - 100 + 'px',
-            });
+            );
+
+
         };
 
         function assemble{{ id }}() {
-            {#
-             var data = [];
-            $.each($('#{{ id }}_container tbody.js-row'), function (idx, itm) {
-                data.push({
-                    widget: $(itm).find('.js-cbi-widget').val(),
-                    id: $(itm).find('.js-cbi-id').val(),
-                    title: $(itm).find('.js-cbi-title').val(),
-                    sql: $(itm).find('.js-cbi-sql').val(),
+            $.each($('#{{ id }}_container .js-section'), function (idx, itm) {
+                var section = getById{{ id }}(_{{ id }}_value, $(itm).data('id'));
+                $.each($(itm).find('.js-block'), function (idxBlk, itmBlk) {
+                    var block = getById{{ id }}(section.blocks, $(itmBlk).data('id'));
+                    $.each($(itmBlk).find('.js-elem'), function (idxElem, itmElem) {
+                        if ($(itmElem).attr('type') == 'checkbox') {
+                            block.values[$(itmElem).attr('id')] = $(itmElem).is(':checked') ? 1 : 0;
+                        } else {
+                            block.values[$(itmElem).attr('id')] = $(itmElem).val();
+                        }
+                    });
                 });
             });
-            $('#{{ id }}').val(JSON.stringify(data));#}
+            $('#{{ id }}').val(cleanString{{ id }}(_{{ id }}_value));
         };
 
         function getById{{ id }}(data, id) {
@@ -291,19 +280,16 @@
             return null;
         };
 
-        function clean{{ id }}(sections) {
+        function cleanString{{ id }}(sections) {
             sections = JSON.parse(JSON.stringify(sections));
             for (var idxSection in sections) {
                 var section = sections[idxSection];
                 for (var idxBlock in section.blocks) {
                     var block = section.blocks[idxBlock];
-                    for (var idxItem in block.items) {
-                        var item = block.items[idxItem];
-                        delete item.__choices;
-                    }
+                    delete block.items;
                 }
             }
             return JSON.stringify(sections)
-        }
+        };
     </script>
 {%- endblock content_block_widget -%}

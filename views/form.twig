@@ -302,7 +302,9 @@
             });
             $('#{{ id }}_add').val('');
             $('#{{ id }}_add').trigger("chosen:updated");
-            $('#{{ id }}_formbuilder .wgt').chosen();
+            $('#{{ id }}_formbuilder .wgt').chosen({
+                allow_single_deselect: true
+            });
         };
 
         function assemble{{ id }}() {

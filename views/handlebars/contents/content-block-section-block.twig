@@ -1,5 +1,5 @@
 {% verbatim %}
-    <div class="panel panel-default">
+    <div class="panel panel-default js-block" data-id="{{block.id}}">
         <div class="panel-heading">
             <div class="left">
                 <h4>{{block.title}}</h4>
@@ -17,72 +17,73 @@
                         {{#compare widget 0 operator='==' }}
                             <div class="inner-box">
                                 <label>{{title}}</label>
-                                <input type="text">
+                                <input type="text" class="js-elem" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
                             </div>
                         {{/compare}}
 
                         {{#compare widget 1 operator='==' }}
                             <div class="inner-box inner-fullwidth">
                                 <label>{{title}}</label>
-                                <textarea></textarea>
+                                <textarea class="js-elem" id="{{id}}">{{#getByKey ../block.values id}}{{/getByKey}}</textarea>
                             </div>
                         {{/compare}}
 
                         {{#compare widget 2 operator='==' }}
                             <div class="inner-box">
                                 <label>{{title}}</label>
-                                <input type="text">
+                                <input type="text" class="js-elem" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
                             </div>
                         {{/compare}}
 
                         {{#compare widget 3 operator='==' }}
                             <div class="inner-box">
                                 <label>{{title}}</label>
-                                <input type="text">
+                                <input type="text" class="js-elem" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
                             </div>
                         {{/compare}}
 
                         {{#compare widget 4 operator='==' }}
                             <div class="inner-box">
-                                <label>{{title}}</label>
-                                <input type="checkbox">
+                                <label for="{{id}}">{{title}}</label>
+                                <input {{#getByKeyAndCompare ../block.values id 1}}checked{{/getByKeyAndCompare}} type="checkbox" class="js-elem" id="{{id}}">
                             </div>
                         {{/compare}}
 
                         {{#compare widget 5 operator='==' }}
                             <div class="inner-box inner-fullwidth">
                                 <label>{{title}}</label>
-                                <textarea class="js-redactor"></textarea>
+                                <textarea class="js-elem js-redactor" id="{{id}}">{{#getByKey ../block.values id}}{{/getByKey}}</textarea>
                             </div>
                         {{/compare}}
 
                         {{#compare widget 6 operator='==' }}
                             <div class="inner-box">
                                 <label>{{title}}</label>
-                                <input type="text" class="js-date">
+                                <input type="text" class="js-elem js-date" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
                             </div>
                         {{/compare}}
 
                         {{#compare widget 7 operator='==' }}
                             <div class="inner-box">
                                 <label>{{title}}</label>
-                                <input type="text" class="js-datetime">
+                                <input type="text" class="js-elem js-datetime" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
                             </div>
                         {{/compare}}
 
                         {{#compare widget 8 operator='==' }}
                             <div class="inner-box">
                                 <label>{{title}}</label>
-                                <input type="text" class="js-time">
+                                <input type="text" class="js-elem js-time" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
                             </div>
                         {{/compare}}
 
                         {{#compare widget 9 operator='==' }}
                             <div class="inner-box">
                                 <label>{{title}}</label>
-                                <select class="no-chosen after-chosen">
-                                    {{#each __choices}}
-                                        <option value="{{@key}}">{{this}}</option>
+                                <select class="js-elem no-chosen after-chosen" id="{{id}}">
+                                    <option></option>
+                                    {{#each choices}}
+                                        <option {{#getByKeyAndCompare ../../block.values ../id @key}}selected{{/getByKeyAndCompare}} value="{{@key}}">{{this}}</option>
                                     {{/each}}
                                 </select>
                             </div>
@@ -91,16 +92,16 @@
                         {{#compare widget 10 operator='==' }}
                             <div class="inner-box">
                                 <label>{{title}}</label>
-                                <select class="no-chosen after-chosen" multiple>
-                                    {{#each __choices}}
-                                        <option value="{{@key}}">{{this}}</option>
+                                <select class="js-elem no-chosen after-chosen" id="{{id}}" multiple>
+                                    {{#each choices}}
+                                        <option {{#getByKeyAndCompare ../../block.values ../id @key}}selected{{/getByKeyAndCompare}} value="{{@key}}">{{this}}</option>
                                     {{/each}}
                                 </select>
                             </div>
                         {{/compare}}
 
                         {{#compare widget 11 operator='==' }}
-                            <div class="inner-box">&nbsp;</div>
+                            <div class="js-elem inner-box" id="{{id}}">&nbsp;</div>
                         {{/compare}}
                     {{/each}}
                 </div>

@@ -158,9 +158,9 @@ class Content extends Pz
                     $choices[$val['key']] = $val['value'];
                 }
                 $opts['choices'] = $choices;
-                $opts['empty_data'] = null;
+//                $opts['empty_data'] = null;
                 $opts['required'] = false;
-                $opts['placeholder'] = 'Choose an option...';
+//                $opts['placeholder'] = 'Select an option...';
             }
             if ($itm->required == 1) {
                 $opts['constraints'] = array(
