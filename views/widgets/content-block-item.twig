@@ -16,7 +16,11 @@
         var _{{ id }}_template = Handlebars.compile($("#{{ id }}_row").html());;
         $(function () {
             $('#{{ id }}_add').click(function () {
-                var data = JSON.parse($('#{{ id }}').val());
+                try {
+                    var data = JSON.parse($('#{{ id }}').val());
+                } catch (ex) {
+                    var data = [];
+                }
                 data.push({
                     widget: 0,
                     id: 'id',
