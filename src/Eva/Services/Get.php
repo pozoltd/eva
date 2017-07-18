@@ -1,7 +1,7 @@
 <?php
 namespace Eva\Services;
 
-use Eva\Route\URL;
+use Eva\Router\URL;
 use Eva\Tools\Utils;
 use Silex\ServiceProviderInterface;
 use Silex\Application;

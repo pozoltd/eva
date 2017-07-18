@@ -63,29 +63,7 @@ class Content extends Pz
 //            'debug' => 1,
         ));
 
-//        $total = null;
-//        if ($options['model']->listType == 0) {
-//            $result = $ormClass::data($app['zdb'], array(
-//                'count' => 1,
-//            ));
-////            $total = $result[0]['total'];
-//        } else if ($options['model']->listType == 2) {
-//            $root = new \stdClass();
-//            $root->id = 0;
-//            $orms = URL::buildTree($root, $orms);
-//        }
         return $app['twig']->render($options['page']->twig, $options);
-
-//        return $app['twig']->render("contents.twig", array(
-//            'model' => $options['model'],
-//            'contents' => $orms,
-//            'returnURL' => 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}",
-//            'pageNum' => $pageNum,
-//            'limit' => $limit,
-//            'sort' => $sort,
-//            'order' => $order,
-//            'total' => $total,
-//        ));
     }
 
     public function content(Application $app, Request $request, $modelClass, $id = null)

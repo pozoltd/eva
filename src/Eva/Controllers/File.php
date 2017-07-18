@@ -2,8 +2,9 @@
 
 namespace Eva\Controllers;
 
-use Eva\Route\Nav;
-use Eva\Route\Node;
+use Eva\Router\Nav;
+use Eva\Router\Node;
+use Eva\Website\FileView;
 use PrettyDateTime\PrettyDateTime;
 use Silex\Application;
 use Symfony\Component\Validator\Constraints as Assert;

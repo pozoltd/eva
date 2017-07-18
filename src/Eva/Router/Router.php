@@ -1,10 +1,10 @@
 <?php
 
-namespace Eva\Controllers;
+namespace Eva\Router;
 
-use Eva\Route\Tree;
-use Eva\Route\URL;
-use Eva\Route\Nav;
+use Eva\Router\Tree;
+use Eva\Router\URL;
+use Eva\Router\Nav;
 use Eva\Tools\Utils;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\Request;
 
 
-abstract class Route implements ControllerProviderInterface
+abstract class Router implements ControllerProviderInterface
 {
     public function __construct(Application $app, $options = array())
     {
@@ -61,6 +61,7 @@ abstract class Route implements ControllerProviderInterface
             $this->app->abort(404);
         }
         return array(
+            'nav' => $nav,
             'page' => $node,
             'args' => $args,
             'returnUrl' => $this->app['request']->get('returnUrl') ?: '/' . $url,

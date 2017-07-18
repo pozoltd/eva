@@ -1,9 +1,9 @@
 <?php
 namespace Eva\Services;
 
-use Eva\Route\Node;
-use Eva\Route\Tree;
-use Eva\Route\Nav;
+use Eva\Router\Node;
+use Eva\Router\Tree;
+use Eva\Router\Nav;
 use Eva\Tools\Utils;
 use Silex\ServiceProviderInterface;
 use Silex\Application;

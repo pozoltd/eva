@@ -1,18 +1,16 @@
 <?php
-namespace Eva\Controllers;
 
-use Eva\Route\Node;
+namespace Eva\Website;
+
+use Eva\Router\Node;
+use Eva\Router\Router;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
-class Index extends Route
+class Index extends Router
 {
-    public function route(Application $app, Request $request, $url = null)
+    protected function getNodes()
     {
-        return parent::route($app, $request, $url);
-    }
-
-    protected function getNodes() {
         $nodes = array();
         $pages = \Eva\ORMs\Page::active($this->app['zdb']);
         foreach ($pages as $itm) {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Eva\Route;
+namespace Eva\Router;
 
 use Eva\Tools\Utils;
 
@@ -18,7 +18,17 @@ class Node
     public $allowExtra;
     public $maxParams;
 
-    public function __construct($id, $parentId, $rank = null, $visible = 1, $title = null, $twig = null, $url = null, $icon = null, $allowExtra = false, $maxParams = 0, $children = array())
+    public function __construct($id,
+                                $parentId,
+                                $rank = null,
+                                $visible = 1,
+                                $title = null,
+                                $twig = null,
+                                $url = null,
+                                $icon = null,
+                                $allowExtra = false,
+                                $maxParams = 0,
+                                $children = array())
     {
         $this->id = $id;
         $this->parentId = $parentId;
@@ -33,7 +43,7 @@ class Node
         $this->maxParams = $maxParams;
     }
 
-    public function hasChildren()
+    public function hasVisibleChildren()
     {
         $count = 0;
         foreach ($this->children as $itm) {

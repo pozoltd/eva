@@ -17,15 +17,16 @@ class Login implements ControllerProviderInterface
         return $controllers;
     }
 
-    public function pz(Application $app, Request $request) {
+    public function pz(Application $app, Request $request)
+    {
         return $app->redirect('/pz/secured');
     }
 
     public function login(Application $app, Request $request)
     {
         return $app['twig']->render("login.twig", array(
-                'error' => $app['security.last_error']($request),
-                'last_username' => $app['session']->get('_security.last_username'))
-        );
+            'error' => $app['security.last_error']($request),
+            'last_username' => $app['session']->get('_security.last_username'),
+        ));
     }
 }

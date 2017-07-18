@@ -2,9 +2,9 @@
 namespace Eva\Controllers;
 
 use Eva\Db\Model;
-use Eva\Route\Nav;
-use Eva\Route\Node;
-use Eva\Route\URL;
+use Eva\Router\Nav;
+use Eva\Router\Node;
+use Eva\Router\URL;
 use Eva\Tools\Utils;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
