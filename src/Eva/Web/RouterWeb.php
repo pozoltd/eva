@@ -1,13 +1,13 @@
 <?php
 
-namespace Eva\Website;
+namespace Eva\Web;
 
 use Eva\Router\Node;
 use Eva\Router\Router;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
-class Index extends Router
+class RouterWeb extends RouterWeb
 {
     protected function getNodes()
     {

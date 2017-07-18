@@ -1,9 +1,7 @@
 <?php
 
-namespace Eva\Website;
+namespace Eva\Cms;
 
-
-use Eva\Controllers\Pz;
 use Silex\Application;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Imagick;
 
 
-class FileView extends Pz
+class FileView extends RouterCms
 {
     public function connect(Application $app)
     {

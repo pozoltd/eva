@@ -1,10 +1,10 @@
 <?php
 
-namespace Eva\Controllers;
+namespace Eva\Cms;
 
 use Eva\Router\Nav;
 use Eva\Router\Node;
-use Eva\Website\FileView;
+use Eva\Cms\FileView;
 use PrettyDateTime\PrettyDateTime;
 use Silex\Application;
 use Symfony\Component\Validator\Constraints as Assert;

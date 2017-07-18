@@ -1,12 +1,12 @@
 <?php
-namespace Eva\Controllers;
+namespace Eva\Cms;
 
 use Eva\Router\Node;
 use Eva\Router\Router;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
-class Pz extends Router
+class RouterCms extends Router
 {
     public function route(Application $app, Request $request, $url = null)
     {

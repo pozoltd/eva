@@ -1,6 +1,6 @@
 <?php
 
-namespace Eva\Controllers;
+namespace Eva\Cms;
 
 use Eva\Db\Table;
 use Eva\Router\URL;
@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
-class Model extends Pz
+class Model extends RouterCms
 {
     public function connect(Application $app)
     {

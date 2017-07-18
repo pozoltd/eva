@@ -1,6 +1,6 @@
 <?php
 
-namespace Eva\Controllers;
+namespace Eva\Cms;
 
 use Silex\Application;
 use Silex\ControllerProviderInterface;

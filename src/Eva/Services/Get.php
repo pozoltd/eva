@@ -29,11 +29,6 @@ class Get implements ServiceProviderInterface
         return URL::getUrl();
     }
 
-    public function slugify($str)
-    {
-        return Utils::slugify($str);
-    }
-
     public function getRequestURI() {
         return stripos(URL::getUrl(), '?') === false ? '' : substr(URL::getUrl(), stripos(URL::getUrl(), '?'));
     }
@@ -43,10 +38,19 @@ class Get implements ServiceProviderInterface
         return $FORM_WIDGETS;
     }
 
+
+    public function slugify($str)
+    {
+        return Utils::slugify($str);
+    }
+
     public function getConfigData($configName) {
         if ($configName == 'CONTNET_BLOCK_WIDGETS') {
             global $CONTNET_BLOCK_WIDGETS;
             return $CONTNET_BLOCK_WIDGETS;
+        } else if ($configName == 'FORM_WIDGETS') {
+            global $FORM_WIDGETS;
+            return $FORM_WIDGETS;
         }
     }
 
