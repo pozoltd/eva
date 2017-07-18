@@ -43,6 +43,13 @@ class Get implements ServiceProviderInterface
         return $FORM_WIDGETS;
     }
 
+    public function getConfigData($configName) {
+        if ($configName == 'CONTNET_BLOCK_WIDGETS') {
+            global $CONTNET_BLOCK_WIDGETS;
+            return $CONTNET_BLOCK_WIDGETS;
+        }
+    }
+
     public function getFormData($value) {
         if ($value[2] == 'textarea') {
             return nl2br($value[1]);

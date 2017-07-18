@@ -44,4 +44,31 @@ class Nav
         }
         return null;
     }
+
+//    public static function withChildIds($node, $id, $status = 0)
+//    {
+//        $result = array();
+//        if ($node->id == $id || $status == 1) {
+//            $result[] = $node->id;
+//            $status = 1;
+//        }
+//        foreach ($node->_c as $itm) {
+//            $result = array_merge($result, static::withChildIds($itm, $id, $status));
+//        }
+//        return $result;
+//    }
+//
+//
+//    public static function buildTree($node, $arr)
+//    {
+//        if (!isset($node->_c)) {
+//            $node->_c = array();
+//        }
+//        foreach ($arr as $itm) {
+//            if ($itm->parentId == $node->id) {
+//                $node->_c[] = static::buildTree($itm, $arr);
+//            }
+//        }
+//        return $node;
+//    }
 }

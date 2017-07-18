@@ -39,7 +39,7 @@
             for (var idx in data) {
                 var itm = data[idx];
                 $("#{{ id }}_container").append(_{{ id }}_template({
-                    widgets: {{ app.cms.contentBlockWidgets|json_encode|raw }},
+                    widgets: {{ app.get.configData('CONTNET_BLOCK_WIDGETS')|json_encode|raw }},
                     data: itm,
                 }));
             }
