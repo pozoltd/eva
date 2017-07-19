@@ -15,7 +15,7 @@
 	{#<script id="file-source" type="text/x-handlebars-template">{% include 'handlebars/file.twig' %}</script>#}
 	{#<script id="folderpicker-tablerow-source" type="text/x-handlebars-template">{% include 'handlebars/folderpicker-tablerow.twig' %}</script>#}
 	{#<script id="folderpicker-table-source" type="text/x-handlebars-template">{% include 'handlebars/folderpicker-table.twig' %}</script>#}
-	{#<script id="formbuilder-source" type="text/x-handlebars-template">{% include 'handlebars/formbuilder.twig' %}</script>#}
+	<script id="formbuilder-source" type="text/x-handlebars-template">{% include 'handlebars/contents/formbuilder.twig' %}</script>
 	{#<script id="block-source" type="text/x-handlebars-template">{% include 'handlebars/block.twig' %}</script>#}
 
 	<div class="row">
@@ -25,17 +25,19 @@
 					<h2>{{ content.id ? '#' ~ content.id  : 'Creating new record...' }}</h2>
 				</div>
 				<div class="ibox-content">
-					<form method="POST" novalidate {{ form_enctype(form) }} autocomplete="off">
-						{{ form_widget(form) }}
-						<div style="clear: both;"></div>
-						<div>&nbsp;</div>
-						<div class="submit-container">
-							<a class="btn btn-white" href="{{ returnUrl }}"><i class="fa fa-arrow-left"></i> &nbsp;Back</a>
-							<input class="btn btn-sm btn-primary pull-right m-t-n-xs" type="submit" value="Save" name="submit" />
-							<input class="btn btn-sm btn-success pull-right m-t-n-xs" type="submit" value="Apply" name="submit" />
-							{#<input class="btn btn-sm btn-danger pull-right m-t-n-xs" type="submit" value="Delete" name="submit" />#}
-						</div>
-					</form>
+					{% block form %}
+						<form method="POST" novalidate {{ form_enctype(form) }} autocomplete="off">
+							{{ form_widget(form) }}
+							<div style="clear: both;"></div>
+							<div>&nbsp;</div>
+							<div class="submit-container">
+								<a class="btn btn-white" href="{{ returnUrl }}"><i class="fa fa-arrow-left"></i> &nbsp;Back</a>
+								<input class="btn btn-sm btn-primary pull-right m-t-n-xs" type="submit" value="Save" name="submit" />
+								<input class="btn btn-sm btn-success pull-right m-t-n-xs" type="submit" value="Apply" name="submit" />
+								{#<input class="btn btn-sm btn-danger pull-right m-t-n-xs" type="submit" value="Delete" name="submit" />#}
+							</div>
+						</form>
+					{% endblock %}
 				</div>
 			</div>
 		</div>

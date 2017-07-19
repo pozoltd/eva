@@ -33,12 +33,6 @@ class Get implements ServiceProviderInterface
         return stripos(URL::getUrl(), '?') === false ? '' : substr(URL::getUrl(), stripos(URL::getUrl(), '?'));
     }
 
-    public function getFormWidgets() {
-        global $FORM_WIDGETS;
-        return $FORM_WIDGETS;
-    }
-
-
     public function slugify($str)
     {
         return Utils::slugify($str);

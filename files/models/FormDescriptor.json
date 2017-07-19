@@ -50,7 +50,7 @@
     {
       "id": "z1458512459460",
       "column": "content",
-      "widget": "\\Eva\\Forms\\Types\\FormBuilder",
+      "widget": "textarea",
       "label": "Fields:",
       "field": "fields",
       "required": 1,
