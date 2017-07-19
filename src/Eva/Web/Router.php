@@ -7,7 +7,7 @@ use Eva\Router\Router;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
-class RouterWeb extends RouterWeb
+class Router extends Router
 {
     protected function getNodes()
     {

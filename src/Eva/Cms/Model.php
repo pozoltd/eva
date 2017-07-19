@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
-class Model extends RouterCms
+class Model extends Router
 {
     public function connect(Application $app)
     {

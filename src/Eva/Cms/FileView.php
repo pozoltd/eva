@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Imagick;
 
 
-class FileView extends RouterCms
+class FileView extends Router
 {
     public function connect(Application $app)
     {
