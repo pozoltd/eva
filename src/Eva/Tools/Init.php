@@ -40,7 +40,7 @@ class Init implements ControllerProviderInterface
 
     public function models(Application $app, Request $request)
     {
-        $path = __DIR__ . '/../Files/models/';
+        $path = __DIR__ . '/../../../files/models/';
         $files = scandir($path);
         foreach ($files as $file) {
             if ($file == '.' || $file == '..') {

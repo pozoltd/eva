@@ -42,9 +42,9 @@ class ModelIO
             $extras = array_filter($extras);
 
             if ($model->className == 'User') {
-                $str = file_get_contents(__DIR__ . '/../Files/orms/orm_user.txt');
+                $str = file_get_contents(__DIR__ . '/../../../files/orms/orm_user.txt');
             } else {
-                $str = file_get_contents(__DIR__ . '/../Files/orms/orm.txt');
+                $str = file_get_contents(__DIR__ . '/../../../files/orms/orm.txt');
             }
             $str = str_replace('{TIMESTAMP}', date('Y-m-d H:i:s'), $str);
             $str = str_replace('{NAMESPACE}', $model->namespace, $str);
@@ -79,7 +79,7 @@ class ModelIO
         }, $columnsJson);
         $extras = array_filter($extras);
 
-        $str = file_get_contents(__DIR__ . '/../Files/orms/orm.txt');
+        $str = file_get_contents(__DIR__ . '/../../../files/orms/orm.txt');
         $str = str_replace('{TIMESTAMP}', date('Y-m-d H:i:s'), $str);
         $str = str_replace('{NAMESPACE}', $model->namespace . '\\Generated', $str);
         $str = str_replace('{CLASSNAME}', $model->className, $str);
@@ -98,7 +98,7 @@ class ModelIO
         $file = HOME_DIR . '/src/' . $model->namespace . '/' . $model->className . '.php';
 
         if (!file_exists($file)) {
-            $str = file_get_contents(__DIR__ . '/../Files/orms/orm_custom.txt');
+            $str = file_get_contents(__DIR__ . '/../../../files/orms/orm_custom.txt');
             $str = str_replace('{TIMESTAMP}', date('Y-m-d H:i:s'), $str);
             $str = str_replace('{NAMESPACE}', $model->namespace, $str);
             $str = str_replace('{CLASSNAME}', $model->className, $str);

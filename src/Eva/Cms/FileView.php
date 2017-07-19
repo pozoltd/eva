@@ -77,7 +77,7 @@ class FileView extends RouterCms
         }
 
         if (!file_exists($file) || !getimagesize($file)) {
-            $file = __DIR__ . '/../Files/images/noimage.jpg';
+            $file = __DIR__ . '/../../../files/images/noimage.jpg';
         }
         $stream = function () use ($file) {
             readfile($file);
