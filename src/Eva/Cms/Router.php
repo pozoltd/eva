@@ -9,7 +9,7 @@ class Router extends \Eva\Router\Router
 {
     public function route(Application $app, Request $request, $url = null)
     {
-        if (empty($url) && $url !== null) {
+        if ($url === 'secured') {
             return $this->app->abort(301, '/pz/secured/pages');
         }
         return parent::route($app, $request, $url);
