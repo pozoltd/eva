@@ -11,7 +11,7 @@
     <button id="{{ id }}_add" type="button" class="btn"><i class="fa fa-plus"></i></button>
     <textarea {{ block('widget_attributes') }} style="display: none;">{{ value ?: '[]' }}</textarea>
 
-    <script id="{{ id }}_row" type="text/x-handlebars-template">{% include 'handlebars/contents/content-block-item.twig' %}</script>
+    <script id="{{ id }}_row" type="text/x-handlebars-template">{% include 'handlebars/widgets/content-block-item/content-block-item.twig' %}</script>
     <script>
         var _{{ id }}_template = Handlebars.compile($("#{{ id }}_row").html());;
         $(function () {

@@ -62,7 +62,7 @@
 
 {% block extraFooter %}
     {{ parent() }}
-
+    <script id="formbuilder-source" type="text/x-handlebars-template">{% include 'handlebars/pages/content-form_descriptor/formbuilder.twig' %}</script>
     <script>
         var _formbuilder = $("#formbuilder-source").html();
 

@@ -56,13 +56,13 @@
         </div>
     </div>
 
-    <script id="{{ id }}_section" type="text/x-handlebars-template">{% include 'handlebars/contents/content-block-section.twig' %}</script>
-    <script id="{{ id }}_block" type="text/x-handlebars-template">{% include 'handlebars/contents/content-block-section-block.twig' %}</script>
-    <script id="{{ id }}_overview" type="text/x-handlebars-template">{% include 'handlebars/contents/content-block-overview.twig' %}</script>
+    <script id="{{ id }}_section" type="text/x-handlebars-template">{% include 'handlebars/widgets/content-block/section.twig' %}</script>
+    <script id="{{ id }}_block" type="text/x-handlebars-template">{% include 'handlebars/widgets/content-block/block.twig' %}</script>
+    <script id="{{ id }}_sidebar" type="text/x-handlebars-template">{% include 'handlebars/widgets/content-block/sidebar.twig' %}</script>
     <script>
         var _{{ id }}_template_section = Handlebars.compile($("#{{ id }}_section").html());
         var _{{ id }}_template_block = Handlebars.compile($("#{{ id }}_block").html());
-        var _{{ id }}_template_overview = Handlebars.compile($("#{{ id }}_overview").html());
+        var _{{ id }}_template_sidebar = Handlebars.compile($("#{{ id }}_sidebar").html());
         var _{{ id }}_blocks = {{ app.blocks.data|json_encode|raw }};
         var _{{ id }}_value = {{ app.blocks.value(value)|json_encode|raw }};
 
@@ -251,22 +251,22 @@
         };
 
         function render_sidebar{{ id }}() {
-            $('.overview{{ id }}').remove();
-            $('body').append(_{{ id }}_template_overview({
-                className: 'overview{{ id }}',
+            $('.sidebar{{ id }}').remove();
+            $('body').append(_{{ id }}_template_sidebar({
+                className: 'sidebar{{ id }}',
             }));
-            $('.overview{{ id }} .panel-body').append('<div class="jstree"></div>');
+            $('.sidebar{{ id }} .panel-body').append('<div class="jstree"></div>');
 
             if ($(window).scrollTop() > 150) {
-                $('.overview{{ id }}').css('top', 0);
+                $('.sidebar{{ id }}').css('top', 0);
             } else {
-                $('.overview{{ id }}').css('top', '150px');
+                $('.sidebar{{ id }}').css('top', '150px');
             }
             $(window).on('scroll resize', function () {
                 if ($(window).scrollTop() > 150) {
-                    $('.overview{{ id }}').css('top', 0);
+                    $('.sidebar{{ id }}').css('top', 0);
                 } else {
-                    $('.overview{{ id }}').css('top', '150px');
+                    $('.sidebar{{ id }}').css('top', '150px');
                 }
             });
 
@@ -290,7 +290,7 @@
                 data.push(obj);
             }
 
-            $('.overview{{ id }} .jstree').jstree({
+            $('.sidebar{{ id }} .jstree').jstree({
                 core: {
                     data: data,
                 },
@@ -304,7 +304,7 @@
                 function() {
                     setTimeout($.proxy(function () {
                         $('.scroll-content').slimscroll({
-                            height: Math.min($(window).height() - 50, $('.overview{{ id }}').outerHeight()) + 'px',
+                            height: Math.min($(window).height() - 50, $('.sidebar{{ id }}').outerHeight()) + 'px',
                         })
                     }, this), 100);
                 }
