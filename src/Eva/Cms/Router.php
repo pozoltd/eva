@@ -38,7 +38,7 @@ class Router extends \Eva\Router\Router
             ));
             foreach ($data as $itm) {
                 $nodes[] = new Node($itm->id, $itm->dataType == 0 ? 'database' : 'admin', $itm->__rank, 1, $itm->title, 'contents.twig', "/pz/secured/contents/$itm->id");
-                
+
                 $twig = 'content.twig';
                 if ($itm->className == 'FormDescriptor') {
                     $twig = 'content-form_descriptor.twig';

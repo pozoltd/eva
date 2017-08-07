@@ -68,12 +68,23 @@
                     sql: '',
                 });
                 $('#{{ form.items.vars.id }}').val(JSON.stringify(data));
-                render{{ form.items.vars.id }}();
+                render();
             });
-            render{{ form.items.vars.id }}();
+
+            $(document).on('click', '.js-remove', function () {
+                try {
+                    var data = JSON.parse($('#{{ form.items.vars.id }}').val());
+                } catch (ex) {
+                    var data = [];
+                }
+                data.splice($(this).closest('tbody.js-row').data('idx'), 1);
+                $('#{{ form.items.vars.id }}').val(JSON.stringify(data));
+                render();
+            });
+            render();
         });
 
-        function render{{ form.items.vars.id }}() {
+        function render() {
             $("#content-block-container tbody").remove();
             var data = JSON.parse($('#{{ form.items.vars.id }}').val());
             for (var idx in data) {
@@ -81,6 +92,7 @@
                 $("#content-block-container").append(_template({
                     widgets: {{ app.get.configData('CONTNET_BLOCK_WIDGETS')|json_encode|raw }},
                     data: itm,
+                    idx: idx,
                 }));
             }
             $('#content-block-container').sortable({
@@ -99,7 +111,7 @@
             });
             $('.js-cbi-widget').on('change', function () {
                 assemble{{ form.items.vars.id }}();
-                render{{ form.items.vars.id }}();
+                render();
             });
             $('.js-cbi-item').on('keyup', function () {
                 assemble{{ form.items.vars.id }}();

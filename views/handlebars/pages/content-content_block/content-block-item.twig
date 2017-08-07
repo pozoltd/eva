@@ -1,18 +1,21 @@
 {% verbatim %}
-    <tbody class="js-row">
+    <tbody class="js-row" data-idx="{{idx}}">
         <tr>
-            <td class="col-md-4">
+            <td class="col-md-3">
                 <select class="form-control no-chosen js-cbi-item js-cbi-widget">
                     {{#each widgets}}
                         <option value="{{@key}}" {{#compare ../data.widget @key operator="=="}}selected{{/compare}}>{{this}}</option>
                     {{/each}}
                 </select>
             </td>
-            <td class="col-md-4">
+            <td class="col-md-3">
                 <input type="text" class="form-control js-cbi-item js-cbi-id" value="{{data.id}}" />
             </td>
-            <td class="col-md-4">
+            <td class="col-md-5">
                 <input type="text" class="form-control js-cbi-item js-cbi-title" value="{{data.title}}" />
+            </td>
+            <td class="col-md-1">
+                <button type="button" class="js-remove btn btn-xs btn-circle btn-danger"><i class="fa fa-times"></i></button>
             </td>
         </tr>
         <tr id="js-sql" style="{{#compare 9 data.widget operator='!='}}{{#compare 10 data.widget operator='!='}}display: none;{{/compare}}{{/compare}}">
