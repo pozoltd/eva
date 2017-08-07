@@ -106,7 +106,6 @@ $TBL_CONTENTS = array(
 );
 
 $CMS_WIDGETS = array(
-    '\\Eva\\Forms\\Types\\ContentBlockItem' => '*Content block item',
     '\\Eva\\Forms\\Types\\FormData' => '*Form data',
     '\\Eva\\Forms\\Types\\AssetPicker' => 'Asset picker',
     '\\Eva\\Forms\\Types\\AssetFolderPicker' => 'Asset folder picker',

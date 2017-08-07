@@ -1,0 +1,125 @@
+{% extends 'content.twig' %}
+
+
+{% block form %}
+    <form method="POST" novalidate {{ form_enctype(form) }} autocomplete="off">
+        <div class="box text">
+            {{ form_label(form.title) }}
+            {{ form_widget(form.title) }}
+            {{ form_errors(form.title) }}
+        </div>
+        <div class="box text">
+            {{ form_label(form.twig) }}
+            {{ form_widget(form.twig) }}
+            {{ form_errors(form.twig) }}
+        </div>
+        <div class="box text">
+            {{ form_label(form.tags) }}
+            {{ form_widget(form.tags) }}
+            {{ form_errors(form.tags) }}
+        </div>
+
+        <div class="box textarea">
+            {{ form_label(form.items) }}
+            {{ form_widget(form.items,{attr:{style:'display:none;'}}) }}
+
+            <table id="content-block-container" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Widget</th>
+                    <th>ID</th>
+                    <th>Title</th>
+                </tr>
+                </thead>
+            </table>
+            <button id="add" type="button" class="btn"><i class="fa fa-plus"></i></button>
+            <div>&nbsp;</div>
+            {{ form_errors(form.items) }}
+        </div>
+
+        {{ form_rest(form) }}
+
+        <div style="clear: both;"></div>
+        <div>&nbsp;</div>
+        <div class="submit-container">
+            <a class="btn btn-white" href="{{ returnUrl }}"><i class="fa fa-arrow-left"></i> &nbsp;Back</a>
+            <input class="btn btn-sm btn-primary pull-right m-t-n-xs" type="submit" value="Save" name="submit" />
+            <input class="btn btn-sm btn-success pull-right m-t-n-xs" type="submit" value="Apply" name="submit" />
+        </div>
+    </form>
+{% endblock %}
+
+{% block extraFooter %}
+    {{ parent() }}
+    <script id="row" type="text/x-handlebars-template">{% include 'handlebars/pages/content-content_block/content-block-item.twig' %}</script>
+    <script>
+        var _template = Handlebars.compile($("#row").html());;
+        $(function () {
+            $('#add').click(function () {
+                try {
+                    var data = JSON.parse($('#{{ form.items.vars.id }}').val());
+                } catch (ex) {
+                    var data = [];
+                }
+                data.push({
+                    widget: 0,
+                    id: 'id',
+                    title: 'Titie:',
+                    sql: '',
+                });
+                $('#{{ form.items.vars.id }}').val(JSON.stringify(data));
+                render{{ form.items.vars.id }}();
+            });
+            render{{ form.items.vars.id }}();
+        });
+
+        function render{{ form.items.vars.id }}() {
+            $("#content-block-container tbody").remove();
+            var data = JSON.parse($('#{{ form.items.vars.id }}').val());
+            for (var idx in data) {
+                var itm = data[idx];
+                $("#content-block-container").append(_template({
+                    widgets: {{ app.get.configData('CONTNET_BLOCK_WIDGETS')|json_encode|raw }},
+                    data: itm,
+                }));
+            }
+            $('#content-block-container').sortable({
+                items: 'tbody',
+                stop: function(event, ui) {
+                    assemble{{ form.items.vars.id }}();
+                },
+                placeholder: {
+                    element: function(currentItem) {
+                        return $('<tr><td colspan="3" style="background: lightyellow; height: ' + $(currentItem).height() + 'px">&nbsp;</td></tr>')[0];
+                    },
+                    update: function(container, p) {
+                        return;
+                    }
+                }
+            });
+            $('.js-cbi-widget').on('change', function () {
+                assemble{{ form.items.vars.id }}();
+                render{{ form.items.vars.id }}();
+            });
+            $('.js-cbi-item').on('keyup', function () {
+                assemble{{ form.items.vars.id }}();
+            });
+            $.each($('#content-block-container td'), function (key, value) {
+                $(value).css('width', $(value).outerWidth() + 'px');
+            });
+        };
+
+        function assemble{{ form.items.vars.id }}() {
+            var data = [];
+            $.each($('#content-block-container tbody.js-row'), function (idx, itm) {
+                data.push({
+                    widget: $(itm).find('.js-cbi-widget').val(),
+                    id: $(itm).find('.js-cbi-id').val(),
+                    title: $(itm).find('.js-cbi-title').val(),
+                    sql: $(itm).find('.js-cbi-sql').val(),
+                });
+            });
+            $('#{{ form.items.vars.id }}').val(JSON.stringify(data));
+        };
+    </script>
+{% endblock %}
