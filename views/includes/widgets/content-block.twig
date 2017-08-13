@@ -2,101 +2,121 @@
 {%- endblock content_block_label -%}
 
 {% block content_block_widget -%}
-    <div id="{{ id }}_container"></div>
-    <button id="{{ id }}-add-section" type="button" class="btn"><i class="fa fa-plus"></i> section</button>
-    <textarea {{ block('widget_attributes') }} style="display: none;">{{ value ?: '[]' }}</textarea>
-    <hr/>
-    <div id="{{ id }}-section-modal" class="modal fade" aria-hidden="true" role="dialog" tabindex="-1">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Section name:</label>
-                        <input type="text" name="name" value="" placeholder="Enter a name" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label>Section ID:</label>
-                        <input type="text" name="id" value="" placeholder="Enter an ID" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label>Relationship tags:</label>
-                        <select name="tags" class="no-chosen after-chosen form-control js-tag-{{ id }}" data-placeholder="Choose tags" multiple>
-                            {% set data = app.db.active('RelationshipTag') %}
-                            {% for itm in data %}
-                                <option value="{{ itm.id }}">{{ itm.title }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-primary m-t-n-xs js-save-section-{{ id }}"><strong>Save</strong></button>
-                    <button type="button" class="btn btn-sm pull-right m-t-n-xs" data-dismiss="modal"><strong>Close</strong></button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="{{ id }}-block-modal" class="modal fade" aria-hidden="true" role="dialog" tabindex="-1">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <input type="text" name="blockId" value="" class="form-control">
-                    <input type="text" name="sectionId" value="" class="form-control">
-                    <input type="text" name="id" value="" class="form-control">
+    <div id="{{ id }}_wrap">
+        <div id="{{ id }}_container"></div>
+        <button id="{{ id }}-add-section" type="button" class="btn"><i class="fa fa-plus"></i> section</button>
+        <textarea {{ block('widget_attributes') }} style="display: none2;">{{ value ?: '[]' }}</textarea>
+        <hr/>
+        <div id="{{ id }}-section-modal" class="modal fade" aria-hidden="true" role="dialog" tabindex="-1"></div>
+        <div id="{{ id }}-block-modal" class="modal fade" aria-hidden="true" role="dialog" tabindex="-1">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <input type="text" name="blockId" value="" class="form-control">
+                        <input type="text" name="sectionId" value="" class="form-control">
+                        <input type="text" name="id" value="" class="form-control">
 
-                    <div class="form-group">
-                        <label>Block name:</label>
-                        <input type="text" name="name" value="" placeholder="Enter a name" class="form-control">
+                        <div class="form-group">
+                            <label>Block name:</label>
+                            <input type="text" name="name" value="" placeholder="Enter a name" class="form-control">
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-primary m-t-n-xs js-save-block-{{ id }}"><strong>Save</strong></button>
-                    <button type="button" class="btn btn-sm pull-right m-t-n-xs" data-dismiss="modal"><strong>Close</strong></button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-primary m-t-n-xs js-save-block-{{ id }}"><strong>Save</strong></button>
+                        <button type="button" class="btn btn-sm pull-right m-t-n-xs" data-dismiss="modal"><strong>Close</strong></button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script id="{{ id }}_section" type="text/x-handlebars-template">{% include 'handlebars/widgets/content-block/section.twig' %}</script>
+    <script id="{{ id }}_section_modal" type="text/x-handlebars-template">{% include 'handlebars/widgets/content-block/section-modal.twig' %}</script>
     <script id="{{ id }}_block" type="text/x-handlebars-template">{% include 'handlebars/widgets/content-block/block.twig' %}</script>
     <script id="{{ id }}_sidebar" type="text/x-handlebars-template">{% include 'handlebars/widgets/content-block/sidebar.twig' %}</script>
     <script>
         var _{{ id }}_template_section = Handlebars.compile($("#{{ id }}_section").html());
+        var _{{ id }}_template_section_modal = Handlebars.compile($("#{{ id }}_section_modal").html());
         var _{{ id }}_template_block = Handlebars.compile($("#{{ id }}_block").html());
         var _{{ id }}_template_sidebar = Handlebars.compile($("#{{ id }}_sidebar").html());
-        var _{{ id }}_blocks = {{ app.blocks.data|json_encode|raw }};
-        var _{{ id }}_value = {{ app.blocks.value(value)|json_encode|raw }};
+
+        var _{{ id }}_blockOptions = {{ app.blocks.blockDropdownOptions|json_encode|raw }};
+        var _{{ id }}_value = {{ app.blocks.decodedDataValue(value)|json_encode|raw }};
+        var _{{ id }}_tags = {{ app.blocks.relationshipTags|json_encode|raw }};
 
         $(function () {
             $('.js-blocks-{{ id }}').sortable({
                 connectWith: ".js-blocks-{{ id }}",
                 handle: ".panel-heading",
             }).disableSelection();
+
             $('#{{ id }}-section-modal').on('shown.bs.modal', function () {
-                $('.js-tag-{{ id }}').chosen({
+                $('#{{ id }}-section-modal select.after-chosen').chosen({
                     allow_single_deselect: true
                 });
             });
+
             $(document).on('click', '#{{ id }}-add-section', function () {
-                $('#{{ id }}-section-modal [name=id]').val('content');
-                $('#{{ id }}-section-modal [name=name]').val('Content')
-                $('#{{ id }}-section-modal select').val('').trigger("chosen:updated");
+                $("#{{ id }}-section-modal").html(_{{ id }}_template_section_modal({
+                    section: {
+                        id: Math.random().toString(36).substr(2, 9),
+                        title: 'Content',
+                        attr: 'content',
+                        tags: [],
+                        blocks: [],
+                    },
+                    optionTags: _{{ id }}_tags,
+                }));
                 $("#{{ id }}-section-modal").modal();
             });
-            $(document).on('click', '.js-save-section-{{ id }}', function () {
-                _{{ id }}_value.unshift({
-                    id: Math.random().toString(36).substr(2, 9),
+
+            $(document).on('click', '#{{ id }}_wrap .js-edit-section', function () {
+                var id = $(this).closest('.js-section').data('id');
+                var section = getById{{ id }}(_{{ id }}_value, id);
+                $("#{{ id }}-section-modal").html(_{{ id }}_template_section_modal({
+                    section: section,
+                    optionTags: _{{ id }}_tags,
+                }));
+                $("#{{ id }}-section-modal").modal();
+            });
+
+            $(document).on('click', '#{{ id }}_wrap .js-save-section', function () {
+                var section = {
+                    id: $('#{{ id }}-section-modal [name=id]').val(),
                     title: $('#{{ id }}-section-modal [name=name]').val(),
-                    attr: $('#{{ id }}-section-modal [name=id]').val(),
-                    tags: $('#{{ id }}-section-modal [name=tags]').val() ? $('#{{ id }}-section-modal [name=tags]').val(): [],
+                    attr: $('#{{ id }}-section-modal [name=attr]').val(),
+                    tags: typeof $('#{{ id }}-section-modal [name=tags]').val() == 'array' ? $('#{{ id }}-section-modal [name=tags]').val(): [],
                     blocks: [],
-                });
+                };
+                var existSection = getById{{ id }}(_{{ id }}_value, section.id)
+                if (!existSection) {
+                    _{{ id }}_value.unshift(section);
+                } else {
+                    existSection.title = section.title;
+                    existSection.attr = section.attr;
+                    existSection.tags = section.tags;
+                }
                 $('#{{ id }}').val(cleanString{{ id }}(_{{ id }}_value));
                 $('#{{ id }}-section-modal').modal('hide');
                 render{{ id }}();
             });
 
+            $(document).on('click', '#{{ id }}_container .js-delete-section', function () {
+                var secId = $(this).closest('.js-section').data('id');
+
+                for (var idx in _{{ id }}_value) {
+                    var itm = _{{ id }}_value[idx];
+                    if (itm.id == secId) {
+                        _{{ id }}_value.splice(idx, 1)
+                    }
+                }
+                render{{ id }}();
+                assemble{{ id }}();
+                return false;
+            });
+
             $(document).on('change', '.js-section-{{ id }} .js-add-block', function () {
-                var block = getById{{ id }}(_{{ id }}_blocks, $(this).val());
+                var block = getById{{ id }}(_{{ id }}_blockOptions, $(this).val());
                 $('#{{ id }}-block-modal [name=blockId]').val(block.id);
                 $('#{{ id }}-block-modal [name=sectionId]').val($(this).closest('.js-section-{{ id }}').data('id'));
                 $('#{{ id }}-block-modal [name=id]').val('');
@@ -111,7 +131,7 @@
                 if (section) {
                     var obj = getById{{ id }}(section.blocks, $('#{{ id }}-block-modal [name=id]').val());
                     if (!obj) {
-                        var block = getById{{ id }}(_{{ id }}_blocks, $('#{{ id }}-block-modal [name=blockId]').val());
+                        var block = getById{{ id }}(_{{ id }}_blockOptions, $('#{{ id }}-block-modal [name=blockId]').val());
                         if (block) {
                             var obj = {
                                 id: Math.random().toString(36).substr(2, 9),
@@ -148,19 +168,7 @@
                 assemble{{ id }}();
                 return false;
             });
-            $(document).on('click', '#{{ id }}_container .js-delete-section', function () {
-                var secId = $(this).closest('.js-section').data('id');
 
-                for (var idx in _{{ id }}_value) {
-                    var itm = _{{ id }}_value[idx];
-                    if (itm.id == secId) {
-                        _{{ id }}_value.splice(idx, 1)
-                    }
-                }
-                render{{ id }}();
-                assemble{{ id }}();
-                return false;
-            });
             render{{ id }}();
         });
 
@@ -176,7 +184,7 @@
                 var itm = _{{ id }}_value[idx];
                 $("#{{ id }}_container").append(_{{ id }}_template_section({
                     id: '{{ id }}',
-                    blocks: _{{ id }}_blocks,
+                    blockOptions: _{{ id }}_blockOptions,
                     section: itm,
                 }));
 
@@ -206,7 +214,7 @@
 //                    update: function (container, p) {
 //                        return;
 //                    }
-//                }
+//                } 
             });
 
             $('#{{ id }}_container select.after-chosen').chosen({
@@ -316,13 +324,15 @@
                 var section = getById{{ id }}(_{{ id }}_value, $(itm).data('id'));
                 $.each($(itm).find('.js-block'), function (idxBlk, itmBlk) {
                     var block = getById{{ id }}(section.blocks, $(itmBlk).data('id'));
-                    $.each($(itmBlk).find('.js-elem'), function (idxElem, itmElem) {
-                        if ($(itmElem).attr('type') == 'checkbox') {
-                            block.values[$(itmElem).attr('id')] = $(itmElem).is(':checked') ? 1 : 0;
-                        } else {
-                            block.values[$(itmElem).attr('id')] = $(itmElem).val();
-                        }
-                    });
+                    if (block) {
+                        $.each($(itmBlk).find('.js-elem'), function (idxElem, itmElem) {
+                            if ($(itmElem).attr('type') == 'checkbox') {
+                                block.values[$(itmElem).attr('id')] = $(itmElem).is(':checked') ? 1 : 0;
+                            } else {
+                                block.values[$(itmElem).attr('id')] = $(itmElem).val();
+                            }
+                        });
+                    }
                 });
             });
             $('#{{ id }}').val(cleanString{{ id }}(_{{ id }}_value));

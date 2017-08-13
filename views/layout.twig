@@ -125,14 +125,15 @@
 
                         $(document).on('click', '.js-status', function() {
                             $(this).attr('data-status', $(this).attr('data-status') == 1 ? 0 : 1);
-                            $(this).removeClass('btn-danger btn-info');
-                            $(this).find('i').removeClass('fa-check fa-ban')
+                            $(this).removeClass('btn-danger');
+                            $(this).removeClass('btn-info');
+                            $(this).find('i').removeClass('fa-toggle-off fa-toggle-on')
                             if ($(this).attr('data-status') == 1) {
                                 $(this).addClass('btn-info');
-                                $(this).find('i').addClass('fa-check');
+                                $(this).find('i').addClass('fa-toggle-on');
                             } else if ($(this).attr('data-status') == 0) {
                                 $(this).addClass('btn-danger');
-                                $(this).find('i').addClass('fa-ban');
+                                $(this).find('i').addClass('fa-toggle-off');
                             }
 
                             $.ajax({

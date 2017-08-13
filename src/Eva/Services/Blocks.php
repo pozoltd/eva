@@ -22,7 +22,7 @@ class Blocks implements ServiceProviderInterface
         $this->app = $app;
     }
 
-    public function data()
+    public function getBlockDropdownOptions()
     {
         $blocks = \Eva\ORMs\ContentBlock::active($this->app['zdb']);
         foreach ($blocks as $block) {
@@ -44,7 +44,12 @@ class Blocks implements ServiceProviderInterface
         return $blocks;
     }
 
-    public function value($value)
+    public function getRelationshipTags()
+    {
+        return \Eva\ORMs\RelationshipTag::active($this->app['zdb']);
+    }
+
+    public function getDecodedDataValue($value)
     {
         $blocks = array();
         $result = \Eva\ORMs\ContentBlock::active($this->app['zdb']);

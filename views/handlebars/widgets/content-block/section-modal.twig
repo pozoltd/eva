@@ -1,0 +1,29 @@
+{% verbatim %}
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-body">
+                <input type="hidden" name="id" value="{{section.id}}">
+                <div class="form-group">
+                    <label>Section name:</label>
+                    <input type="text" name="name" value="{{section.title}}" placeholder="Enter a name" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Section ID:</label>
+                    <input type="text" name="attr" value="{{section.attr}}" placeholder="Enter an ID" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Relationship tags:</label>
+                    <select name="tags" class="no-chosen after-chosen form-control js-tag" data-placeholder="Choose tags" multiple>
+                        {{#each optionTags}}
+                            <option {{#ifHasIt ../section.tags id }}selected{{/ifHasIt}} value="{{id}}">{{title}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-primary m-t-n-xs js-save-section"><strong>Save</strong></button>
+                <button type="button" class="btn btn-sm pull-right m-t-n-xs" data-dismiss="modal"><strong>Close</strong></button>
+            </div>
+        </div>
+    </div>
+{% endverbatim %}
