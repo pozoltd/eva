@@ -216,6 +216,7 @@ abstract class ORM
         }
 
         if ($options['debug']) {
+            while (@ob_end_clean());
             var_dump('<pre>', $sql, $options['params'], '</pre>');
             exit;
         }
