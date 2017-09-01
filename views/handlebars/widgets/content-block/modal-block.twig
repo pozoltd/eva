@@ -1,0 +1,20 @@
+{% verbatim %}
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-body">
+                <input type="hidden" name="sectionId" value="{{section.id}}" class="form-control">
+                <input type="hidden" name="blockId" value="{{block.block}}" class="form-control">
+                <input type="hidden" name="id" value="{{block.id}}" class="form-control">
+
+                <div class="form-group">
+                    <label>Block name:</label>
+                    <input type="text" name="name" value="{{block.title}}" placeholder="Enter a name" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-primary m-t-n-xs js-save-block"><strong>Save</strong></button>
+                <button type="button" class="btn btn-sm pull-right m-t-n-xs" data-dismiss="modal"><strong>Close</strong></button>
+            </div>
+        </div>
+    </div>
+{% endverbatim %}
