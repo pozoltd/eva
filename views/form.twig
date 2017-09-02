@@ -70,13 +70,13 @@
     <div class="widget style1" style="padding: 0; margin: 0;">
         <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}"/>
         <div class="row">
-            <div class="col-xs-4 text-center" style="width: auto;">
-                <img id="{{ id }}-preview" src="/pz/asset/image/{{ value }}/asset-picker-preview/" alt="image" style="height: 50px; {% if not value %}visibility: hidden;{% endif %}">
+            <div class="col-xs-4 text-center" style="width: auto;min-height: 110px;">
+                <img id="{{ id }}-preview" src="/asset/files/image/{{ value }}/cms_file_preview" style="height: 100px; {% if not value %}visibility: hidden;{% endif %}">
             </div>
             <div class="col-xs-8 text-right" style="width: auto;">
                 <p>
-                    <button type="button" class="btn btn-default btn-sm btn-circle change" style="margin-right: .2em;" data-id="#{{ id }}"><i class="fa fa-edit"></i></button>
-                    <button type="button" class="btn btn-warning btn-sm btn-circle delete" data-id="#{{ id }}"><i class="fa fa-times"></i></button>
+                    <button type="button" class="btn btn-primary btn-xs btn-circle js-asset-change" data-id="#{{ id }}" style="margin-right: .2em;"><i class="fa fa-edit"></i></button>
+                    <button type="button" class="btn btn-warning btn-xs btn-circle js-asset-delete" data-id="#{{ id }}"><i class="fa fa-times"></i></button>
                 </p>
 
             </div>

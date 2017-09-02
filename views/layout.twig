@@ -52,7 +52,7 @@
                                     <li class="nav-header">
                                         <div class="dropdown profile-element">
                                         <span>
-                                            <img style="height: 48px; width: 48px;" class="img-circle" src="{% if app.user.image %}/pz/asset/image/{{ app.user.image }}/asset-picker-preview/{% else %}{{ constant('CDN') }}/inspinia/profile_small.jpg{% endif %}"/>
+                                            <img style="height: 48px; width: 48px;" class="img-circle" src="{% if app.user.image %}/pz/secured/files/image/{{ app.user.image }}/cms_file_preview{% else %}{{ constant('CDN') }}/inspinia/profile_small.jpg{% endif %}"/>
                                         </span>
                                             <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                                             <span class="clear">
@@ -61,7 +61,7 @@
                                             </a>
                                         </div>
                                         <div class="logo-element">
-                                            <img style="width: 30px;" class="img-circle" src="{% if app.user.image %}/pz/asset/image/{{ app.user.image }}/asset-picker-preview/{% else %}{{ constant('CDN') }}/inspinia/profile_small.jpg{% endif %}"/>
+                                            <img style="width: 30px;" class="img-circle" src="{% if app.user.image %}/pz/secured/files/image/{{ app.user.image }}/cms_file_preview{% else %}{{ constant('CDN') }}/inspinia/profile_small.jpg{% endif %}"/>
                                         </div>
                                     </li>
 

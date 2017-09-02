@@ -31,9 +31,20 @@
                         {{/compare}}
 
                         {{#compare widget 2 operator='==' }}
-                            <div class="inner-box">
+                            <div class="inner-box content-block-asset">
                                 <label>{{title}}</label>
-                                <input type="text" class="js-elem" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
+                                <div class="row">
+                                    <div class="col-xs-4 text-center" style="width: 40%;min-height: 110px;">
+                                        <img id="{{id}}-preview" src="/asset/files/image/{{#getByKey ../block.values id}}{{/getByKey}}/cms_file_preview" style="height: 100px; {{#ifGetByKey ../block.values id }}visibility: hidden;{{/ifGetByKey}}" >
+                                    </div>
+                                    <div class="col-xs-8 text-right" style="width: 50%;">
+                                        <p>
+                                            <button type="button" class="btn btn-primary btn-xs btn-circle js-asset-change" data-id="#{{id}}" style="margin-right: .2em;"><i class="fa fa-edit"></i></button>
+                                            <button type="button" class="btn btn-warning btn-xs btn-circle js-asset-delete" data-id="#{{id}}"><i class="fa fa-times"></i></button>
+                                        </p>
+                                    </div>
+                                </div>
+                                <input type="hidden" class="js-elem" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
                             </div>
                         {{/compare}}
 

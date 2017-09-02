@@ -15,8 +15,8 @@ class User extends \Eva\Db\ORM implements UserInterface {
         return array_merge(array(
             'title' => 'title', 
 			'password' => 'password', 
-			'password_' => 'extra1', 
-			'name' => 'name', 
+			'password_' => 'extra1',
+			'name' => 'name',
 			'email' => 'email', 
 			'image' => 'image', 
 			'folder' => 'extra3', 

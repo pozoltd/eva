@@ -5,7 +5,7 @@
     <div id="{{ id }}_wrap">
         <div id="{{ id }}_container"></div>
         <button id="{{ id }}-add-section" type="button" class="btn"><i class="fa fa-plus"></i> section</button>
-        <textarea {{ block('widget_attributes') }} style="display: none2;">{{ value ?: '[]' }}</textarea>
+        <textarea {{ block('widget_attributes') }} style="display: none;">{{ value ?: '[]' }}</textarea>
         <hr/>
         <div id="{{ id }}-modal-section" class="modal fade" aria-hidden="true" role="dialog" tabindex="-1"></div>
         <div id="{{ id }}-modal-block" class="modal fade" aria-hidden="true" role="dialog" tabindex="-1"></div>
@@ -52,6 +52,7 @@
                     }
                 }
                 render{{ id }}();
+                assemble{{ id }}();
                 return false;
             });
             $(document).on('click', '#{{ id }}_wrap .js-section .js-up', function () {
@@ -66,6 +67,7 @@
                     }
                 }
                 render{{ id }}();
+                assemble{{ id }}();
                 return false;
             });
 
@@ -142,6 +144,7 @@
 
                 obj.status = $(this).data('status');
                 render{{ id }}();
+                assemble{{ id }}();
                 return false;
             });
 
@@ -306,7 +309,24 @@
                 },
             });
 
-            $('.js-elem').on('change', function () {
+
+            $('.assetpicker .js-asset-delete').click(function(ev) {
+                $($(this).data('id')).val('');
+                $($(this).data('id') + '-preview').css('visibility', 'hidden');
+            });
+
+            $('#{{ id }}_container .js-asset-change').click(function(ev) {
+                var _this = this;
+                window._callback = function () {
+                    $($(_this).data('id')).val($(this).closest('.file-box').data('id'));
+                    $($(_this).data('id') + '-preview').css('visibility', 'visible');
+                    $($(_this).data('id') + '-preview').attr('src', '/asset/files/image/' + $(this).closest('.file-box').data('id') + '/cms_file_preview');
+                    assemble{{ id }}();
+                };
+                filepicker();
+            });
+
+            $('.js-elem').change(function () {
                 assemble{{ id }}();
             });
             {#$('.js-cbi-item').on('keyup', function () {
@@ -437,7 +457,6 @@
             });
 
             $('.sidebar{{ id }}').find('.sidebar-submit .js-back').click(function () {
-                console.log($('form').find('.js-back'))
                 location.href = $('form').find('.js-back').attr('href');
                 return false;
             });

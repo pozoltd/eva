@@ -78,6 +78,14 @@ class Init implements ControllerProviderInterface
             $orm->save();
         }
 
+        $orm = \Eva\ORMs\AssetSize::getByTitle($app['zdb'], 'general');
+        if (!$orm) {
+            $orm = new \Eva\ORMs\AssetSize($app['zdb']);
+            $orm->title = 'general';
+            $orm->width = 950;
+            $orm->save();
+        }
+
         $orm = \Eva\ORMs\RelationshipTag::getByTitle($app['zdb'], 'Page content');
         if (!$orm) {
             $orm = new \Eva\ORMs\RelationshipTag($app['zdb']);
