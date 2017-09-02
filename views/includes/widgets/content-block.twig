@@ -35,9 +35,38 @@
             }).disableSelection();
 
             $('#{{ id }}-modal-section').on('shown.bs.modal', function () {
-                $('#{{ id }}-modal-section select.after-chosen').chosen({
+                $('#{{ id }}-modal-section select.js-after-chosen').chosen({
                     allow_single_deselect: true
                 });
+            });
+
+            $(document).on('click', '#{{ id }}_wrap .js-section .js-down', function () {
+                var id = $(this).closest('.js-section').data('id');
+                for (var idx in _{{ id }}_value) {
+                    var itm = _{{ id }}_value[idx];
+                    if (itm.id == id && idx < (_{{ id }}_value.length - 1)) {
+                        idx = parseInt(idx, 10);
+                        _{{ id }}_value[idx] = JSON.parse(JSON.stringify(_{{ id }}_value[idx + 1]));
+                        _{{ id }}_value[idx + 1] = JSON.parse(JSON.stringify(itm));
+                        break;
+                    }
+                }
+                render{{ id }}();
+                return false;
+            });
+            $(document).on('click', '#{{ id }}_wrap .js-section .js-up', function () {
+                var id = $(this).closest('.js-section').data('id');
+                for (var idx in _{{ id }}_value) {
+                    var itm = _{{ id }}_value[idx];
+                    if (itm.id == id && idx > 0) {
+                        idx = parseInt(idx, 10);
+                        _{{ id }}_value[idx] = JSON.parse(JSON.stringify(_{{ id }}_value[idx - 1]));
+                        _{{ id }}_value[idx - 1] = JSON.parse(JSON.stringify(itm));
+                        break;
+                    }
+                }
+                render{{ id }}();
+                return false;
             });
 
             $(document).on('click', '#{{ id }}-add-section', function () {
@@ -46,6 +75,7 @@
                         id: Math.random().toString(36).substr(2, 9),
                         title: 'Content',
                         attr: 'content',
+                        status: 1,
                         tags: [],
                         blocks: [],
                     },
@@ -68,6 +98,7 @@
                     id: $('#{{ id }}-modal-section [name=id]').val(),
                     title: $('#{{ id }}-modal-section [name=name]').val(),
                     attr: $('#{{ id }}-modal-section [name=attr]').val(),
+                    status: $('#{{ id }}-modal-section [name=status]').val(),
                     tags: typeof $('#{{ id }}-modal-section [name=tags]').val() == 'object' ? $('#{{ id }}-modal-section [name=tags]').val() : [],
                     blocks: [],
                 };
@@ -96,6 +127,23 @@
                 assemble{{ id }}();
                 return false;
             });
+            $(document).on('click', '#{{ id }}_container .js-status-toggle', function () {
+                var type = $(this).data('type');
+                if (type == 'section') {
+                    var obj = getById{{ id }}(_{{ id }}_value, $(this).closest('.js-section').data('id'));
+                } else {
+                    var blocks = [];
+                    for (var idx in _{{ id }}_value) {
+                        var itm = _{{ id }}_value[idx];
+                        blocks = blocks.concat(itm.blocks);
+                    }
+                    var obj = getById{{ id }}(blocks, $(this).closest('.js-block').data('id'));
+                }
+
+                obj.status = $(this).data('status');
+                render{{ id }}();
+                return false;
+            });
 
             $(document).on('change', '.js-section-{{ id }} .js-add-block', function () {
                 var blockOption = getById{{ id }}(_{{ id }}_blockOptions, $(this).val());
@@ -103,6 +151,7 @@
                     id: Math.random().toString(36).substr(2, 9),
                     title: blockOption.title,
                     block: blockOption.id,
+                    status: 1,
                 };
                 var section = getById{{ id }}(_{{ id }}_value, $(this).closest('.js-section').data('id'));
                 $("#{{ id }}-modal-block").html(_{{ id }}_template_modal_block({
@@ -133,6 +182,7 @@
                 var block = {
                     id: $('#{{ id }}-modal-block [name=id]').val(),
                     title: $('#{{ id }}-modal-block [name=name]').val(),
+                    status: $('#{{ id }}-modal-block [name=status]').val(),
                     block: $('#{{ id }}-modal-block [name=blockId]').val(),
                     items: blockOption.items,
                     values: {},
@@ -223,7 +273,7 @@
                 }
             });
 
-            $('#{{ id }}_container select.after-chosen').chosen({
+            $('#{{ id }}_container select.js-after-chosen').chosen({
                 allow_single_deselect: true
             });
 
@@ -288,17 +338,21 @@
             for (var idxSec in _{{ id }}_value) {
                 var section = _{{ id }}_value[idxSec];
                 var obj = {
+                    id: section.id,
                     text: section.title,
                     state: {
                         opened: true,
                         selected: false
                     },
-                    children: []
+                    children: [],
+                    type: section.status == 1 ? 'section' : 'section-disabled',
                 };
                 for (var idxBlk in section.blocks) {
                     var block = section.blocks[idxBlk];
                     obj.children.push({
+                        id: block.id,
                         text: block.title,
+                        type: block.status == 1 ? 'block' : 'block-disabled',
                     })
                 }
                 data.push(obj);
@@ -306,23 +360,96 @@
 
             $('.sidebar{{ id }} .jstree').jstree({
                 core: {
+                    check_callback: true,
                     data: data,
                 },
-                'plugins': ['types'],
+                'plugins': ['types', 'dnd'],
                 'types': {
-                    'default': {
-                        'icon': 'fa fa-file-text-o'
+                    "#" : {
+                        "valid_children" : ["section"]
+                    },
+                    "section" : {
+                        'icon': 'fa fa-folder-open-o',
+                        "valid_children" : ["block"]
+                    },
+                    "section-disabled" : {
+                        'icon': 'fa fa-folder-open-o text-danger',
+                        "valid_children" : ["block"]
+                    },
+                    "block" : {
+                        'icon': 'fa fa-file-text-o',
+                        "valid_children" : [],
+                    },
+                    "block-disabled" : {
+                        'icon': 'fa fa-file-text-o text-danger',
+                        "valid_children" : [],
                     },
                 },
             }).on('ready.jstree',
                 function() {
                     setTimeout($.proxy(function () {
                         $('.scroll-content').slimscroll({
-                            height: Math.min($(window).height() - 50, $('.sidebar{{ id }}').outerHeight()) + 'px',
+                            height: Math.min($(window).height() - 50, $('.sidebar{{ id }} .panel-body').outerHeight()) + 'px',
                         })
                     }, this), 100);
                 }
             );
+
+            $('.sidebar{{ id }} .jstree').bind("move_node.jstree", function (e, data) {
+                var nodes = $(this).jstree().get_json($(this), {
+                    flat: true
+                });
+
+                var blocks = [];
+                for (var idx in _{{ id }}_value) {
+                    var itm = _{{ id }}_value[idx];
+                    blocks = blocks.concat(itm.blocks);
+                }
+
+                var result = [];
+                for (var idx in nodes) {
+                    var itm = nodes[idx];
+                    if (itm.parent == '#') {
+                        var section = getById{{ id }}(_{{ id }}_value, itm.id);
+                        section.blocks = [];
+                        for (var idxBlk in nodes) {
+                            var blk = nodes[idxBlk];
+                            if (blk.parent == itm.id) {
+                                section.blocks.push(getById{{ id }}(blocks, blk.id));
+                            }
+                        }
+                        result.push(section);
+                    }
+                }
+
+                _{{ id }}_value = result;
+                render_content{{ id }}();
+                assemble{{ id }}();
+
+            });
+            $('.sidebar{{ id }} .jstree').on("select_node.jstree", function (e, data) {
+                if (data.node.parent == '#') {
+                    var selector = '.js-section-{{ id }}-' + data.node.id;
+                } else {
+                    var selector = '.js-block-' + data.node.id;
+                }
+                $("html, body").animate({ scrollTop: $(selector).position().top });
+            });
+
+            $('.sidebar{{ id }}').find('.sidebar-submit .js-back').click(function () {
+                console.log($('form').find('.js-back'))
+                location.href = $('form').find('.js-back').attr('href');
+                return false;
+            });
+
+            $('.sidebar{{ id }}').find('.sidebar-submit [value=Apply]').click(function () {
+                $('form').find('[value=Apply]').click();
+            });
+
+            $('.sidebar{{ id }}').find('.sidebar-submit [value=Save]').click(function () {
+                $('form').find('[value=Save]').click();
+            });
+
         };
 
         function assemble{{ id }}() {

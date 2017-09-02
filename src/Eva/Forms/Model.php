@@ -51,7 +51,7 @@ class Model extends AbstractType
             'label' => 'Data type:',
             'expanded' => true,
             'choices' => array(
-                0 => 'Database',
+                0 => 'Bespoke',
                 1 => 'Admin',
                 2 => 'None',
             )

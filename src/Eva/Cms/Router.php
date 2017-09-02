@@ -20,7 +20,7 @@ class Router extends \Eva\Router\Router
         $nodes = array();
         try {
             $pages = new Node('pages', -1, 10, 1, 'Pages', 'pages.twig', '/pz/secured/pages', 'fa fa-sitemap');
-            $database = new Node('database', -1, 20, 1, 'Database', null, '#', 'fa fa-database');
+            $database = new Node('database', -1, 20, 1, 'Bespoke modules', null, '#', 'fa fa-database');
             $files = new Node('files', -1, 30, 1, 'Files', 'files.twig', '/pz/secured/files', 'fa fa-file-image-o');
             $admin = new Node('admin', -1, 40, 1, 'Admin', null, '#', 'fa fa-cogs');
             $customs = new Node('customs', 'admin', 1000, 1, 'Customised models', 'models.twig', '/pz/secured/models/0');

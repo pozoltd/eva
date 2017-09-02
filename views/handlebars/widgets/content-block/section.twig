@@ -13,9 +13,10 @@
                     <option value="{{id}}">{{title}}</option>
                 {{/each}}
             </select>
-            {{#compare idx 0 operator=">"}}<a href="#" class="text-muted"><i class="fa-lg fa fa-angle-up"></i></a>{{/compare}}
-            {{#compare idx total operator="<"}}<a href="#" class="text-muted"><i class="fa-lg fa fa-angle-down"></i></a>{{/compare}}
-            <a href="#" class="text-info"><i class="fa-lg fa fa-toggle-on"></i></a>
+            {{#compare idx 0 operator=">"}}<a href="#" class="js-up text-muted"><i class="fa-lg fa fa-angle-up"></i></a>{{/compare}}
+            {{#compare idx total operator="<"}}<a href="#" class="js-down text-muted"><i class="fa-lg fa fa-angle-down"></i></a>{{/compare}}
+            {{#compare section.status 1 operator="=="}}<a href="#" class="js-status-toggle text-info" data-status="0" data-type="section"><i class="fa-lg fa fa-toggle-on"></i></a>{{/compare}}
+            {{#compare section.status 0 operator="=="}}<a href="#" class="js-status-toggle text-danger" data-status="1" data-type="section"><i class="fa-lg fa fa-toggle-off"></i></a>{{/compare}}
             <a href="#" class="text-success js-edit-section"><i class="fa-lg fa fa-pencil"></i></a>
             <a href="#" class="text-danger"><i class="fa-lg fa fa-times js-delete-section"></i></a>
         </div>

@@ -1,11 +1,12 @@
 {% verbatim %}
-    <div class="panel panel-default js-block" data-id="{{block.id}}">
+    <div class="panel panel-default js-block js-block-{{block.id}}" data-id="{{block.id}}">
         <div class="panel-heading">
             <div class="left">
                 <h4>{{block.title}}</h4>
             </div>
             <div class="right">
-                <a href="#" class="text-info"><i class="fa-lg fa fa-toggle-on"></i></a>
+                {{#compare block.status 1 operator="=="}}<a href="#" class="js-status-toggle text-info" data-status="0" data-type="block"><i class="fa-lg fa fa-toggle-on"></i></a>{{/compare}}
+                {{#compare block.status 0 operator="=="}}<a href="#" class="js-status-toggle text-danger" data-status="1" data-type="block"><i class="fa-lg fa fa-toggle-off"></i></a>{{/compare}}
                 <a href="#" class="text-success js-edit-block"><i class="fa-lg fa fa-pencil"></i></a>
                 <a href="#" class="text-danger"><i class="fa-lg fa fa-times js-delete-block"></i></a>
             </div>
@@ -81,7 +82,7 @@
                         {{#compare widget 9 operator='==' }}
                             <div class="inner-box">
                                 <label>{{title}}</label>
-                                <select class="js-elem no-chosen after-chosen" id="{{id}}">
+                                <select class="js-elem no-chosen js-after-chosen" id="{{id}}">
                                     <option></option>
                                     {{#each choices}}
                                         <option {{#getByKeyAndCompare ../../block.values ../id @key}}selected{{/getByKeyAndCompare}} value="{{@key}}">{{this}}</option>
@@ -93,7 +94,7 @@
                         {{#compare widget 10 operator='==' }}
                             <div class="inner-box">
                                 <label>{{title}}</label>
-                                <select class="js-elem no-chosen after-chosen" id="{{id}}" multiple>
+                                <select class="js-elem no-chosen js-after-chosen" id="{{id}}" multiple>
                                     {{#each choices}}
                                         <option {{#getByKeyAndCompare ../../block.values ../id @key}}selected{{/getByKeyAndCompare}} value="{{@key}}">{{this}}</option>
                                     {{/each}}

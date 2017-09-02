@@ -101,7 +101,7 @@ class Page extends Router
     public function change(Application $app, Request $request)
     {
         $categories = \Eva\ORMs\PageCategory::data($this->app['zdb']);
-        $options = parent::getOptionsFromUrl('pz/pages/');
+        $options = parent::getOptionsFromUrl('/pz/secured/pages');
         $options['cat'] = $this->app['request']->get('cat') ?: (count($categories) > 0 ? $categories[0]->id : -1);
 
         $nodes = array();

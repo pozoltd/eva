@@ -37,7 +37,7 @@
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.4/js.cookie.min.js"></script>
 
                 <link href="{{ constant('CDN') }}/pz/css/style.css" rel="stylesheet">
-                <script src="{{ constant('CDN') }}/pz/js/function.min.js" type="text/javascript"></script>
+                <script src="{{ constant('CDN') }}/pz/js/function{% if not constant('DEBUG_ENABLED') %}.min{% endif %}.js" type="text/javascript"></script>
                 {% block extraHead %}{% endblock %}
             </head>
         {% endblock %}
@@ -172,7 +172,11 @@
                                             showConfirmButton: false
                                         });
                                         setTimeout(function () {
-                                            $(_this).closest('.content-container').remove();
+                                            if ($(_this).closest('.dd-list').length) {
+                                                $(_this).closest('.dd-list').remove();
+                                            } else {
+                                                $(_this).closest('.content-container').remove();
+                                            }
                                         }, 800)
                                     }
                                 });

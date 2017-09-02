@@ -3,6 +3,8 @@
         <div class="modal-content">
             <div class="modal-body">
                 <input type="hidden" name="id" value="{{section.id}}">
+                <input type="hidden" name="status" value="{{section.status}}">
+
                 <div class="form-group">
                     <label>Section name:</label>
                     <input type="text" name="name" value="{{section.title}}" placeholder="Enter a name" class="form-control">
@@ -13,7 +15,7 @@
                 </div>
                 <div class="form-group">
                     <label>Relationship tags:</label>
-                    <select name="tags" class="no-chosen after-chosen form-control js-tag" data-placeholder="Choose tags" multiple>
+                    <select name="tags" class="no-chosen js-after-chosen form-control js-tag" data-placeholder="Choose tags" multiple>
                         {{#each optionTags}}
                             <option {{#ifHasIt ../section.tags id }}selected{{/ifHasIt}} value="{{id}}">{{title}}</option>
                         {{/each}}

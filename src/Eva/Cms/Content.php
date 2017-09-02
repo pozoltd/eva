@@ -89,11 +89,11 @@ class Content extends Router
 //        return $this->getForm($app, $request, $modelId, $id, $content, $model);
     }
 
-    public function copy(Application $app, Request $request, $modelId, $id)
+    public function copy(Application $app, Request $request, $modelClass, $id)
     {
         $options = parent::getOptionsFromUrl();
 
-        $options['model'] = Model::getById($app['zdb'], $modelId);
+        $options['model'] = Model::getORMByField($app['zdb'], 'className', $modelClass);
         if (!$options['model']) {
             $app->abort(404);
         }
@@ -207,13 +207,13 @@ class Content extends Router
     public function nestable(Application $app, Request $request)
     {
         $modelClass = $app['modelClass'];
-        $model = $modelClass::findById($app['zdb'], $modelId);
-        $className = $model->getFullClass();
+        $model = \Eva\Db\Model::getORMByField($app['zdb'], 'className', $modelClass);
+        $className = $model->namespace . '\\' . $model->className;
         $data = json_decode($request->get('data'));
         foreach ($data as $itm) {
             $obj = $className::findById($app['zdb'], $itm->id);
-            $obj->rank = $itm->rank;
-            $obj->parentId = $itm->parentId;
+            $obj->__rank = $itm->rank;
+            $obj->__parentId = $itm->parentId;
             $obj->save();
         }
         return new Response('OK');

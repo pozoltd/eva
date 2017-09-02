@@ -30,7 +30,7 @@
 							<div style="clear: both;"></div>
 							<div>&nbsp;</div>
 							<div class="submit-container">
-								<a class="btn btn-white" href="{{ returnUrl }}"><i class="fa fa-arrow-left"></i> &nbsp;Back</a>
+								<a class="js-back btn btn-white" href="{{ returnUrl }}"><i class="fa fa-arrow-left"></i> &nbsp;Back</a>
 								<input class="btn btn-sm btn-primary pull-right m-t-n-xs" type="submit" value="Save" name="submit" />
 								<input class="btn btn-sm btn-success pull-right m-t-n-xs" type="submit" value="Apply" name="submit" />
 								{#<input class="btn btn-sm btn-danger pull-right m-t-n-xs" type="submit" value="Delete" name="submit" />#}
@@ -115,41 +115,6 @@
 				allow_single_deselect: true
 			});
 
-			{#var pb = $('.progress-bar').progressbar();
-			var url = '{{ path('upload-assets') }}';
-			$('#fileupload').fileupload({
-				url: url,
-				dataType: 'json',
-				sequentialUploads: true,
-				add: function(e, data) {
-					var uploadErrors = [];
-					if(data.files[0]['size'] == '' || data.files[0]['size'] > 5000000) {
-						uploadErrors.push('File size is too big');
-					}
-					if(uploadErrors.length > 0) {
-						alert(uploadErrors.join("\n"));
-					} else {
-						$('.progress').show();
-						data.submit();
-					}
-				},
-				done: function (e, data) {
-					_files.push(data.result);
-					repaintAssetPicker();
-				},
-				progressall: function (e, data) {
-					var progress = parseInt(data.loaded / data.total * 100, 10);
-					$('.progress-bar').css('width', progress + '%');
-				},
-				stop: function (e) {
-					$('.progress').fadeOut(3000);
-				}
-			}).prop('disabled', !$.support.fileInput).parent().addClass($.support.fileInput ? undefined : 'disabled');
-			$('#fileupload').bind('fileuploadsubmit', function (e, data) {
-				data.formData = {
-					parentId: _parentId
-				};
-			});#}
 		});
 
 		$.Redactor.prototype.filePicker = function()
@@ -162,11 +127,12 @@
 				},
 				show: function()
 				{
-					window._redactor = this;
-					window._callback = function() {
-						window._redactor.file.insert.call(window._redactor, '<a href="/asset/download/' + $(this).attr('data-id') + '/">' + $(this).attr('data-title') + '</a>');
-					};
-					filepicker();
+				    alert(1);
+//					window._redactor = this;
+//					window._callback = function() {
+//						window._redactor.file.insert.call(window._redactor, '<a href="/asset/download/' + $(this).attr('data-id') + '/">' + $(this).attr('data-title') + '</a>');
+//					};
+//					filepicker();
 				}
 			};
 		};
@@ -189,7 +155,6 @@
 				}
 			};
 		};
-
 
 		function folderpicker() {
 			$('.asset-picker-upload').css('visibility', 'hidden');
@@ -281,7 +246,6 @@
 				return false;
 			});
 		}
-
 
 		function filepicker() {
 			$('.asset-picker-upload').css('visibility', 'visible');
