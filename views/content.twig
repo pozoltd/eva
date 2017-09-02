@@ -37,8 +37,8 @@
 	</div>
 
 	<div id="popup-container">
-		<div class="row">
-			<div class="col-lg-12">
+		<div class="row" style="margin: 0">
+			<div class="col-lg-12" style="padding: 0">
 				<div class="ibox">
 					<div class="ibox-title">
 						<div class="js-upload"></div>
@@ -46,7 +46,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="row">
+		<div class="row" style="margin: 0">
 			<div class="col-lg-2" id="js-folders"></div>
 			<div class="col-lg-10" id="js-files"></div>
 		</div>
@@ -59,7 +59,7 @@
 	<script id="loading" type="text/x-handlebars-template">{% include 'handlebars/pages/file/loading.twig' %}</script>
 	<script id="template-upload" type="text/x-handlebars-template">
         {% verbatim %}
-			<button class="btn btn-primary" onclick="$('#fileupload').click();">
+			<button class="btn btn-sm btn-info" onclick="$('#fileupload').click();">
 				<i class="fa fa-upload"></i> Upload
 			</button>
 			<input id="fileupload" type="file" name="files[]" multiple style="display: none;">
@@ -79,6 +79,43 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.7/jquery.fileupload.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/3.0.4/jquery.imagesloaded.min.js"></script>
 	<script>
+
+        $.Redactor.prototype.filePicker = function() {
+            return {
+                init: function()
+                {
+                    var button = this.button.add('file', 'File Picker');
+                    this.button.addCallback(button, this.filePicker.show);
+                },
+                show: function()
+                {
+                    window._redactor = this;
+                    window._callback = function() {
+                        window._redactor.file.insert.call(window._redactor, '<a href="/asset/files/download/' + $(this).closest('.file-box').data('id') + '/">' + $(this).closest('.file-box').data('title') + '</a>');
+                    };
+                    filepicker();
+                }
+            };
+        };
+
+        $.Redactor.prototype.imagePicker = function() {
+            return {
+                init: function()
+                {
+                    var button = this.button.add('image', 'Image Picker');
+                    this.button.addCallback(button, this.imagePicker.show);
+                },
+                show: function()
+                {
+                    window._redactor = this;
+                    window._callback = function() {
+                        window._redactor.image.insert.call(window._redactor, '<img src="/asset/files/image/' + $(this).closest('.file-box').data('id') + '/general" alt="' + $(this).closest('.file-box').data('title') + '">');
+                    };
+                    filepicker();
+                }
+            };
+        };
+
 		var _parentId = -1;
 
 		$(function() {
@@ -124,41 +161,6 @@
                 return false;
             });
 
-            $.Redactor.prototype.filePicker = function() {
-                return {
-                    init: function()
-                    {
-                        var button = this.button.add('file', 'File Picker');
-                        this.button.addCallback(button, this.filePicker.show);
-                    },
-                    show: function()
-                    {
-                        window._redactor = this;
-                        window._callback = function() {
-                            window._redactor.file.insert.call(window._redactor, '<a href="/asset/files/download/' + $(this).closest('.file-box').data('id') + '/">' + $(this).closest('.file-box').data('title') + '</a>');
-                        };
-                        filepicker();
-                    }
-                };
-            };
-
-            $.Redactor.prototype.imagePicker = function() {
-                return {
-                    init: function()
-                    {
-                        var button = this.button.add('image', 'Image Picker');
-                        this.button.addCallback(button, this.imagePicker.show);
-                    },
-                    show: function()
-                    {
-                        window._redactor = this;
-                        window._callback = function() {
-                            window._redactor.image.insert.call(window._redactor, '<img src="/asset/files/image/' + $(this).closest('.file-box').data('id') + '/general" alt="' + $(this).closest('.file-box').data('title') + '">');
-                        };
-                        filepicker();
-                    }
-                };
-            };
 
 			$('.wysiwyg textarea').redactor({
 				plugins: ['filePicker', 'imagePicker', 'video', 'table'],
