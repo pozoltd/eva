@@ -3,11 +3,10 @@
 namespace Eva\Web;
 
 use Eva\Router\Node;
-use Eva\Router\Router;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
-class Router extends Router
+class Router extends \Eva\Router\Router
 {
     protected function getNodes()
     {

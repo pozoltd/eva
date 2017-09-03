@@ -5,7 +5,7 @@
   "namespace": "Eva\\ORMs",
   "dataTable": "__contents",
   "modelType": "1",
-  "dataType": "0",
+  "dataType": "1",
   "listType": "1",
   "numberPerPage": "25",
   "defaultSortBy": "id",
