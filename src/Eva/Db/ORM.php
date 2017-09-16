@@ -58,7 +58,7 @@ abstract class ORM
                     $this->track = md5(uniqid() . time() . rand());
                 }
 
-                if (isset($this->{$idx})) {
+                if (property_exists($this, $idx)) {
                     $part1 .= "`$itm`, ";
                     $part2 .= "?, ";
                     $params[] = $this->{$idx};
@@ -74,7 +74,7 @@ abstract class ORM
                 if ($itm == 'id' || $itm == 'track') {
                     continue;
                 }
-                if (isset($this->{$idx})) {
+                if (property_exists($this, $idx)) {
                     $sql .= "`$itm` = ?, ";
                     $params[] = $this->{$idx};
                 }

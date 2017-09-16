@@ -310,9 +310,10 @@
             });
 
 
-            $('.assetpicker .js-asset-delete').click(function(ev) {
+            $('#{{ id }}_container .js-asset-delete').click(function(ev) {
                 $($(this).data('id')).val('');
                 $($(this).data('id') + '-preview').css('visibility', 'hidden');
+                assemble{{ id }}();
             });
 
             $('#{{ id }}_container .js-asset-change').click(function(ev) {
