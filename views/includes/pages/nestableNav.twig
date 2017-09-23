@@ -1,6 +1,6 @@
 {% macro nest(node, depth) %}
     {% from _self import nest as nest %}
-    {% set currentPath = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
+    {% set currentPath = app.request.uri %}
     <li class="dd-item dd3-item content-container" data-id="{{ node.id }}">
         <div class="dd-handle dd3-handle"></div>
         <div class="dd-handle dd3-handle"></div>
