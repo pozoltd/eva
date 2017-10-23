@@ -3,7 +3,10 @@
 namespace Eva\Cms;
 
 use Eva\Db\Model;
+use Eva\Router\Nav;
+use Eva\Router\Node;
 use Eva\Tools\Utils;
+use MyProject\Proxies\__CG__\stdClass;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -62,7 +65,30 @@ class Content extends Router
 //            'debug' => 1,
         ));
 
+        if ($options['model']->listType == 2) {
+            $nodes = array();
+            foreach ($options['contents'] as $itm) {
+                $node = new Node($itm->id, $itm->parentId ?: -1, $itm->__rank, $itm->__active ? 1 : 0, $itm->title);
+                $node->__modelClass = $options['model']->className;
+                $nodes[] = $node;
+            }
+            $nav = new Nav($nodes);
+            $options['contents'] = $nav->root();
+        }
+
         return $app['twig']->render($options['page']->twig, $options);
+    }
+
+    public function createNestable($node, $data) {
+        if (!isset($node->_children)) {
+            $node->_children = array();
+        }
+        foreach ($data as $itm) {
+            if ($itm->parentId == $node->id) {
+                $node->_children[] = $itm;
+                $this->createNestable($itm, $data);
+            }
+        }
     }
 
     public function content(Application $app, Request $request, $modelClass, $id = null)
@@ -206,14 +232,14 @@ class Content extends Router
 
     public function nestable(Application $app, Request $request)
     {
-        $modelClass = $app['modelClass'];
+        $modelClass = $request->get('model');
         $model = \Eva\Db\Model::getORMByField($app['zdb'], 'className', $modelClass);
         $className = $model->namespace . '\\' . $model->className;
         $data = json_decode($request->get('data'));
         foreach ($data as $itm) {
-            $obj = $className::findById($app['zdb'], $itm->id);
+            $obj = $className::getById($app['zdb'], $itm->id);
             $obj->__rank = $itm->rank;
-            $obj->__parentId = $itm->parentId;
+            $obj->parentId = $itm->parentId;
             $obj->save();
         }
         return new Response('OK');

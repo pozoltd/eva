@@ -137,7 +137,7 @@
                             }
 
                             $.ajax({
-                                type: 'POST',
+                                type: 'GET',
                                 url: '{{ path('change-status') }}',
                                 data: 'content=' + encodeURIComponent($(this).attr('data-content'))  + '&model=' + encodeURIComponent($(this).attr('data-model')) + '&status=' + encodeURIComponent($(this).attr('data-status')),
                                 success: function (msg) {
@@ -160,7 +160,7 @@
                                 showLoaderOnConfirm: true,
                             }, function () {
                                 $.ajax({
-                                    type: 'POST',
+                                    type: 'GET',
                                     url: '{{ path('remove-content') }}',
                                     data: 'content=' + encodeURIComponent($(_this).attr('data-content')) + '&model=' + encodeURIComponent($(_this).attr('data-model')),
                                     success: function (msg) {
@@ -172,8 +172,12 @@
                                             showConfirmButton: false
                                         });
                                         setTimeout(function () {
-                                            if ($(_this).closest('.dd-list').length) {
-                                                $(_this).closest('.dd-list').remove();
+                                            if ($(_this).closest('.dd-item').length) {
+                                                if ($(_this).closest('.dd-list').find('.dd-item').length == 1) {
+                                                    $(_this).closest('.dd-list').remove();
+                                                } else {
+                                                    $(_this).closest('.dd-item').remove();
+                                                }
                                             } else {
                                                 $(_this).closest('.content-container').remove();
                                             }

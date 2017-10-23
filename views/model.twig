@@ -193,7 +193,7 @@
 
             //
             $(document).on('change', '#columns select', function(ev) {
-                if ($(this).val() == 'choice' || $(this).val() == '\\Pz\\Twig\\Types\\ChoiceMultiJson') {
+                if ($(this).val() == 'choice' || $(this).val() == '\\Eva\\Forms\\Types\\ChoiceMultiJson') {
                     $('#sql' + $(this).closest('tbody').find('.id').val()).show();
                 } else {
                     $('#sql' + $(this).closest('tbody').find('.id').val()).hide();

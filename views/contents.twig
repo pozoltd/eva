@@ -1,3 +1,4 @@
+{% from "includes/pages/nestableNav.twig" import nest as nest %}
 {% extends 'layout.twig' %}
 
 {% block extraHead %}
@@ -50,7 +51,13 @@
                         {% endif %}
                     {% else %}
                         <div class="nestable-lists">
-                            <div class="dd" id="nestable">{{ contents|nestable|raw }}</div>
+                            <div class="dd" id="nestable">
+                                <ol class="dd-list">
+                                    {% for itm in contents.children %}
+                                        {{ nest(itm, 1) }}
+                                    {% endfor %}
+                                </ol>
+                            </div>
                         </div>
                     {% endif %}
                 </div>
@@ -80,7 +87,7 @@
                     }
                 });
             {% elseif model.listType == 2 %}
-                $('#nestable').nestable().on('change', update);
+                $('#nestable').nestable({ group: 1 }).on('change', update);
             {% endif %}
         });
 
@@ -91,9 +98,10 @@
             }
 
             _ajax = $.ajax({
-                type: 'POST',
+                type: 'GET',
                 url: '{{ path('nestable') }}',
-                data: 'model={{ model.className }}data=' + encodeURIComponent(JSON.stringify(toArray(root))),
+                data: 'model={{ model.className }}&data=' + encodeURIComponent(JSON.stringify(toArray(root))),
+                data: 'model={{ model.className }}&data=' + encodeURIComponent(JSON.stringify(toArray(root))),
                 success : function(msg) {
                 }
             });
