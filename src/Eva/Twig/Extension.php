@@ -8,6 +8,12 @@ use \Twig_Extension;
 
 class Extension extends Twig_Extension
 {
+    private $app;
+
+    public function __construct($app)
+    {
+        $this->app = $app;
+    }
 
     public function getName()
     {
@@ -17,6 +23,9 @@ class Extension extends Twig_Extension
     public function getFilters()
     {
         return array(
+            'block' => new \Twig_Filter_Method($this, 'block'),
+            'section' => new \Twig_Filter_Method($this, 'section'),
+            'sections' => new \Twig_Filter_Method($this, 'sections'),
             'json_decode' => new \Twig_Filter_Method($this, 'jsonDecode'),
             'ceil' => new \Twig_Filter_Method($this, 'ceil'),
             'purify' => new \Twig_Filter_Method($this, 'purify'),
@@ -24,6 +33,39 @@ class Extension extends Twig_Extension
             'nav' => new \Twig_Filter_Method($this, 'nav'),
             'prettydatetime' => new \Twig_Filter_Method($this, 'prettydatetime'),
         );
+    }
+
+    public function block($block)
+    {
+        if (!isset($block->status) || !$block->status || $block->status == 0) {
+            return '';
+        }
+        return $this->app['twig']->render("fragments/{$block->twig}", (array)$block->values);
+    }
+
+    public function section($section)
+    {
+        if (!isset($section->status) || !$section->status || $section->status == 0) {
+            return '';
+        }
+        $html = '';
+        foreach ($section->blocks as $block) {
+            $html .= $this->block($block);
+        }
+        return $html;
+    }
+
+    public function sections($sections)
+    {
+        if (gettype($sections) == 'string') {
+            $sections = json_decode($sections);
+        }
+
+        $html = '';
+        foreach ($sections as $section) {
+            $html .= $this->section($section);
+        }
+        return $html;
     }
 
     public function jsonDecode($str)

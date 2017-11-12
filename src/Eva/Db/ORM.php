@@ -137,7 +137,7 @@ abstract class ORM
     {
         $options['select'] = isset($options['select']) && !empty($options['select']) ? $options['select'] : 'm.*';
         $options['joins'] = isset($options['joins']) && !empty($options['joins']) ? $options['joins'] : null;
-        $options['whereSql'] = isset($options['whereSql']) && !empty($options['whereSql']) ? $options['whereSql'] : null;
+        $options['whereSql'] = isset($options['whereSql']) && !empty($options['whereSql']) ? "({$options['whereSql']})" : null;
         $options['params'] = isset($options['params']) && gettype($options['params']) == 'array' && count($options['params']) ? $options['params'] : [];
         $options['sort'] = isset($options['sort']) && !empty($options['sort']) ? $options['sort'] : 'm.__rank';
         $options['order'] = isset($options['order']) && !empty($options['order']) ? $options['order'] : 'ASC';
@@ -157,9 +157,9 @@ abstract class ORM
         if ($options['count']) {
             $options['orm'] = false;
             $options['oneOrNull'] = true;
-            $options['select'] = 'COUNT(*)';
-            unset($options['page']);
-            unset($options['limit']);
+            $options['select'] = 'COUNT(*) AS count';
+            $options['page'] = null;
+            $options['limit'] = null;
         }
 
         $myClass = get_called_class();

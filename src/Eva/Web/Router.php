@@ -18,7 +18,9 @@ class Router extends \Eva\Router\Router
             if (!$twig) {
                 $this->app->abort(404);
             }
-            $nodes[] = new Node($itm->id, -1, $itm->__rank, $itm->__active, $itm->title, $twig->filename, $itm->url, null, $itm->allowExtra, $itm->maxParams);
+            $node = new Node($itm->id, -1, $itm->__rank, $itm->__active, $itm->title, $twig->filename, $itm->url, null, $itm->allowExtra, $itm->maxParams);
+            $node->objContent = $itm->objContent();
+            $nodes[] = $node;
         }
         return $nodes;
     }
