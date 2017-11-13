@@ -9,7 +9,7 @@ class URL
 {
     public static function getUrl()
     {
-        return 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+        return 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}" . urldecode($_SERVER['REQUEST_URI']);
     }
 
     public static function getUrlWq()
