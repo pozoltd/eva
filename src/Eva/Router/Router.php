@@ -39,6 +39,9 @@ abstract class Router implements ControllerProviderInterface
             $url = str_replace(DOMAIN, '', URL::getUrlWq());
         }
         $url = trim($url, '/');
+        if (stripos($url, '?')) {
+            $url = substr($url, 0, stripos($url, '?'));
+        }
         $args = explode('/', $url);
 
         $nav = new Nav($this->getNodes());
