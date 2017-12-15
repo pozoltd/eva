@@ -5,6 +5,7 @@
  */
 namespace Eva\ORMs;
 
+use Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 
@@ -58,5 +59,14 @@ class User extends \Eva\Db\ORM implements UserInterface {
         return '';
     }
 
-    
+    public function save()
+    {
+        if ($this->password_) {
+            $encoder = new MessageDigestPasswordEncoder();
+            $this->password = $encoder->encodePassword($this->password_, '');
+            $this->password_ = null;
+        }
+        parent::save();
+    }
+
 }
