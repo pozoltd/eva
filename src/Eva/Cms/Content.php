@@ -30,10 +30,11 @@ class Content extends Router
         $controllers->match('/contents/nestable', array($this, 'nestable'))->bind('nestable');
 
         $controllers->match('/contents/{modelId}', array($this, 'contents'))->bind('contents');
+
         return $controllers;
     }
 
-    public function contents(Application $app, Request $request, $modelId, $pageNum = null, $sort = null, $order = null)
+    public function contents(Application $app, Request $request, $modelId)
     {
         $options = parent::getOptionsFromUrl();
 
@@ -42,8 +43,9 @@ class Content extends Router
             $app->abort(404);
         }
 
-        $sort = null;
-        $order = null;
+        $pageNum = $request->get('pageNum') ?: 1;
+        $sort = $request->get('sort') ?: null;
+        $order = $request->get('order') ?: null;
         $limit = null;
         if ($options['model']->listType == 0) {
             $sort = $sort ?: $options['model']->defaultSortBy;
@@ -63,6 +65,12 @@ class Content extends Router
             'page' => $pageNum,
             'limit' => $limit,
 //            'debug' => 1,
+        ));
+
+        $options['pageNum'] = $pageNum;
+        $options['limit'] = $limit;
+        $options['total'] = $ormClass::data($app['zdb'], array(
+            'count' => 1,
         ));
 
         if ($options['model']->listType == 2) {

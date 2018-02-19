@@ -47,7 +47,11 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
-                            {#{% include 'includes/pagination.twig' %}#}
+
+                            {% set url = '/pz/secured/contents/15' %}
+                            {% set total = (total.count / limit)|ceil %}
+                            {% set current = pageNum %}
+                            {% include 'includes/pages/pagination.twig' %}
                         {% endif %}
                     {% else %}
                         <div class="nestable-lists">

@@ -1,0 +1,37 @@
+{#<div class="text-center">#}
+    {#<div class="btn-group">#}
+        {#<button class="btn btn-white" type="button"><i class="fa fa-chevron-left"></i></button>#}
+        {#<button class="btn btn-white">1</button>#}
+        {#<button class="btn btn-white  active">2</button>#}
+        {#<button class="btn btn-white">3</button>#}
+        {#<button class="btn btn-white">4</button>#}
+        {#<button class="btn btn-white">5</button>#}
+        {#<button class="btn btn-white">6</button>#}
+        {#<button class="btn btn-white">7</button>#}
+        {#<button class="btn btn-white" type="button"><i class="fa fa-chevron-right"></i></button>#}
+    {#</div>#}
+{#</div>#}
+
+
+{% if total is defined and current is defined and url is defined and total > 1 %}
+    {% set all = 5 %}
+    {% set half = (all - 1) / 2 %}
+    {% if total > current + half %}
+        {% set start = max(current - half, 1) %}
+        {% set end = min(start + all - 1, total) %}
+    {% else %}
+        {% set end = total %}
+        {% set start = max(total - all + 1, 1) %}
+    {% endif %}
+
+    <div class="text-center">
+        <div class="btn-group">
+            <a class="btn btn-white" type="button" href="{{ url }}/{{ max(current - 1, 1) }}"><i class="fa fa-chevron-left"></i></a>
+            {% for i in start..end %}
+                <a class="btn btn-white {% if current == i %}active{% endif %}" href="{{ url }}?pageNum={{ i }}">{{ i }}</a>
+                {#<li class="item {% if current == i %}active{% endif %}"><a href="{{ url }}/{{ i }}">{{ i }}</a></li>#}
+            {% endfor %}
+            <a class="btn btn-white" type="button" href="{{ url }}?pageNum={{ min(current + 1, total) }}"><i class="fa fa-chevron-right"></i></a>
+        </div>
+    </div>
+{% endif %}
