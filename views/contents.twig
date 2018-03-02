@@ -48,10 +48,12 @@
                                 </tbody>
                             </table>
 
-                            {% set url = '/pz/secured/contents/' ~ model.id %}
-                            {% set total = (total.count / limit)|ceil %}
-                            {% set current = pageNum %}
-                            {% include 'includes/pages/pagination.twig' %}
+                            {% if limit > 0 %}
+                                {% set url = '/pz/secured/contents/' ~ model.id %}
+                                {% set total = (total.count / limit)|ceil %}
+                                {% set current = pageNum %}
+                                {% include 'includes/pages/pagination.twig' %}
+                            {% endif %}
                         {% endif %}
                     {% else %}
                         <div class="nestable-lists">
