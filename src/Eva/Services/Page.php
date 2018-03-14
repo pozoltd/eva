@@ -40,9 +40,11 @@ class Page implements ServiceProviderInterface
                     $this->app->abort(404);
                 }
 
+                $itm->categoryParent = ((empty($itm->categoryParent) || !$itm->categoryParent)) ? array() : (array)json_decode($itm->categoryParent);
                 $itm->categoryRank = ((empty($itm->categoryRank) || !$itm->categoryRank)) ? array() : (array)json_decode($itm->categoryRank);
+                $parent = isset($itm->categoryParent['cat' . $category->id]) ? $itm->categoryParent['cat' . $category->id] : 0;
                 $rank = isset($itm->categoryRank['cat' . $category->id]) ? $itm->categoryRank['cat' . $category->id] : 0;
-                $node = new Node($itm->id, -1, $rank, $itm->__active, $itm->title, $twig->filename, $itm->url, null, $itm->allowExtra, $itm->maxParams);
+                $node = new Node($itm->id, $parent, $rank, $itm->__active, $itm->title, $twig->filename, $itm->url, null, $itm->allowExtra, $itm->maxParams);
                 $node->objContent = $itm->objContent();
                 $nodes[] = $node;
             }

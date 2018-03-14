@@ -1,5 +1,5 @@
 <?php
-namespace Pz\Services;
+namespace Eva\Services;
 
 use Pz\Common\Utils;
 use Silex\ServiceProviderInterface;
@@ -23,14 +23,14 @@ class Form implements ServiceProviderInterface
     {
         $dao = isset($options['dao']) && $options['dao'] ? $options['dao'] : null;
 
-        $formDescriptorClass = $this->app['formDescriptorClass'];
-        $formDescriptor = $formDescriptorClass::findByField($this->app['em'], 'code', $code);
+        $formDescriptorClass = isset($this->app['formDescriptorClass']) ? $this->app['formDescriptorClass'] : '\\Eva\\ORMs\\FormDescriptor';
+        $formDescriptor = $formDescriptorClass::getORMByField($this->app['zdb'], 'code', $code);
         if (is_null($formDescriptor)) {
             $this->app->abort(404);
         }
         $formDescriptor->sent = false;
 
-        $formBuilderClass = $this->app['formBuilderClass'];
+        $formBuilderClass = isset($this->app['formBuilderClass']) ? $this->app['formBuilderClass'] : '\\Eva\\Forms\\FormBuilder';
         $formBuilder = new $formBuilderClass($formDescriptor, $this->app, array());
         $formDescriptor->form = $this->app['form.factory']->create(
             $formBuilder, $dao
@@ -59,8 +59,8 @@ class Form implements ServiceProviderInterface
 
                 if ($formDescriptor->recipients) {
                     $code = uniqid();
-                    $formSubmissionClass = $this->app['formSubmissionClass'];
-                    $submission = new $formSubmissionClass($this->app['em']);
+                    $formSubmissionClass = isset($this->app['formSubmissionClass']) ? $this->app['formSubmissionClass'] : '\\Eva\\ORMs\\FormSubmission';
+                    $submission = new $formSubmissionClass($this->app['zdb']);
                     $submission->title = '#' . $code . ' ' . (isset($data['email']) ? $data['email'] : '');
                     $submission->uniqueId = $code;
                     $submission->date = date('Y-m-d H:i:s');
@@ -97,7 +97,6 @@ class Form implements ServiceProviderInterface
                 $this->afterSend($formDescriptor, $result, $data, $dao);
             }
         }
-
 
         $formDescriptor->form = $formDescriptor->form->createView();
         return $formDescriptor;

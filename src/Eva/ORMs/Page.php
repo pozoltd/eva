@@ -23,6 +23,8 @@ class Page extends \Eva\Db\ORM
             'categoryRank' => 'extra2',
             'categoryParent' => 'extra3',
             'pageTitle' => 'extra4',
+            'pageHeading' => 'extra9',
+            'image' => 'image',
             'description' => 'description',
             'allowExtra' => 'extra1',
             'maxParams' => 'extra7',
