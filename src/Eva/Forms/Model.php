@@ -60,7 +60,7 @@ class Model extends AbstractType
             'expanded' => true,
             'choices' => array(
                 1 => 'Drag & Drop',
-                2 => 'Nested tree',
+                2 => 'Tree',
                 0 => 'Pagination',
             )
         ))->add('numberPerPage', 'text', array(
