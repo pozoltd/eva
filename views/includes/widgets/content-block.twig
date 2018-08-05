@@ -321,9 +321,9 @@
             $('#{{ id }}_container .js-asset-change').click(function(ev) {
                 var _this = this;
                 window._callback = function () {
-                    $($(_this).data('id')).val($(this).closest('.file-box').data('id'));
-                    $($(_this).data('id') + '-preview').css('visibility', 'visible');
-                    $($(_this).data('id') + '-preview').attr('src', '/asset/files/image/' + $(this).closest('.file-box').data('id') + '/cms_file_preview');
+                    $(_this).closest('.inner-box').find($(_this).data('id')).val($(this).closest('.file-box').data('id'));
+                    $(_this).closest('.inner-box').find($(_this).data('id') + '-preview').css('visibility', 'visible');
+                    $(_this).closest('.inner-box').find($(_this).data('id') + '-preview').attr('src', '/asset/files/image/' + $(this).closest('.file-box').data('id') + '/cms_file_preview');
                     assemble{{ id }}();
                 };
                 filepicker();
