@@ -84,6 +84,9 @@ class Form implements ServiceProviderInterface
                         ->setBody(
                             $messageBody, 'text/html'
                         );
+                    if (isset($data['email']) && $data['email'] && filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                        $message->setReplyTo(array($data['email']));
+                    }
                     $formDescriptor->sent = $this->app['mailer']->send($message);
 
                     $submission->emailStatus = $formDescriptor->sent ? 1 : 2;
